@@ -9,6 +9,33 @@ namespace WinFormsDevTools
         private readonly Control[] _controlsForEnablingHandling;
         private WinFormsGitHubRepoManager? _gitHubRepoManager;
 
+        private const string ACCESSIBILITY = "Accessibility";
+        private const string MICROSOFT_VISUALBASIC = "Microsoft.VisualBasic";
+        private const string MICROSOFT_VISUALBASIC_FACADE = "Microsoft.VisualBasic.Facade";
+        private const string MICROSOFT_VISUALBASIC_FORMS = "Microsoft.VisualBasic.Forms";
+        private const string SYSTEM_DESIGN_FACADE = "System.Design.Facade";
+        private const string SYSTEM_DRAWING_COMMON = "System.Drawing.Common";
+        private const string SYSTEM_DRAWING_DESIGN_FACADE = "System.Drawing.Design.Facade";
+        private const string SYSTEM_DRAWING_FACADE = "System.Drawing.Facade";
+        private const string SYSTEM_WINDOWS_FORMS = "System.Windows.Forms";
+        private const string SYSTEM_WINDOWS_FORMS_DESIGN = "System.Windows.Forms.Design";
+        private const string SYSTEM_WINDOWS_FORMS_PRIMITIVES = "System.Windows.Forms.Primitives";
+
+        string[] s_preCheckItems = new string[]
+        {
+            ACCESSIBILITY,
+            MICROSOFT_VISUALBASIC,
+            MICROSOFT_VISUALBASIC_FACADE,
+            MICROSOFT_VISUALBASIC_FORMS,
+            SYSTEM_DESIGN_FACADE,
+            SYSTEM_DRAWING_COMMON,
+            SYSTEM_DRAWING_DESIGN_FACADE,
+            SYSTEM_DRAWING_FACADE,
+            SYSTEM_WINDOWS_FORMS,
+            SYSTEM_WINDOWS_FORMS_DESIGN,
+            SYSTEM_WINDOWS_FORMS_PRIMITIVES
+        };
+
         public MainForm()
         {
             InitializeComponent();
@@ -110,6 +137,8 @@ namespace WinFormsDevTools
                     addSourceDataToTag: true,
                     (nameof(DesktopAssemblyInfo.Name), "Assembly name"),
                     (nameof(DesktopAssemblyInfo.Path), "Path"));
+
+                _availableAssembliesListView.CheckItemsInFirstColumn(s_preCheckItems);
             }
         }
 

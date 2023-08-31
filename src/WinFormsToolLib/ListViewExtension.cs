@@ -14,20 +14,22 @@
             listView.CheckBoxes = checkBoxes;
         }
 
-        /// <summary>
-        /// Adds items for a list of certain types where the columns are selected by property names, 
-        /// and the display names for columns can be configured.
-        /// </summary>
-        /// <typeparam name="T">Type of the items in the List.</typeparam>
-        /// <param name="listView">The ListView control displaying headers and Items. 
-        /// Should be in Details View for this to work correctly.</param>
-        /// <param name="dataItems">The data elements.</param>
-        /// <param name="typePropertyColumnHeaderNames">Tuple with Property/DisplayName.</param>
+        public static void CheckItemsInFirstColumn(this ListView listView, string[] itemsToCheck)
+        {
+            foreach (ListViewItem item in listView.Items)
+            {
+                if (itemsToCheck.Contains(item.SubItems[0].Text))
+                {
+                    item.Checked = true;
+                }
+            }
+        }
+
         public static void AddItemsWithColumnHeadersFromType<T>(
             this ListView listView,
             IEnumerable<T> dataItems,
             bool addSourceDataToTag,
-            params (string PropertyName,string DisplayName)[] typePropertyColumnHeaderNames)
+            params (string PropertyName, string DisplayName)[] typePropertyColumnHeaderNames)
         {
             // We're joining the columns we want to have with the type's properties.
             var columnProperties = typePropertyColumnHeaderNames
@@ -39,7 +41,7 @@
                     {
                         PropertyInfo = inner,
                         DisplayName = outer.DisplayName
-                    });               
+                    });
 
             listView.Items.Clear();
             listView.Columns.Clear();
@@ -69,7 +71,7 @@
                                 .GetValue(dataItem)!
                                 .ToString());
 
-                        if (addSourceDataToTag) 
+                        if (addSourceDataToTag)
                             listViewItem.Tag = dataItem;
 
                         continue;
