@@ -12,7 +12,10 @@ namespace WinFormsToolLib
         private StringBuilder? _protocolStorage;
         private bool _newline = true;
 
-        public void StartBatch(bool showCommandBatchWindow = true, bool dryRun = false, string? windowTitel=null)
+        public void StartBatch(
+            bool showCommandBatchWindow = true, 
+            bool dryRun = false, 
+            string? windowTitle=null)
         {
             if (_batchStarted)
             {
@@ -25,7 +28,7 @@ namespace WinFormsToolLib
 
             if (_showCommandBatchWindow)
             {
-                _commandBatchWindow = new CommandBatchForm(windowTitel);
+                _commandBatchWindow = new CommandBatchForm(windowTitle);
                 _commandBatchWindow.StartBatch();
             }
 
@@ -102,10 +105,7 @@ namespace WinFormsToolLib
 
         private string MessageHeader(string? message)
         {
-            if (message is null)
-            {
-                message = String.Empty;
-            }
+            message ??= String.Empty;
 
             if (_newline)
             {
@@ -120,10 +120,7 @@ namespace WinFormsToolLib
         {
             message = MessageHeader(message);
 
-            if (_commandBatchWindow is not null)
-            {
-                _commandBatchWindow.Print(message);
-            }
+            _commandBatchWindow?.Print(message);
 
             _protocolStorage!.Append(message);
         }
@@ -132,10 +129,7 @@ namespace WinFormsToolLib
         {
             message = MessageHeader(message);
 
-            if (_commandBatchWindow is not null)
-            {
-                _commandBatchWindow.PrintLine(message);
-            }
+            _commandBatchWindow?.PrintLine(message);
 
             _protocolStorage!.Append(message + "\r\n");
             _newline = true;

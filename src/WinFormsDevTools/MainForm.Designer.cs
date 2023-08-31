@@ -261,7 +261,7 @@
             this._copyCommandButton.TabIndex = 11;
             this._copyCommandButton.Text = "Copy...";
             this._copyCommandButton.UseVisualStyleBackColor = true;
-            this._copyCommandButton.Click += new System.EventHandler(this._copyCommandButton_Click);
+            this._copyCommandButton.Click += new System.EventHandler(this.CopyCommandButton_Click);
             // 
             // _checkForRespectiveRefAssembliesCheckBox
             // 
@@ -322,7 +322,7 @@
             this._pickPathToArtefactsButton.TabIndex = 2;
             this._pickPathToArtefactsButton.Text = "...";
             this._pickPathToArtefactsButton.UseVisualStyleBackColor = true;
-            this._pickPathToArtefactsButton.Click += new System.EventHandler(this._pickPathToArtefactsButton_Click);
+            this._pickPathToArtefactsButton.Click += new System.EventHandler(this.PickPathToArtefactsButton_Click);
             // 
             // _pathToArtefactsRepoTextBox
             // 

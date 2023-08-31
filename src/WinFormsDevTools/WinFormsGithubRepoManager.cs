@@ -1,21 +1,19 @@
 ﻿namespace WinFormsDevTools
 {
-    internal partial class WinFormsGithubRepoManager
+    internal partial class WinFormsGitHubRepoManager
     {
         public const string BinSystemWindowsFormsPath = "\\bin\\System.Windows.Forms";
         public const string BinPath = "\\bin";
         public const string ObjPath = "\\obj";
 
-        string _pathToGithubRepo;
-
-        public WinFormsGithubRepoManager(string pathToGithubRepo)
+        public WinFormsGitHubRepoManager(string pathToGitHubRepo)
         {
-            _pathToGithubRepo = pathToGithubRepo;
+            PathToGitHubRepo = pathToGitHubRepo;
         }
 
         public TargetFrameworkSourceItem[] GetAvailableTargets()
         {
-            DirectoryInfo binWinForms = new DirectoryInfo(_pathToGithubRepo + BinSystemWindowsFormsPath);
+            DirectoryInfo binWinForms = new(PathToGitHubRepo + BinSystemWindowsFormsPath);
 
             return binWinForms.GetDirectories(
                 searchPattern: "*.*",
@@ -41,7 +39,7 @@
 
         public DesktopAssemblyInfo[] GetWinFormsRuntimeAssemblies(TargetFrameworkSourceItem target, bool includeRefAssemblies)
         {
-            DirectoryInfo binWinForms = new DirectoryInfo(_pathToGithubRepo + BinPath);
+            DirectoryInfo binWinForms = new(PathToGitHubRepo + BinPath);
 
             return binWinForms.GetFiles(
                 searchPattern: "*.dll",
@@ -65,7 +63,7 @@
 
             FileInfo[]? FindRefAssemblySourceFiles(DirectoryInfo directory, string TfmPath)
             {
-                var refDirectory = new DirectoryInfo($"{_pathToGithubRepo}{ObjPath}\\{directory.Name}{TfmPath}");
+                var refDirectory = new DirectoryInfo($"{PathToGitHubRepo}{ObjPath}\\{directory.Name}{TfmPath}");
                 if (refDirectory.Exists)
                 {
                     var filesToReturn=refDirectory.GetFiles("*.dll");
@@ -76,7 +74,7 @@
             }
         }
 
-        public string PathToGithubRepo => _pathToGithubRepo;
-        public string PathToBinSystemWindowsForms => _pathToGithubRepo + BinSystemWindowsFormsPath;
+        public string PathToGitHubRepo { get; }
+        public string PathToBinSystemWindowsForms => PathToGitHubRepo + BinSystemWindowsFormsPath;
     }
 }

@@ -22,7 +22,7 @@
         /// <param name="listView">The ListView control displaying headers and Items. 
         /// Should be in Details View for this to work correctly.</param>
         /// <param name="dataItems">The data elements.</param>
-        /// <param name="typePropertyColumnHeaderNames">Tuple with Property/Displayname.</param>
+        /// <param name="typePropertyColumnHeaderNames">Tuple with Property/DisplayName.</param>
         public static void AddItemsWithColumnHeadersFromType<T>(
             this ListView listView,
             IEnumerable<T> dataItems,

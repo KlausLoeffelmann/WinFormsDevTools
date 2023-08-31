@@ -13,6 +13,7 @@ namespace WinFormsToolLib
         public static Dictionary<string, DirectoryInfo>? GetDotNetDesktopSdk(bool getRefPath = false)
         {
             string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+
             DirectoryInfo netDesktopVersionsDirectory =
                 new(programFiles +
                     (getRefPath

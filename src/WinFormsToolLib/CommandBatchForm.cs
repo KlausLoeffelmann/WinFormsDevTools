@@ -2,16 +2,13 @@
 {
     public partial class CommandBatchForm : Form
     {
-        public CommandBatchForm(string? windowTitel)
+        public CommandBatchForm(string? windowTitle)
         {
             InitializeComponent();
 
-            if (windowTitel == null)
-            {
-                windowTitel = $"Command Batch";
-            }
+            windowTitle ??= $"Command Batch";
 
-            Text = windowTitel + $" - started {DateTime.Now: ddd, yy/MM/dd hh:mm:ss}";
+            Text = windowTitle + $" - started {DateTime.Now: ddd, yy/MM/dd hh:mm:ss}";
         }
 
         public void Print(string? message)

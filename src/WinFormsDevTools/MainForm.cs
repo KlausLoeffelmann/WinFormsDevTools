@@ -1,12 +1,13 @@
 using WinFormsToolLib;
-using static WinFormsDevTools.WinFormsGithubRepoManager;
+
+using static WinFormsDevTools.WinFormsGitHubRepoManager;
 
 namespace WinFormsDevTools
 {
     public partial class MainForm : Form
     {
-        private Control[] _controlsForEnablingHandling;
-        private WinFormsGithubRepoManager? _githubRepoManager;
+        private readonly Control[] _controlsForEnablingHandling;
+        private WinFormsGitHubRepoManager? _gitHubRepoManager;
 
         public MainForm()
         {
@@ -42,7 +43,7 @@ namespace WinFormsDevTools
                 .Select(item => new TargetFrameworkTargetItem()
                 {
                     Name = item.Name,
-                    PathFullname = item.FullName,
+                    PathFullName = item.FullName,
                     Directory = item
                 })
                 .ToArray();
@@ -52,7 +53,7 @@ namespace WinFormsDevTools
                 sdkTargets,
                 addSourceDataToTag: true,
                 (nameof(TargetFrameworkTargetItem.Name), ".NET SDK Version"),
-                (nameof(TargetFrameworkTargetItem.PathFullname), "Path"));
+                (nameof(TargetFrameworkTargetItem.PathFullName), "Path"));
 
             _replaceTargetSDKVersionComboBox.Items.AddRange(sdkTargets);
             _replaceTargetSDKVersionComboBox.SelectedIndex = _replaceTargetSDKVersionComboBox.Items.Count - 1;
@@ -70,7 +71,7 @@ namespace WinFormsDevTools
             Array.ForEach(
                 _controlsForEnablingHandling.Where(
                     item => excludeControlsForHandling.Any(
-                        excludeitem => excludeitem == item)).ToArray(),
+                        excludeItem => excludeItem == item)).ToArray(),
                 control => control.Enabled = enable);
         }
 
@@ -82,13 +83,13 @@ namespace WinFormsDevTools
             }
             else
             {
-                _githubRepoManager = new(_pathToArtefactsRepoTextBox.Text);
+                _gitHubRepoManager = new(_pathToArtefactsRepoTextBox.Text);
 
-                var targets = _githubRepoManager
+                var targets = _gitHubRepoManager
                     .GetAvailableTargets();
 
                 _availableDesktopRuntimesComboBox.Items.AddRange(targets);
-                _availableDesktopRuntimesComboBox.SelectedIndex = targets.Count() - 1;
+                _availableDesktopRuntimesComboBox.SelectedIndex = targets.Length - 1;
             }
         }
 
@@ -96,9 +97,9 @@ namespace WinFormsDevTools
         {
 
             if (_availableDesktopRuntimesComboBox.SelectedItem is not null && 
-                _githubRepoManager is not null)
+                _gitHubRepoManager is not null)
             {
-                var assemblies = _githubRepoManager.GetWinFormsRuntimeAssemblies(
+                var assemblies = _gitHubRepoManager.GetWinFormsRuntimeAssemblies(
                     (TargetFrameworkSourceItem)_availableDesktopRuntimesComboBox.SelectedItem,
                     _checkForRespectiveRefAssembliesCheckBox.Checked);
 
@@ -112,10 +113,13 @@ namespace WinFormsDevTools
             }
         }
 
-        private void _pickPathToArtefactsButton_Click(object sender, EventArgs e)
+        private void PickPathToArtefactsButton_Click(object sender, EventArgs e)
         {
-            FolderBrowserDialog browserDialog = new();
-            browserDialog.Description = "Pick the path to the WinForms Github repo";
+            FolderBrowserDialog browserDialog = new()
+            {
+                Description = "Pick the path to the WinForms GitHub repo:"
+            };
+
             DialogResult dialogResult = browserDialog.ShowDialog();
             if (dialogResult == DialogResult.OK)
             {
@@ -125,17 +129,17 @@ namespace WinFormsDevTools
             }
         }
 
-        private void _copyCommandButton_Click(object sender, EventArgs e)
+        private void CopyCommandButton_Click(object sender, EventArgs e)
         {
             CommandBatch commandBatch = new();
             commandBatch.StartBatch(
-                windowTitel: "Copy .NET Desktop runtime assemblies",
+                windowTitle: "Copy .NET Desktop runtime assemblies",
                 showCommandBatchWindow: true,
                 dryRun: _dryRunCheckBox.Checked);
 
-            var targetFrameworkTarget = (TargetFrameworkTargetItem) _replaceTargetSDKVersionComboBox.SelectedItem;
-            var targetAssemblyPath = targetFrameworkTarget.Directory;
-            var targetRefAssemblyPath= targetFrameworkTarget.Directory;
+            TargetFrameworkTargetItem targetFrameworkTarget = (TargetFrameworkTargetItem) _replaceTargetSDKVersionComboBox.SelectedItem;
+            DirectoryInfo targetAssemblyPath = targetFrameworkTarget.Directory;
+            DirectoryInfo targetRefAssemblyPath = targetFrameworkTarget.Directory;
 
             bool foundCheckedItems = false;
 
@@ -145,7 +149,7 @@ namespace WinFormsDevTools
                 {
                     foundCheckedItems = true;
 
-                    var assemblyInfo = (DesktopAssemblyInfo)item.Tag;
+                    DesktopAssemblyInfo assemblyInfo = (DesktopAssemblyInfo)item.Tag;
 
                     foreach (FileInfo fileItem in assemblyInfo.AssemblyFiles)
                     {
@@ -159,7 +163,7 @@ namespace WinFormsDevTools
                     {
                         foreach (FileInfo fileItem in assemblyInfo.RefAssemblyFiles)
                         {
-                            var refDir = new DirectoryInfo($"{FrameworkInfo.NetDesktopRefsDirectory}\\" +
+                            DirectoryInfo refDir = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\" +
                                 $"{targetFrameworkTarget.Name}\\ref\\" +
                                 $"net{MajorMinorVersionString(targetFrameworkTarget.Name)}");
 
@@ -171,7 +175,7 @@ namespace WinFormsDevTools
                     }
                 }
 
-                string MajorMinorVersionString(string versionString)
+                static string MajorMinorVersionString(string versionString)
                 {
                     string[] items = versionString.Split('.');
 

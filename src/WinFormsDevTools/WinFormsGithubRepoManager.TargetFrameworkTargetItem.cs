@@ -2,7 +2,7 @@
 
 namespace WinFormsDevTools
 {
-    internal partial class WinFormsGithubRepoManager
+    internal partial class WinFormsGitHubRepoManager
     {
         internal class TargetFrameworkTargetItem
         {
@@ -10,7 +10,7 @@ namespace WinFormsDevTools
             public string Name { get; set; }
 
             [AllowNull]
-            public string PathFullname { get; set; }
+            public string PathFullName { get; set; }
 
             [AllowNull]
             public DirectoryInfo Directory { get; set; }

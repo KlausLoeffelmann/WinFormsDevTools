@@ -2,7 +2,7 @@
 
 namespace WinFormsDevTools
 {
-    internal partial class WinFormsGithubRepoManager
+    internal partial class WinFormsGitHubRepoManager
     {
         internal class DesktopAssemblyInfo
         {
