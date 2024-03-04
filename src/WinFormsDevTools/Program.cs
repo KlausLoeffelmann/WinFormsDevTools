@@ -11,6 +11,10 @@ namespace WinFormsDevTools
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
+
+            // Enable DarkMode:
+            Application.SetDefaultDarkMode(DarkMode.Inherits);
+
             Application.Run(new MainForm());
         }
     }

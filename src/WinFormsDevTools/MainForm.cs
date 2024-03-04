@@ -39,14 +39,22 @@ namespace WinFormsDevTools
         public MainForm()
         {
             InitializeComponent();
-            
-            _pathToArtefactsRepoTextBox.TextChanged += 
+
+            _overviewPanel.Visible = true;
+            _deployRuntimePanel.Visible = false;
+            _overviewPanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            _deployRuntimePanel.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+
+            _overviewPanel.Location = _deployRuntimePanel.Location;
+            _overviewPanel.Size = _deployRuntimePanel.Size;
+
+            _pathToArtefactsRepoTextBox.TextChanged +=
                 (sender, e) => DeployAvailableRuntimes();
 
-            _availableDesktopRuntimesComboBox.SelectedIndexChanged += 
-                (sender,e) => DeployAvailableAssemblies();
+            _availableDesktopRuntimesComboBox.SelectedIndexChanged +=
+                (sender, e) => DeployAvailableAssemblies();
 
-            _controlsForEnablingHandling = new Control[] 
+            _controlsForEnablingHandling = new Control[]
             {
                 _availableDesktopRuntimesComboBox,
                 _checkForRespectiveRefAssembliesCheckBox,
@@ -123,7 +131,7 @@ namespace WinFormsDevTools
         private void DeployAvailableAssemblies()
         {
 
-            if (_availableDesktopRuntimesComboBox.SelectedItem is not null && 
+            if (_availableDesktopRuntimesComboBox.SelectedItem is not null &&
                 _gitHubRepoManager is not null)
             {
                 var assemblies = _gitHubRepoManager.GetWinFormsRuntimeAssemblies(
@@ -166,7 +174,7 @@ namespace WinFormsDevTools
                 showCommandBatchWindow: true,
                 dryRun: _dryRunCheckBox.Checked);
 
-            TargetFrameworkTargetItem targetFrameworkTarget = (TargetFrameworkTargetItem) _replaceTargetSDKVersionComboBox.SelectedItem;
+            TargetFrameworkTargetItem targetFrameworkTarget = (TargetFrameworkTargetItem)_replaceTargetSDKVersionComboBox.SelectedItem;
             DirectoryInfo targetAssemblyPath = targetFrameworkTarget.Directory;
             DirectoryInfo targetRefAssemblyPath = targetFrameworkTarget.Directory;
 
@@ -224,6 +232,18 @@ namespace WinFormsDevTools
             }
 
             commandBatch.EndBatch("End of Command Batch.");
+        }
+
+        private void overviewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _overviewPanel.Visible = true;
+            _deployRuntimePanel.Visible = false;
+        }
+
+        private void deployRuntimeBinariesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            _overviewPanel.Visible = false;
+            _deployRuntimePanel.Visible = true;
         }
     }
 }
