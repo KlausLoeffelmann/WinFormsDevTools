@@ -1,138 +1,144 @@
 ﻿using System.Text;
 
-namespace WinFormsToolLib
+namespace WinFormsToolLib;
+
+public class CommandBatch
 {
-    public class CommandBatch
+    private bool _showCommandBatchWindow;
+    private bool _dryRun;
+    private bool _batchStarted;
+
+    private CommandBatchForm? _commandBatchWindow;
+    private StringBuilder? _protocolStorage;
+    private bool _newline = true;
+
+    public async Task StartBatchAsync(
+        bool showCommandBatchWindow = true,
+        bool dryRun = false,
+        string? windowTitle = null)
     {
-        private bool _showCommandBatchWindow;
-        private bool _dryRun;
-        private bool _batchStarted;
-
-        private CommandBatchForm? _commandBatchWindow;
-        private StringBuilder? _protocolStorage;
-        private bool _newline = true;
-
-        public void StartBatch(
-            bool showCommandBatchWindow = true, 
-            bool dryRun = false, 
-            string? windowTitle=null)
+        if (_batchStarted)
         {
-            if (_batchStarted)
+            throw new ArgumentException("Batch has already started and cannot be started twice.");
+        }
+
+        _batchStarted = true;
+        _showCommandBatchWindow = showCommandBatchWindow;
+        _dryRun = dryRun;
+
+        if (_showCommandBatchWindow)
+        {
+            _commandBatchWindow = new CommandBatchForm(windowTitle);
+            await _commandBatchWindow.StartBatchAsync();
+        }
+
+        _protocolStorage = new();
+    }
+
+    public string EndBatch(string? endOfBatchComment)
+    {
+        if (!string.IsNullOrEmpty(endOfBatchComment))
+        {
+            InfoPrintLineAsync(endOfBatchComment);
+        }
+
+        _batchStarted = false;
+        _commandBatchWindow?.EndBatch();
+        return _protocolStorage!.ToString();
+    }
+
+    private void CheckBatchStarted()
+    {
+        if (!_batchStarted)
+        {
+            throw new ArgumentException("Cannot execute commands when the batch has not started!");
+        }
+    }
+
+    public Task CopyFileCommandAsync(FileInfo sourceFile, DirectoryInfo destinationDirectory, bool overrideIfExist = false)
+    {
+        return CopyFileCommandAsync(
+            sourceFile,
+            new FileInfo($"{destinationDirectory.FullName}\\{sourceFile.Name}"),
+            overrideIfExist);
+    }
+
+    public async Task CopyFileCommandAsync(FileInfo sourceFile, FileInfo destinationFile, bool overrideIfExist = false)
+    {
+        CheckBatchStarted();
+
+        if (!sourceFile.Exists)
+        {
+            await InfoPrintLineAsync($"Source file [{sourceFile.Name}] does NOT exists. --> SKIPPING.");
+            return;
+        }
+
+        if (!destinationFile.Exists)
+        {
+            await InfoPrintAsync($"Copying [{sourceFile.Name}] to [{destinationFile.Name}] ... ");
+
+            if (!_dryRun)
             {
-                throw new ArgumentException("Batch has already started and cannot be started twice.");
+                await sourceFile.CopyToAsync(destinationFile.FullName);
             }
 
-            _batchStarted = true;
-            _showCommandBatchWindow = showCommandBatchWindow;
-            _dryRun = dryRun;
+            await InfoPrintLineAsync($"DONE.");
 
-            if (_showCommandBatchWindow)
+            return;
+        }
+
+        await InfoPrintAsync($"Copying [{sourceFile.Name}] - destination file [{destinationFile.Name}] exists! ");
+
+        if (overrideIfExist)
+        {
+            await InfoPrintAsync($"--> Overwriting... ");
+            if (!_dryRun)
             {
-                _commandBatchWindow = new CommandBatchForm(windowTitle);
-                _commandBatchWindow.StartBatch();
+                await sourceFile.CopyToAsync(destinationFile.FullName, overwrite: true);
             }
 
-            _protocolStorage = new();
+            await InfoPrintLineAsync($"DONE.");
         }
-
-        public string EndBatch(string? endOfBatchComment)
+        else
         {
-            if (!string.IsNullOrEmpty(endOfBatchComment))
-            {
-                InfoPrintLine(endOfBatchComment);
-            }
-
-            _batchStarted = false;
-            _commandBatchWindow?.EndBatch();
-            return _protocolStorage!.ToString();
+            await InfoPrintLineAsync($"--> SKIPPING.");
         }
 
-        private void CheckBatchStarted()
+    }
+
+    private string MessageHeader(string? message)
+    {
+        message ??= String.Empty;
+
+        if (_newline)
         {
-            if (!_batchStarted)
-            {
-                throw new ArgumentException("Cannot execute commands when the batch has not started!");
-            }
+            message = $"[{DateTime.Now:(mm/ddd) HH:mm:ss ff}]: " + message;
+            _newline = false;
         }
 
-        public void CopyFileCommand(FileInfo sourceFile, DirectoryInfo destinationDirectory, bool overrideIfExist = false)
-        {
-            CopyFileCommand(
-                sourceFile,
-                new FileInfo($"{destinationDirectory.FullName}\\{sourceFile.Name}"),
-                overrideIfExist);
-        }
+        return message;
+    }
 
-        public void CopyFileCommand(FileInfo sourceFile, FileInfo destinationFile, bool overrideIfExist = false)
-        {
-            CheckBatchStarted();
-            if (sourceFile.Exists)
-            {
-                if (destinationFile.Exists)
-                {
-                    InfoPrint($"Copying [{sourceFile}] - destination file [{destinationFile}] exists! ");
-                    if (overrideIfExist)
-                    {
-                        InfoPrint($"--> Overwriting... ");
-                        if (!_dryRun)
-                        {
-                            sourceFile.CopyTo(destinationFile.FullName,overwrite: true);
-                        }
+    public Task InfoPrintAsync(string? message)
+    {
+        message = MessageHeader(message);
 
-                        InfoPrintLine($"DONE.");
-                    }
-                    else
-                    {
-                        InfoPrintLine($"--> SKIPPING.");
-                    }
-                }
-                else
-                {
-                    InfoPrint($"Copying [{sourceFile}] to [{destinationFile}] ... ");
-                    if (!_dryRun)
-                    {
-                        sourceFile.CopyTo(destinationFile.FullName);
-                    }
+        var task = _commandBatchWindow?.PrintAsync(message);
 
-                    InfoPrintLine($"DONE.");
-                }
-            }
-            else
-            {
-                InfoPrintLine($"Source file [{sourceFile}] does NOT exists. --> SKIPPING.");
-            }
-        }
+        _protocolStorage!.Append(message);
 
-        private string MessageHeader(string? message)
-        {
-            message ??= String.Empty;
+        return task ?? Task.CompletedTask;
+    }
 
-            if (_newline)
-            {
-                message = $"[{DateTime.Now:(mm/ddd) HH:mm:ss ff}]: " + message;
-                _newline = false;
-            }
+    public Task InfoPrintLineAsync(string? message)
+    {
+        message = MessageHeader(message);
 
-            return message;
-        }
+        var task = _commandBatchWindow?.PrintLineAsync(message);
 
-        public void InfoPrint(string? message)
-        {
-            message = MessageHeader(message);
+        _protocolStorage!.Append(message + "\r\n");
+        _newline = true;
 
-            _commandBatchWindow?.Print(message);
-
-            _protocolStorage!.Append(message);
-        }
-
-        public void InfoPrintLine(string? message)
-        {
-            message = MessageHeader(message);
-
-            _commandBatchWindow?.PrintLine(message);
-
-            _protocolStorage!.Append(message + "\r\n");
-            _newline = true;
-        }
+        return task ?? Task.CompletedTask;
     }
 }

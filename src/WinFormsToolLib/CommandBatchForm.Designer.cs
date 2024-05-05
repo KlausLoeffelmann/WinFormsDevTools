@@ -28,49 +28,50 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this._printableTextBox = new WinFormsToolLib.PrintableTextBox();
-            this._okButton = new System.Windows.Forms.Button();
-            this.SuspendLayout();
+            _printableTextBox = new PrintableTextBox();
+            _okButton = new Button();
+            SuspendLayout();
             // 
             // _printableTextBox
             // 
-            this._printableTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this._printableTextBox.BackColor = System.Drawing.SystemColors.ButtonHighlight;
-            this._printableTextBox.Font = new System.Drawing.Font("Cascadia Code", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this._printableTextBox.Location = new System.Drawing.Point(14, 17);
-            this._printableTextBox.Multiline = true;
-            this._printableTextBox.Name = "_printableTextBox";
-            this._printableTextBox.ReadOnly = true;
-            this._printableTextBox.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this._printableTextBox.Size = new System.Drawing.Size(885, 443);
-            this._printableTextBox.TabIndex = 0;
+            _printableTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            _printableTextBox.BackColor = SystemColors.ButtonHighlight;
+            _printableTextBox.Font = new Font("Cascadia Code", 11.25F, FontStyle.Regular, GraphicsUnit.Point);
+            _printableTextBox.Location = new Point(10, 10);
+            _printableTextBox.Margin = new Padding(2, 2, 2, 2);
+            _printableTextBox.Multiline = true;
+            _printableTextBox.Name = "_printableTextBox";
+            _printableTextBox.ReadOnly = true;
+            _printableTextBox.ScrollBars = ScrollBars.Both;
+            _printableTextBox.Size = new Size(821, 375);
+            _printableTextBox.TabIndex = 0;
             // 
             // _okButton
             // 
-            this._okButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this._okButton.Location = new System.Drawing.Point(728, 474);
-            this._okButton.Name = "_okButton";
-            this._okButton.Size = new System.Drawing.Size(173, 40);
-            this._okButton.TabIndex = 1;
-            this._okButton.Text = "OK";
-            this._okButton.UseVisualStyleBackColor = true;
-            this._okButton.Click += new System.EventHandler(this.OkButton_Click);
+            _okButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            _okButton.Location = new Point(710, 392);
+            _okButton.Margin = new Padding(2, 2, 2, 2);
+            _okButton.Name = "_okButton";
+            _okButton.Size = new Size(121, 24);
+            _okButton.TabIndex = 1;
+            _okButton.Text = "OK";
+            _okButton.UseVisualStyleBackColor = true;
+            _okButton.Click += OkButton_Click;
             // 
             // CommandBatchForm
             // 
-            this.AcceptButton = this._okButton;
-            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(911, 526);
-            this.Controls.Add(this._okButton);
-            this.Controls.Add(this._printableTextBox);
-            this.Name = "CommandBatchForm";
-            this.Text = "ExecuteCommandForm";
-            this.ResumeLayout(false);
-            this.PerformLayout();
-
+            AcceptButton = _okButton;
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(838, 424);
+            Controls.Add(_okButton);
+            Controls.Add(_printableTextBox);
+            Margin = new Padding(2, 2, 2, 2);
+            Name = "CommandBatchForm";
+            StartPosition = FormStartPosition.CenterParent;
+            Text = "ExecuteCommandForm";
+            ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion

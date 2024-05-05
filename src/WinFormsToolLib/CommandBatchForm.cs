@@ -11,26 +11,22 @@
             Text = windowTitle + $" - started {DateTime.Now: ddd, yy/MM/dd hh:mm:ss}";
         }
 
-        public void Print(string? message)
-            => _printableTextBox.Print(message);
+        public Task PrintAsync(string? message)
+            => _printableTextBox.PrintAsync(message);
 
-        public void PrintLine(string? message)
-            => _printableTextBox.PrintLine(message);
+        public Task PrintLineAsync(string? message)
+            => _printableTextBox.PrintLineAsync(message);
 
-        public void StartBatch()
+        public async Task StartBatchAsync()
         {
             _okButton.Enabled = false;
-            Show();
+            await this.ShowAsync();
         }
 
-        public void EndBatch()
-        {
-            _okButton.Enabled = true;
-        }
+        public void EndBatch() 
+            => _okButton.Enabled = true;
 
-        private void OkButton_Click(object sender, EventArgs e)
-        {
-            Close();
-        }
+        private void OkButton_Click(object sender, EventArgs e) 
+            => Close();
     }
 }

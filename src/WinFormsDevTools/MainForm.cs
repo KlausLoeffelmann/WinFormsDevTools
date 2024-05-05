@@ -21,7 +21,7 @@ namespace WinFormsDevTools
         private const string SYSTEM_WINDOWS_FORMS_DESIGN = "System.Windows.Forms.Design";
         private const string SYSTEM_WINDOWS_FORMS_PRIMITIVES = "System.Windows.Forms.Primitives";
 
-        string[] s_preCheckItems = new string[]
+        private readonly string[] s_preCheckItems = new string[]
         {
             ACCESSIBILITY,
             MICROSOFT_VISUALBASIC,
@@ -65,7 +65,7 @@ namespace WinFormsDevTools
                 return;
             }
 
-            var sdkTargets = sdkFolders
+            TargetFrameworkTargetItem[] sdkTargets = sdkFolders
                 .Values
                 .Select(item => new TargetFrameworkTargetItem()
                 {
@@ -88,10 +88,8 @@ namespace WinFormsDevTools
             SetupControls_DeployRuntimeBinaries_Tab();
         }
 
-        private void SetupControls_DeployRuntimeBinaries_Tab()
-        {
-            _pathToArtefactsRepoTextBox.Text = Properties.Settings.Default.PathToWinFormsGitHubRepo;
-        }
+        private void SetupControls_DeployRuntimeBinaries_Tab() 
+            => _pathToArtefactsRepoTextBox.Text = Properties.Settings.Default.PathToWinFormsGitHubRepo;
 
         private void HandleControlEnabling_DeployRuntimeBinariesTab(bool enable, params Control[] excludeControlsForHandling)
         {
@@ -122,24 +120,25 @@ namespace WinFormsDevTools
 
         private void DeployAvailableAssemblies()
         {
-
-            if (_availableDesktopRuntimesComboBox.SelectedItem is not null && 
-                _gitHubRepoManager is not null)
+            if (_availableDesktopRuntimesComboBox.SelectedItem is null ||
+                _gitHubRepoManager is null)
             {
-                var assemblies = _gitHubRepoManager.GetWinFormsRuntimeAssemblies(
-                    (TargetFrameworkSourceItem)_availableDesktopRuntimesComboBox.SelectedItem,
-                    _checkForRespectiveRefAssembliesCheckBox.Checked);
-
-                _availableAssembliesListView.ConfigureDetailsView(checkBoxes: true);
-
-                _availableAssembliesListView.AddItemsWithColumnHeadersFromType(
-                    assemblies,
-                    addSourceDataToTag: true,
-                    (nameof(DesktopAssemblyInfo.Name), "Assembly name"),
-                    (nameof(DesktopAssemblyInfo.Path), "Path"));
-
-                _availableAssembliesListView.CheckItemsInFirstColumn(s_preCheckItems);
+                return;
             }
+
+            var assemblies = _gitHubRepoManager.GetWinFormsRuntimeAssemblies(
+                (TargetFrameworkSourceItem)_availableDesktopRuntimesComboBox.SelectedItem,
+                _checkForRespectiveRefAssembliesCheckBox.Checked);
+
+            _availableAssembliesListView.ConfigureDetailsView(checkBoxes: true);
+
+            _availableAssembliesListView.AddItemsWithColumnHeadersFromType(
+                assemblies,
+                addSourceDataToTag: true,
+                (nameof(DesktopAssemblyInfo.Name), "Assembly name"),
+                (nameof(DesktopAssemblyInfo.Path), "Path"));
+
+            _availableAssembliesListView.CheckItemsInFirstColumn(s_preCheckItems);
         }
 
         private void PickPathToArtefactsButton_Click(object sender, EventArgs e)
@@ -158,10 +157,17 @@ namespace WinFormsDevTools
             }
         }
 
-        private void CopyCommandButton_Click(object sender, EventArgs e)
+        private async void CopyCommandButton_Click(object sender, EventArgs e)
         {
+            _copyCommandButton.Enabled = false;
             CommandBatch commandBatch = new();
-            commandBatch.StartBatch(
+
+            if (_replaceTargetSDKVersionComboBox.SelectedItem is null)
+            {
+                return;
+            }
+
+            await commandBatch.StartBatchAsync(
                 windowTitle: "Copy .NET Desktop runtime assemblies",
                 showCommandBatchWindow: true,
                 dryRun: _dryRunCheckBox.Checked);
@@ -170,60 +176,67 @@ namespace WinFormsDevTools
             DirectoryInfo targetAssemblyPath = targetFrameworkTarget.Directory;
             DirectoryInfo targetRefAssemblyPath = targetFrameworkTarget.Directory;
 
+            await commandBatch.InfoPrintLineAsync($"Destination Assembly directory:{targetAssemblyPath}");
+            await commandBatch.InfoPrintLineAsync($"Destination REF-Assembly directory:{targetRefAssemblyPath}");
+            await commandBatch.InfoPrintLineAsync($"");
+
             bool foundCheckedItems = false;
 
             foreach (ListViewItem item in _availableAssembliesListView.Items)
             {
-                if (item.Checked)
+                if (!item.Checked)
                 {
-                    foundCheckedItems = true;
-
-                    DesktopAssemblyInfo assemblyInfo = (DesktopAssemblyInfo)item.Tag;
-
-                    foreach (FileInfo fileItem in assemblyInfo.AssemblyFiles)
-                    {
-                        commandBatch.CopyFileCommand(
-                            fileItem,
-                            new DirectoryInfo($"{FrameworkInfo.NetDesktopLibsDirectory}\\{targetFrameworkTarget.Name}"),
-                            overrideIfExist: true);
-                    }
-
-                    if (assemblyInfo.RefAssemblyFiles is not null)
-                    {
-                        foreach (FileInfo fileItem in assemblyInfo.RefAssemblyFiles)
-                        {
-                            DirectoryInfo refDir = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\" +
-                                $"{targetFrameworkTarget.Name}\\ref\\" +
-                                $"net{MajorMinorVersionString(targetFrameworkTarget.Name)}");
-
-                            commandBatch.CopyFileCommand(
-                                fileItem,
-                                refDir,
-                                overrideIfExist: true);
-                        }
-                    }
+                    continue;
                 }
 
-                static string MajorMinorVersionString(string versionString)
-                {
-                    string[] items = versionString.Split('.');
+                foundCheckedItems = true;
+                DesktopAssemblyInfo assemblyInfo = (DesktopAssemblyInfo)item.Tag!;
 
-                    return items.Length switch
+                foreach (FileInfo fileItem in assemblyInfo.AssemblyFiles)
+                {
+                    await commandBatch.CopyFileCommandAsync(
+                        fileItem,
+                        new DirectoryInfo($"{FrameworkInfo.NetDesktopLibsDirectory}\\{targetFrameworkTarget.Name}"),
+                        overrideIfExist: true);
+                }
+
+                if (assemblyInfo.RefAssemblyFiles is not null)
+                {
+                    foreach (FileInfo fileItem in assemblyInfo.RefAssemblyFiles)
                     {
-                        1 => $"{items[0]}.0",
-                        > 1 => $"{items[0]}.{items[1]}",
-                        _ => throw new ArgumentException(
-                            "Could not figure out .NET Major/Minor Version for Ref Assemblies.")
-                    };
+                        DirectoryInfo refDir = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\" +
+                            $"{targetFrameworkTarget.Name}\\ref\\" +
+                            $"net{MajorMinorVersionString(targetFrameworkTarget.Name)}");
+
+                        await commandBatch.CopyFileCommandAsync(
+                            fileItem,
+                            refDir,
+                            overrideIfExist: true);
+                    }
                 }
             }
 
             if (!foundCheckedItems)
             {
-                commandBatch.InfoPrintLine("No items were selected, found nothing to copy.");
+                await commandBatch.InfoPrintLineAsync("No items were selected, found nothing to copy.");
             }
 
             commandBatch.EndBatch("End of Command Batch.");
+
+            _copyCommandButton.Enabled = true;
+
+            static string MajorMinorVersionString(string versionString)
+            {
+                string[] items = versionString.Split('.');
+
+                return items.Length switch
+                {
+                    1 => $"{items[0]}.0",
+                    > 1 => $"{items[0]}.{items[1]}",
+                    _ => throw new ArgumentException(
+                        "Could not figure out .NET Major/Minor Version for Ref Assemblies.")
+                };
+            }
         }
     }
 }

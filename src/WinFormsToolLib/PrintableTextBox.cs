@@ -1,34 +1,53 @@
-﻿using System.Diagnostics;
+﻿namespace WinFormsToolLib;
 
-namespace WinFormsToolLib
+public class PrintableTextBox : TextBox
 {
-    public class PrintableTextBox : TextBox
+    public PrintableTextBox() 
     {
-        public PrintableTextBox() 
+        ReadOnly = true;
+        Multiline = true;
+        ScrollBars = ScrollBars.Both;
+    }
+
+    public async Task PrintAsync(string? message)
+    {
+        if (!IsHandleCreated)
         {
-            ReadOnly = true;
-            Multiline = true;
-            ScrollBars = ScrollBars.Both;
+            return;
         }
 
-        public void Print(string? message)
-        {
-            Text += message;
-            SelectionStart=Text.Length-1;
-        }
+        TaskCompletionSource taskCompletionSource = new TaskCompletionSource();
 
-        public void PrintLine(string? message)
+        BeginInvoke(() =>
         {
-            if (message is null)
+            try
             {
-                message = "\r\n";
+                Text += message;
+                SelectionStart = Text.Length - 1;
+                ScrollToCaret();
+                taskCompletionSource.SetResult();
             }
-            else
+            catch (Exception ex)
             {
-                message += "\r\n";
+                taskCompletionSource
+                    .SetException(ex);
             }
+        });
 
-            Print(message);
+        await taskCompletionSource.Task;
+    }
+
+    public Task PrintLineAsync(string? message)
+    {
+        if (message is null)
+        {
+            message = "\r\n";
         }
+        else
+        {
+            message += "\r\n";
+        }
+
+        return PrintAsync(message);
     }
 }
