@@ -1,22 +1,25 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace WinFormsDevTools
+namespace WinFormsDevTools;
+
+internal partial class WinFormsGitHubRepoManager
 {
-    internal partial class WinFormsGitHubRepoManager
+    internal class TargetFrameworkSourceItem
     {
-        internal class TargetFrameworkSourceItem
+        public TargetFrameworkSourceItem(string name, string[] tfmPaths, DirectoryInfo directory)
         {
-            [AllowNull]
-            public string Name { get; init; }
-
-            [AllowNull]
-            public string TfmPath { get; init; }
-
-            [AllowNull]
-            public DirectoryInfo Directory { get; init; }
-
-            public override string ToString()
-                => Name;
+            Name = name;
+            TfmPaths = tfmPaths;
+            Directory = directory;
         }
+
+        public string Name { get; init; }
+
+        public string[] TfmPaths { get; init; }
+
+        public DirectoryInfo Directory { get; init; }
+
+        public override string ToString()
+            => $"{Name} ({Directory.Name}";
     }
 }

@@ -28,352 +28,383 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this._mainTabControl = new System.Windows.Forms.TabControl();
-            this._overviewTabPage = new System.Windows.Forms.TabPage();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.pathShortCutControl4 = new WinFormsDevTools.PathShortCutControl();
-            this.label7 = new System.Windows.Forms.Label();
-            this.pathShortCutControl3 = new WinFormsDevTools.PathShortCutControl();
-            this.label6 = new System.Windows.Forms.Label();
-            this.pathShortCutControl2 = new WinFormsDevTools.PathShortCutControl();
-            this.label5 = new System.Windows.Forms.Label();
-            this.pathShortCutControl1 = new WinFormsDevTools.PathShortCutControl();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this._netDesktopSdksListView = new System.Windows.Forms.ListView();
-            this._netSdkVersionColumn = new System.Windows.Forms.ColumnHeader();
-            this._netSdkPath = new System.Windows.Forms.ColumnHeader();
-            this._deployRuntimeBinariesTabPage = new System.Windows.Forms.TabPage();
-            this._replaceTargetSDKVersionComboBox = new System.Windows.Forms.ComboBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this._copyCommandButton = new System.Windows.Forms.Button();
-            this._checkForRespectiveRefAssembliesCheckBox = new System.Windows.Forms.CheckBox();
-            this._availableAssembliesListView = new System.Windows.Forms.ListView();
-            this.label3 = new System.Windows.Forms.Label();
-            this._availableDesktopRuntimesComboBox = new System.Windows.Forms.ComboBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this._pickPathToArtefactsButton = new System.Windows.Forms.Button();
-            this._pathToArtefactsRepoTextBox = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this._dryRunCheckBox = new System.Windows.Forms.CheckBox();
-            this._mainTabControl.SuspendLayout();
-            this._overviewTabPage.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox1.SuspendLayout();
-            this._deployRuntimeBinariesTabPage.SuspendLayout();
-            this.SuspendLayout();
+            _mainTabControl = new TabControl();
+            _overviewTabPage = new TabPage();
+            groupBox2 = new GroupBox();
+            label8 = new Label();
+            pathShortCutControl4 = new PathShortCutControl();
+            label7 = new Label();
+            pathShortCutControl3 = new PathShortCutControl();
+            label6 = new Label();
+            pathShortCutControl2 = new PathShortCutControl();
+            label5 = new Label();
+            pathShortCutControl1 = new PathShortCutControl();
+            groupBox1 = new GroupBox();
+            _netDesktopSdksListView = new ListView();
+            _netSdkVersionColumn = new ColumnHeader();
+            _netSdkPath = new ColumnHeader();
+            _deployRuntimeBinariesTabPage = new TabPage();
+            _dryRunCheckBox = new CheckBox();
+            _replaceTargetSDKVersionComboBox = new ComboBox();
+            label4 = new Label();
+            _copyCommandButton = new Button();
+            _checkForRespectiveRefAssembliesCheckBox = new CheckBox();
+            _availableAssembliesListView = new ListView();
+            label3 = new Label();
+            _availableDesktopRuntimesComboBox = new ComboBox();
+            label2 = new Label();
+            _pickPathToArtefactsButton = new Button();
+            _pathToArtefactsRepoTextBox = new TextBox();
+            label1 = new Label();
+            _chkStandardAssemblies = new CheckBox();
+            _mainTabControl.SuspendLayout();
+            _overviewTabPage.SuspendLayout();
+            groupBox2.SuspendLayout();
+            groupBox1.SuspendLayout();
+            _deployRuntimeBinariesTabPage.SuspendLayout();
+            SuspendLayout();
             // 
             // _mainTabControl
             // 
-            this._mainTabControl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this._mainTabControl.Controls.Add(this._overviewTabPage);
-            this._mainTabControl.Controls.Add(this._deployRuntimeBinariesTabPage);
-            this._mainTabControl.Location = new System.Drawing.Point(20, 23);
-            this._mainTabControl.Name = "_mainTabControl";
-            this._mainTabControl.SelectedIndex = 0;
-            this._mainTabControl.Size = new System.Drawing.Size(1193, 779);
-            this._mainTabControl.TabIndex = 0;
+            _mainTabControl.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            _mainTabControl.Controls.Add(_overviewTabPage);
+            _mainTabControl.Controls.Add(_deployRuntimeBinariesTabPage);
+            _mainTabControl.Location = new Point(14, 14);
+            _mainTabControl.Margin = new Padding(2, 2, 2, 2);
+            _mainTabControl.Name = "_mainTabControl";
+            _mainTabControl.SelectedIndex = 0;
+            _mainTabControl.Size = new Size(835, 467);
+            _mainTabControl.TabIndex = 0;
             // 
             // _overviewTabPage
             // 
-            this._overviewTabPage.Controls.Add(this.groupBox2);
-            this._overviewTabPage.Controls.Add(this.groupBox1);
-            this._overviewTabPage.Location = new System.Drawing.Point(4, 34);
-            this._overviewTabPage.Name = "_overviewTabPage";
-            this._overviewTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this._overviewTabPage.Size = new System.Drawing.Size(1185, 741);
-            this._overviewTabPage.TabIndex = 0;
-            this._overviewTabPage.Text = "Overview";
-            this._overviewTabPage.UseVisualStyleBackColor = true;
+            _overviewTabPage.Controls.Add(groupBox2);
+            _overviewTabPage.Controls.Add(groupBox1);
+            _overviewTabPage.Location = new Point(4, 24);
+            _overviewTabPage.Margin = new Padding(2, 2, 2, 2);
+            _overviewTabPage.Name = "_overviewTabPage";
+            _overviewTabPage.Padding = new Padding(2, 2, 2, 2);
+            _overviewTabPage.Size = new Size(827, 439);
+            _overviewTabPage.TabIndex = 0;
+            _overviewTabPage.Text = "Overview";
+            _overviewTabPage.UseVisualStyleBackColor = true;
             // 
             // groupBox2
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.label8);
-            this.groupBox2.Controls.Add(this.pathShortCutControl4);
-            this.groupBox2.Controls.Add(this.label7);
-            this.groupBox2.Controls.Add(this.pathShortCutControl3);
-            this.groupBox2.Controls.Add(this.label6);
-            this.groupBox2.Controls.Add(this.pathShortCutControl2);
-            this.groupBox2.Controls.Add(this.label5);
-            this.groupBox2.Controls.Add(this.pathShortCutControl1);
-            this.groupBox2.Location = new System.Drawing.Point(19, 410);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1151, 325);
-            this.groupBox2.TabIndex = 3;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Path shortcuts";
+            groupBox2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox2.Controls.Add(label8);
+            groupBox2.Controls.Add(pathShortCutControl4);
+            groupBox2.Controls.Add(label7);
+            groupBox2.Controls.Add(pathShortCutControl3);
+            groupBox2.Controls.Add(label6);
+            groupBox2.Controls.Add(pathShortCutControl2);
+            groupBox2.Controls.Add(label5);
+            groupBox2.Controls.Add(pathShortCutControl1);
+            groupBox2.Location = new Point(13, 246);
+            groupBox2.Margin = new Padding(2, 2, 2, 2);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Padding = new Padding(2, 2, 2, 2);
+            groupBox2.Size = new Size(806, 195);
+            groupBox2.TabIndex = 3;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "Path shortcuts";
             // 
             // label8
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(15, 199);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(132, 25);
-            this.label8.TabIndex = 7;
-            this.label8.Text = "Template cache";
+            label8.AutoSize = true;
+            label8.Location = new Point(10, 119);
+            label8.Margin = new Padding(2, 0, 2, 0);
+            label8.Name = "label8";
+            label8.Size = new Size(89, 15);
+            label8.TabIndex = 7;
+            label8.Text = "Template cache";
             // 
             // pathShortCutControl4
             // 
-            this.pathShortCutControl4.Location = new System.Drawing.Point(263, 190);
-            this.pathShortCutControl4.Name = "pathShortCutControl4";
-            this.pathShortCutControl4.Size = new System.Drawing.Size(873, 43);
-            this.pathShortCutControl4.TabIndex = 6;
+            pathShortCutControl4.Location = new Point(184, 114);
+            pathShortCutControl4.Margin = new Padding(1, 1, 1, 1);
+            pathShortCutControl4.Name = "pathShortCutControl4";
+            pathShortCutControl4.Size = new Size(611, 26);
+            pathShortCutControl4.TabIndex = 6;
             // 
             // label7
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(15, 150);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(209, 25);
-            this.label7.TabIndex = 5;
-            this.label7.Text = ".NET SDK Ref Assemblies";
+            label7.AutoSize = true;
+            label7.Location = new Point(10, 90);
+            label7.Margin = new Padding(2, 0, 2, 0);
+            label7.Name = "label7";
+            label7.Size = new Size(137, 15);
+            label7.TabIndex = 5;
+            label7.Text = ".NET SDK Ref Assemblies";
             // 
             // pathShortCutControl3
             // 
-            this.pathShortCutControl3.Location = new System.Drawing.Point(263, 141);
-            this.pathShortCutControl3.Name = "pathShortCutControl3";
-            this.pathShortCutControl3.Size = new System.Drawing.Size(873, 43);
-            this.pathShortCutControl3.TabIndex = 4;
+            pathShortCutControl3.Location = new Point(184, 85);
+            pathShortCutControl3.Margin = new Padding(1, 1, 1, 1);
+            pathShortCutControl3.Name = "pathShortCutControl3";
+            pathShortCutControl3.Size = new Size(611, 26);
+            pathShortCutControl3.TabIndex = 4;
             // 
             // label6
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(15, 99);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(179, 25);
-            this.label6.TabIndex = 3;
-            this.label6.Text = ".NET SDK Assemblies";
+            label6.AutoSize = true;
+            label6.Location = new Point(10, 59);
+            label6.Margin = new Padding(2, 0, 2, 0);
+            label6.Name = "label6";
+            label6.Size = new Size(117, 15);
+            label6.TabIndex = 3;
+            label6.Text = ".NET SDK Assemblies";
             // 
             // pathShortCutControl2
             // 
-            this.pathShortCutControl2.Location = new System.Drawing.Point(263, 90);
-            this.pathShortCutControl2.Name = "pathShortCutControl2";
-            this.pathShortCutControl2.Size = new System.Drawing.Size(873, 43);
-            this.pathShortCutControl2.TabIndex = 2;
+            pathShortCutControl2.Location = new Point(184, 54);
+            pathShortCutControl2.Margin = new Padding(1, 1, 1, 1);
+            pathShortCutControl2.Name = "pathShortCutControl2";
+            pathShortCutControl2.Size = new Size(611, 26);
+            pathShortCutControl2.TabIndex = 2;
             // 
             // label5
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(15, 50);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(201, 25);
-            this.label5.TabIndex = 1;
-            this.label5.Text = "WinForms Github Repo:";
+            label5.AutoSize = true;
+            label5.Location = new Point(10, 30);
+            label5.Margin = new Padding(2, 0, 2, 0);
+            label5.Name = "label5";
+            label5.Size = new Size(133, 15);
+            label5.TabIndex = 1;
+            label5.Text = "WinForms Github Repo:";
             // 
             // pathShortCutControl1
             // 
-            this.pathShortCutControl1.Location = new System.Drawing.Point(263, 41);
-            this.pathShortCutControl1.Name = "pathShortCutControl1";
-            this.pathShortCutControl1.Size = new System.Drawing.Size(873, 43);
-            this.pathShortCutControl1.TabIndex = 0;
+            pathShortCutControl1.Location = new Point(184, 25);
+            pathShortCutControl1.Margin = new Padding(1, 1, 1, 1);
+            pathShortCutControl1.Name = "pathShortCutControl1";
+            pathShortCutControl1.Size = new Size(611, 26);
+            pathShortCutControl1.TabIndex = 0;
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox1.Controls.Add(this._netDesktopSdksListView);
-            this.groupBox1.Location = new System.Drawing.Point(19, 15);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(1151, 368);
-            this.groupBox1.TabIndex = 2;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = ".NET Desktop SDKs:";
+            groupBox1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            groupBox1.Controls.Add(_netDesktopSdksListView);
+            groupBox1.Location = new Point(13, 9);
+            groupBox1.Margin = new Padding(2, 2, 2, 2);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Padding = new Padding(2, 2, 2, 2);
+            groupBox1.Size = new Size(806, 221);
+            groupBox1.TabIndex = 2;
+            groupBox1.TabStop = false;
+            groupBox1.Text = ".NET Desktop SDKs:";
             // 
             // _netDesktopSdksListView
             // 
-            this._netDesktopSdksListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this._netDesktopSdksListView.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this._netSdkVersionColumn,
-            this._netSdkPath});
-            this._netDesktopSdksListView.FullRowSelect = true;
-            this._netDesktopSdksListView.GridLines = true;
-            this._netDesktopSdksListView.Location = new System.Drawing.Point(15, 30);
-            this._netDesktopSdksListView.Name = "_netDesktopSdksListView";
-            this._netDesktopSdksListView.Size = new System.Drawing.Size(1121, 318);
-            this._netDesktopSdksListView.TabIndex = 2;
-            this._netDesktopSdksListView.UseCompatibleStateImageBehavior = false;
-            this._netDesktopSdksListView.View = System.Windows.Forms.View.Details;
+            _netDesktopSdksListView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            _netDesktopSdksListView.Columns.AddRange(new ColumnHeader[] { _netSdkVersionColumn, _netSdkPath });
+            _netDesktopSdksListView.FullRowSelect = true;
+            _netDesktopSdksListView.GridLines = true;
+            _netDesktopSdksListView.Location = new Point(10, 18);
+            _netDesktopSdksListView.Margin = new Padding(2, 2, 2, 2);
+            _netDesktopSdksListView.Name = "_netDesktopSdksListView";
+            _netDesktopSdksListView.Size = new Size(786, 192);
+            _netDesktopSdksListView.TabIndex = 2;
+            _netDesktopSdksListView.UseCompatibleStateImageBehavior = false;
+            _netDesktopSdksListView.View = View.Details;
             // 
             // _netSdkVersionColumn
             // 
-            this._netSdkVersionColumn.Text = ".NET SDK Version";
-            this._netSdkVersionColumn.Width = 149;
+            _netSdkVersionColumn.Text = ".NET SDK Version";
+            _netSdkVersionColumn.Width = 149;
             // 
             // _netSdkPath
             // 
-            this._netSdkPath.Text = "Path";
-            this._netSdkPath.Width = 968;
+            _netSdkPath.Text = "Path";
+            _netSdkPath.Width = 968;
             // 
             // _deployRuntimeBinariesTabPage
             // 
-            this._deployRuntimeBinariesTabPage.Controls.Add(this._dryRunCheckBox);
-            this._deployRuntimeBinariesTabPage.Controls.Add(this._replaceTargetSDKVersionComboBox);
-            this._deployRuntimeBinariesTabPage.Controls.Add(this.label4);
-            this._deployRuntimeBinariesTabPage.Controls.Add(this._copyCommandButton);
-            this._deployRuntimeBinariesTabPage.Controls.Add(this._checkForRespectiveRefAssembliesCheckBox);
-            this._deployRuntimeBinariesTabPage.Controls.Add(this._availableAssembliesListView);
-            this._deployRuntimeBinariesTabPage.Controls.Add(this.label3);
-            this._deployRuntimeBinariesTabPage.Controls.Add(this._availableDesktopRuntimesComboBox);
-            this._deployRuntimeBinariesTabPage.Controls.Add(this.label2);
-            this._deployRuntimeBinariesTabPage.Controls.Add(this._pickPathToArtefactsButton);
-            this._deployRuntimeBinariesTabPage.Controls.Add(this._pathToArtefactsRepoTextBox);
-            this._deployRuntimeBinariesTabPage.Controls.Add(this.label1);
-            this._deployRuntimeBinariesTabPage.Location = new System.Drawing.Point(4, 34);
-            this._deployRuntimeBinariesTabPage.Name = "_deployRuntimeBinariesTabPage";
-            this._deployRuntimeBinariesTabPage.Padding = new System.Windows.Forms.Padding(3);
-            this._deployRuntimeBinariesTabPage.Size = new System.Drawing.Size(1185, 741);
-            this._deployRuntimeBinariesTabPage.TabIndex = 1;
-            this._deployRuntimeBinariesTabPage.Text = "Deploy WinForms runtime binaries";
-            this._deployRuntimeBinariesTabPage.UseVisualStyleBackColor = true;
-            // 
-            // _replaceTargetSDKVersionComboBox
-            // 
-            this._replaceTargetSDKVersionComboBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this._replaceTargetSDKVersionComboBox.FormattingEnabled = true;
-            this._replaceTargetSDKVersionComboBox.Location = new System.Drawing.Point(344, 690);
-            this._replaceTargetSDKVersionComboBox.Name = "_replaceTargetSDKVersionComboBox";
-            this._replaceTargetSDKVersionComboBox.Size = new System.Drawing.Size(337, 33);
-            this._replaceTargetSDKVersionComboBox.TabIndex = 9;
-            // 
-            // label4
-            // 
-            this.label4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 693);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(230, 25);
-            this.label4.TabIndex = 8;
-            this.label4.Text = "Replace Target SDK Version:";
-            // 
-            // _copyCommandButton
-            // 
-            this._copyCommandButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this._copyCommandButton.Location = new System.Drawing.Point(999, 685);
-            this._copyCommandButton.Name = "_copyCommandButton";
-            this._copyCommandButton.Size = new System.Drawing.Size(168, 41);
-            this._copyCommandButton.TabIndex = 11;
-            this._copyCommandButton.Text = "Copy...";
-            this._copyCommandButton.UseVisualStyleBackColor = true;
-            this._copyCommandButton.Click += new System.EventHandler(this.CopyCommandButton_Click);
-            // 
-            // _checkForRespectiveRefAssembliesCheckBox
-            // 
-            this._checkForRespectiveRefAssembliesCheckBox.AutoSize = true;
-            this._checkForRespectiveRefAssembliesCheckBox.Checked = true;
-            this._checkForRespectiveRefAssembliesCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._checkForRespectiveRefAssembliesCheckBox.Location = new System.Drawing.Point(354, 163);
-            this._checkForRespectiveRefAssembliesCheckBox.Name = "_checkForRespectiveRefAssembliesCheckBox";
-            this._checkForRespectiveRefAssembliesCheckBox.Size = new System.Drawing.Size(327, 29);
-            this._checkForRespectiveRefAssembliesCheckBox.TabIndex = 6;
-            this._checkForRespectiveRefAssembliesCheckBox.Text = "Check for respective REF-Assemblies";
-            this._checkForRespectiveRefAssembliesCheckBox.UseVisualStyleBackColor = true;
-            // 
-            // _availableAssembliesListView
-            // 
-            this._availableAssembliesListView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this._availableAssembliesListView.Location = new System.Drawing.Point(6, 198);
-            this._availableAssembliesListView.Name = "_availableAssembliesListView";
-            this._availableAssembliesListView.Size = new System.Drawing.Size(1161, 470);
-            this._availableAssembliesListView.TabIndex = 7;
-            this._availableAssembliesListView.UseCompatibleStateImageBehavior = false;
-            this._availableAssembliesListView.View = System.Windows.Forms.View.Details;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 164);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(181, 25);
-            this.label3.TabIndex = 5;
-            this.label3.Text = "Available Assemblies:";
-            // 
-            // _availableDesktopRuntimesComboBox
-            // 
-            this._availableDesktopRuntimesComboBox.FormattingEnabled = true;
-            this._availableDesktopRuntimesComboBox.Location = new System.Drawing.Point(354, 96);
-            this._availableDesktopRuntimesComboBox.Name = "_availableDesktopRuntimesComboBox";
-            this._availableDesktopRuntimesComboBox.Size = new System.Drawing.Size(327, 33);
-            this._availableDesktopRuntimesComboBox.TabIndex = 4;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 99);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(334, 25);
-            this.label2.TabIndex = 3;
-            this.label2.Text = "Available WinForms artefacts binaries TF:";
-            // 
-            // _pickPathToArtefactsButton
-            // 
-            this._pickPathToArtefactsButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this._pickPathToArtefactsButton.Location = new System.Drawing.Point(1120, 33);
-            this._pickPathToArtefactsButton.Name = "_pickPathToArtefactsButton";
-            this._pickPathToArtefactsButton.Size = new System.Drawing.Size(43, 34);
-            this._pickPathToArtefactsButton.TabIndex = 2;
-            this._pickPathToArtefactsButton.Text = "...";
-            this._pickPathToArtefactsButton.UseVisualStyleBackColor = true;
-            this._pickPathToArtefactsButton.Click += new System.EventHandler(this.PickPathToArtefactsButton_Click);
-            // 
-            // _pathToArtefactsRepoTextBox
-            // 
-            this._pathToArtefactsRepoTextBox.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this._pathToArtefactsRepoTextBox.Location = new System.Drawing.Point(354, 35);
-            this._pathToArtefactsRepoTextBox.Name = "_pathToArtefactsRepoTextBox";
-            this._pathToArtefactsRepoTextBox.ReadOnly = true;
-            this._pathToArtefactsRepoTextBox.Size = new System.Drawing.Size(760, 31);
-            this._pathToArtefactsRepoTextBox.TabIndex = 1;
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 38);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(279, 25);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "Path to WinForms Repo Artefacts:";
+            _deployRuntimeBinariesTabPage.Controls.Add(_chkStandardAssemblies);
+            _deployRuntimeBinariesTabPage.Controls.Add(_dryRunCheckBox);
+            _deployRuntimeBinariesTabPage.Controls.Add(_replaceTargetSDKVersionComboBox);
+            _deployRuntimeBinariesTabPage.Controls.Add(label4);
+            _deployRuntimeBinariesTabPage.Controls.Add(_copyCommandButton);
+            _deployRuntimeBinariesTabPage.Controls.Add(_checkForRespectiveRefAssembliesCheckBox);
+            _deployRuntimeBinariesTabPage.Controls.Add(_availableAssembliesListView);
+            _deployRuntimeBinariesTabPage.Controls.Add(label3);
+            _deployRuntimeBinariesTabPage.Controls.Add(_availableDesktopRuntimesComboBox);
+            _deployRuntimeBinariesTabPage.Controls.Add(label2);
+            _deployRuntimeBinariesTabPage.Controls.Add(_pickPathToArtefactsButton);
+            _deployRuntimeBinariesTabPage.Controls.Add(_pathToArtefactsRepoTextBox);
+            _deployRuntimeBinariesTabPage.Controls.Add(label1);
+            _deployRuntimeBinariesTabPage.Location = new Point(4, 24);
+            _deployRuntimeBinariesTabPage.Margin = new Padding(2, 2, 2, 2);
+            _deployRuntimeBinariesTabPage.Name = "_deployRuntimeBinariesTabPage";
+            _deployRuntimeBinariesTabPage.Padding = new Padding(2, 2, 2, 2);
+            _deployRuntimeBinariesTabPage.Size = new Size(827, 439);
+            _deployRuntimeBinariesTabPage.TabIndex = 1;
+            _deployRuntimeBinariesTabPage.Text = "Deploy WinForms runtime binaries";
+            _deployRuntimeBinariesTabPage.UseVisualStyleBackColor = true;
             // 
             // _dryRunCheckBox
             // 
-            this._dryRunCheckBox.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this._dryRunCheckBox.AutoSize = true;
-            this._dryRunCheckBox.Checked = true;
-            this._dryRunCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this._dryRunCheckBox.Location = new System.Drawing.Point(887, 692);
-            this._dryRunCheckBox.Name = "_dryRunCheckBox";
-            this._dryRunCheckBox.Size = new System.Drawing.Size(97, 29);
-            this._dryRunCheckBox.TabIndex = 10;
-            this._dryRunCheckBox.Text = "Dry run";
-            this._dryRunCheckBox.UseVisualStyleBackColor = true;
+            _dryRunCheckBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            _dryRunCheckBox.AutoSize = true;
+            _dryRunCheckBox.Checked = true;
+            _dryRunCheckBox.CheckState = CheckState.Checked;
+            _dryRunCheckBox.Location = new Point(624, 413);
+            _dryRunCheckBox.Margin = new Padding(2, 2, 2, 2);
+            _dryRunCheckBox.Name = "_dryRunCheckBox";
+            _dryRunCheckBox.Size = new Size(65, 19);
+            _dryRunCheckBox.TabIndex = 10;
+            _dryRunCheckBox.Text = "Dry run";
+            _dryRunCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // _replaceTargetSDKVersionComboBox
+            // 
+            _replaceTargetSDKVersionComboBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            _replaceTargetSDKVersionComboBox.FormattingEnabled = true;
+            _replaceTargetSDKVersionComboBox.Location = new Point(241, 414);
+            _replaceTargetSDKVersionComboBox.Margin = new Padding(2, 2, 2, 2);
+            _replaceTargetSDKVersionComboBox.Name = "_replaceTargetSDKVersionComboBox";
+            _replaceTargetSDKVersionComboBox.Size = new Size(237, 23);
+            _replaceTargetSDKVersionComboBox.TabIndex = 9;
+            // 
+            // label4
+            // 
+            label4.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
+            label4.AutoSize = true;
+            label4.Location = new Point(4, 416);
+            label4.Margin = new Padding(2, 0, 2, 0);
+            label4.Name = "label4";
+            label4.Size = new Size(151, 15);
+            label4.TabIndex = 8;
+            label4.Text = "Replace Target SDK Version:";
+            // 
+            // _copyCommandButton
+            // 
+            _copyCommandButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            _copyCommandButton.Location = new Point(699, 411);
+            _copyCommandButton.Margin = new Padding(2, 2, 2, 2);
+            _copyCommandButton.Name = "_copyCommandButton";
+            _copyCommandButton.Size = new Size(118, 25);
+            _copyCommandButton.TabIndex = 11;
+            _copyCommandButton.Text = "Copy...";
+            _copyCommandButton.UseVisualStyleBackColor = true;
+            _copyCommandButton.Click += CopyCommandButton_Click;
+            // 
+            // _checkForRespectiveRefAssembliesCheckBox
+            // 
+            _checkForRespectiveRefAssembliesCheckBox.AutoSize = true;
+            _checkForRespectiveRefAssembliesCheckBox.Checked = true;
+            _checkForRespectiveRefAssembliesCheckBox.CheckState = CheckState.Checked;
+            _checkForRespectiveRefAssembliesCheckBox.Location = new Point(248, 98);
+            _checkForRespectiveRefAssembliesCheckBox.Margin = new Padding(2, 2, 2, 2);
+            _checkForRespectiveRefAssembliesCheckBox.Name = "_checkForRespectiveRefAssembliesCheckBox";
+            _checkForRespectiveRefAssembliesCheckBox.Size = new Size(219, 19);
+            _checkForRespectiveRefAssembliesCheckBox.TabIndex = 6;
+            _checkForRespectiveRefAssembliesCheckBox.Text = "Check for respective REF-Assemblies";
+            _checkForRespectiveRefAssembliesCheckBox.UseVisualStyleBackColor = true;
+            // 
+            // _availableAssembliesListView
+            // 
+            _availableAssembliesListView.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            _availableAssembliesListView.Location = new Point(4, 121);
+            _availableAssembliesListView.Margin = new Padding(2, 2, 2, 2);
+            _availableAssembliesListView.Name = "_availableAssembliesListView";
+            _availableAssembliesListView.Size = new Size(814, 282);
+            _availableAssembliesListView.TabIndex = 7;
+            _availableAssembliesListView.UseCompatibleStateImageBehavior = false;
+            _availableAssembliesListView.View = View.Details;
+            // 
+            // label3
+            // 
+            label3.AutoSize = true;
+            label3.Location = new Point(4, 98);
+            label3.Margin = new Padding(2, 0, 2, 0);
+            label3.Name = "label3";
+            label3.Size = new Size(120, 15);
+            label3.TabIndex = 5;
+            label3.Text = "Available Assemblies:";
+            // 
+            // _availableDesktopRuntimesComboBox
+            // 
+            _availableDesktopRuntimesComboBox.FormattingEnabled = true;
+            _availableDesktopRuntimesComboBox.Location = new Point(248, 58);
+            _availableDesktopRuntimesComboBox.Margin = new Padding(2, 2, 2, 2);
+            _availableDesktopRuntimesComboBox.Name = "_availableDesktopRuntimesComboBox";
+            _availableDesktopRuntimesComboBox.Size = new Size(230, 23);
+            _availableDesktopRuntimesComboBox.TabIndex = 4;
+            // 
+            // label2
+            // 
+            label2.AutoSize = true;
+            label2.Location = new Point(4, 59);
+            label2.Margin = new Padding(2, 0, 2, 0);
+            label2.Name = "label2";
+            label2.Size = new Size(222, 15);
+            label2.TabIndex = 3;
+            label2.Text = "Available WinForms artefacts binaries TF:";
+            // 
+            // _pickPathToArtefactsButton
+            // 
+            _pickPathToArtefactsButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            _pickPathToArtefactsButton.Location = new Point(784, 20);
+            _pickPathToArtefactsButton.Margin = new Padding(2, 2, 2, 2);
+            _pickPathToArtefactsButton.Name = "_pickPathToArtefactsButton";
+            _pickPathToArtefactsButton.Size = new Size(30, 20);
+            _pickPathToArtefactsButton.TabIndex = 2;
+            _pickPathToArtefactsButton.Text = "...";
+            _pickPathToArtefactsButton.UseVisualStyleBackColor = true;
+            _pickPathToArtefactsButton.Click += PickPathToArtefactsButton_Click;
+            // 
+            // _pathToArtefactsRepoTextBox
+            // 
+            _pathToArtefactsRepoTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            _pathToArtefactsRepoTextBox.Location = new Point(248, 21);
+            _pathToArtefactsRepoTextBox.Margin = new Padding(2, 2, 2, 2);
+            _pathToArtefactsRepoTextBox.Name = "_pathToArtefactsRepoTextBox";
+            _pathToArtefactsRepoTextBox.ReadOnly = true;
+            _pathToArtefactsRepoTextBox.Size = new Size(533, 23);
+            _pathToArtefactsRepoTextBox.TabIndex = 1;
+            // 
+            // label1
+            // 
+            label1.AutoSize = true;
+            label1.Location = new Point(4, 23);
+            label1.Margin = new Padding(2, 0, 2, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(185, 15);
+            label1.TabIndex = 0;
+            label1.Text = "Path to WinForms Repo Artefacts:";
+            // 
+            // _chkStandardAssemblies
+            // 
+            _chkStandardAssemblies.AutoSize = true;
+            _chkStandardAssemblies.Checked = true;
+            _chkStandardAssemblies.CheckState = CheckState.Checked;
+            _chkStandardAssemblies.Location = new Point(491, 98);
+            _chkStandardAssemblies.Margin = new Padding(2);
+            _chkStandardAssemblies.Name = "_chkStandardAssemblies";
+            _chkStandardAssemblies.Size = new Size(204, 19);
+            _chkStandardAssemblies.TabIndex = 12;
+            _chkStandardAssemblies.Text = "Include .NET Standard Assemblies";
+            _chkStandardAssemblies.UseVisualStyleBackColor = true;
             // 
             // MainForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(10F, 25F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1234, 825);
-            this.Controls.Add(this._mainTabControl);
-            this.Name = "MainForm";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "WinFormsDevTool";
-            this._mainTabControl.ResumeLayout(false);
-            this._overviewTabPage.ResumeLayout(false);
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox1.ResumeLayout(false);
-            this._deployRuntimeBinariesTabPage.ResumeLayout(false);
-            this._deployRuntimeBinariesTabPage.PerformLayout();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(864, 495);
+            Controls.Add(_mainTabControl);
+            Margin = new Padding(2, 2, 2, 2);
+            Name = "MainForm";
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "WinFormsDevTool";
+            _mainTabControl.ResumeLayout(false);
+            _overviewTabPage.ResumeLayout(false);
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
+            groupBox1.ResumeLayout(false);
+            _deployRuntimeBinariesTabPage.ResumeLayout(false);
+            _deployRuntimeBinariesTabPage.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion
@@ -406,5 +437,6 @@
         private Label label8;
         private PathShortCutControl pathShortCutControl4;
         private CheckBox _dryRunCheckBox;
+        private CheckBox _chkStandardAssemblies;
     }
 }
