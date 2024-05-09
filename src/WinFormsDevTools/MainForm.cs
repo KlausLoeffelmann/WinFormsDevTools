@@ -17,12 +17,17 @@ namespace WinFormsDevTools
         private const string SYSTEM_DRAWING_COMMON = "System.Drawing.Common";
         private const string SYSTEM_DRAWING_DESIGN_FACADE = "System.Drawing.Design.Facade";
         private const string SYSTEM_DRAWING_FACADE = "System.Drawing.Facade";
+        private const string SYSTEM_PRIVATE_WINDOWS_CORE = "System.Private.Windows.Core";
         private const string SYSTEM_WINDOWS_FORMS = "System.Windows.Forms";
+        private const string SYSTEM_WINDOWS_FORMS_ANALYZERS = "System.Windows.Forms.Analyzers";
+        private const string SYSTEM_WINDOWS_FORMS_ANALYZERS_CSHARP = "System.Windows.Forms.Analyzers.CSharp";
+        private const string SYSTEM_WINDOWS_FORMS_ANALYZERS_VISUALBASIC = "System.Windows.Forms.Analyzers.VisualBasic";
         private const string SYSTEM_WINDOWS_FORMS_DESIGN = "System.Windows.Forms.Design";
         private const string SYSTEM_WINDOWS_FORMS_PRIMITIVES = "System.Windows.Forms.Primitives";
+        private const string SYSTEM_WINDOWS_FORMS_PRIVATESOURCEGENERATORS = "System.Windows.Forms.PrivateSourceGenerators";
 
-        private readonly string[] s_preCheckItems = new string[]
-        {
+        private readonly string[] s_preCheckItems =
+        [
             ACCESSIBILITY,
             MICROSOFT_VISUALBASIC,
             MICROSOFT_VISUALBASIC_FACADE,
@@ -31,10 +36,15 @@ namespace WinFormsDevTools
             SYSTEM_DRAWING_COMMON,
             SYSTEM_DRAWING_DESIGN_FACADE,
             SYSTEM_DRAWING_FACADE,
+            SYSTEM_PRIVATE_WINDOWS_CORE,
             SYSTEM_WINDOWS_FORMS,
+            SYSTEM_WINDOWS_FORMS_ANALYZERS,
+            SYSTEM_WINDOWS_FORMS_ANALYZERS_CSHARP,
+            SYSTEM_WINDOWS_FORMS_ANALYZERS_VISUALBASIC,
             SYSTEM_WINDOWS_FORMS_DESIGN,
-            SYSTEM_WINDOWS_FORMS_PRIMITIVES
-        };
+            SYSTEM_WINDOWS_FORMS_PRIMITIVES,
+            SYSTEM_WINDOWS_FORMS_PRIVATESOURCEGENERATORS
+        ];
 
         public MainForm()
         {
@@ -46,14 +56,14 @@ namespace WinFormsDevTools
             _availableDesktopRuntimesComboBox.SelectedIndexChanged += 
                 (sender,e) => DeployAvailableAssemblies();
 
-            _controlsForEnablingHandling = new Control[] 
-            {
+            _controlsForEnablingHandling =
+            [
                 _availableDesktopRuntimesComboBox,
                 _checkForRespectiveRefAssembliesCheckBox,
                 _availableAssembliesListView,
                 _replaceTargetSDKVersionComboBox,
                 _copyCommandButton
-            };
+            ];
         }
 
         protected override void OnLoad(EventArgs e)
@@ -93,11 +103,13 @@ namespace WinFormsDevTools
 
         private void HandleControlEnabling_DeployRuntimeBinariesTab(bool enable, params Control[] excludeControlsForHandling)
         {
-            Array.ForEach(
-                _controlsForEnablingHandling.Where(
-                    item => excludeControlsForHandling.Any(
-                        excludeItem => excludeItem == item)).ToArray(),
-                control => control.Enabled = enable);
+            foreach (var control in _controlsForEnablingHandling)
+            {
+                if (!excludeControlsForHandling.Contains(control))
+                {
+                    control.Enabled = enable;
+                }
+            }
         }
 
         private void DeployAvailableRuntimes()
