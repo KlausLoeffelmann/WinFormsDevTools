@@ -79,10 +79,12 @@ public class CommandBatch
 
             if (!_dryRun)
             {
-                await sourceFile.CopyToAsync(destinationFile.FullName);
+                await InfoPrintLineAsync($"{await sourceFile.CopyToAsync(destinationFile.FullName)}");
             }
-
-            await InfoPrintLineAsync($"DONE.");
+            else
+            {
+                await InfoPrintLineAsync($"OK.");
+            }
 
             return;
         }
@@ -92,12 +94,15 @@ public class CommandBatch
         if (overrideIfExist)
         {
             await InfoPrintAsync($"--> Overwriting... ");
+
             if (!_dryRun)
             {
-                await sourceFile.CopyToAsync(destinationFile.FullName, overwrite: true);
+                await InfoPrintLineAsync($"{await sourceFile.CopyToAsync(destinationFile.FullName)}");
             }
-
-            await InfoPrintLineAsync($"DONE.");
+            else
+            {
+                await InfoPrintLineAsync($"OK.");
+            }
         }
         else
         {
@@ -112,7 +117,7 @@ public class CommandBatch
 
         if (_newline)
         {
-            message = $"[{DateTime.Now:(mm/ddd) HH:mm:ss ff}]: " + message;
+            message = $"[{DateTime.Now:(MM/dd) HH:mm:ss-ff}]: " + message;
             _newline = false;
         }
 
