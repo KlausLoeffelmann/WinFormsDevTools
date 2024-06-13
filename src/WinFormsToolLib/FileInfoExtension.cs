@@ -2,12 +2,12 @@
 
 internal static class FileInfoExtension
 {
-    public static async Task<string> CopyToAsync(this FileInfo fileinfo, string destinationFile, bool overwrite = true)
+    public static async Task<string> CopyToAsync(this FileInfo fileInfo, string destinationFile, bool overwrite = true)
     {
         try
         {
             using var sourceStream = new FileStream(
-                fileinfo.FullName,
+                fileInfo.FullName,
                 FileMode.Open,
                 FileAccess.Read,
                 FileShare.Read,
@@ -27,7 +27,7 @@ internal static class FileInfoExtension
         }
         catch (Exception ex)
         {
-            return $"\n\nThe attempt to copy the file {fileinfo.FullName} caused an exception:\n{ex.Message}.\n\n";
+            return $"\n\nThe attempt to copy the file {fileInfo.FullName} caused an exception:\n{ex.Message}.\n\n";
         }
     }
 }

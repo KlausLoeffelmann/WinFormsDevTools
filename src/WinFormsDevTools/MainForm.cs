@@ -22,9 +22,14 @@ namespace WinFormsDevTools
         private const string SYSTEM_WINDOWS_FORMS_ANALYZERS = "System.Windows.Forms.Analyzers";
         private const string SYSTEM_WINDOWS_FORMS_ANALYZERS_CSHARP = "System.Windows.Forms.Analyzers.CSharp";
         private const string SYSTEM_WINDOWS_FORMS_ANALYZERS_VISUALBASIC = "System.Windows.Forms.Analyzers.VisualBasic";
+        private const string SYSTEM_WINDOWS_FORMS_ANALYZERS_CODEFIXES_CSHARP = "System.Windows.Forms.Analyzers.CodeFixes.CSharp";
+        private const string SYSTEM_WINDOWS_FORMS_ANALYZERS_CODEFIXES_VISUALBASIC = "System.Windows.Forms.Analyzers.CodeFixes.VisualBasic";
         private const string SYSTEM_WINDOWS_FORMS_DESIGN = "System.Windows.Forms.Design";
         private const string SYSTEM_WINDOWS_FORMS_PRIMITIVES = "System.Windows.Forms.Primitives";
         private const string SYSTEM_WINDOWS_FORMS_PRIVATESOURCEGENERATORS = "System.Windows.Forms.PrivateSourceGenerators";
+
+        private const string VisualBasicSubfolderPath = "vb";
+        private const string CSharpSubfolderPath = "cs";
 
         private readonly string[] s_preCheckItems =
         [
@@ -41,6 +46,8 @@ namespace WinFormsDevTools
             SYSTEM_WINDOWS_FORMS_ANALYZERS,
             SYSTEM_WINDOWS_FORMS_ANALYZERS_CSHARP,
             SYSTEM_WINDOWS_FORMS_ANALYZERS_VISUALBASIC,
+            SYSTEM_WINDOWS_FORMS_ANALYZERS_CODEFIXES_CSHARP,
+            SYSTEM_WINDOWS_FORMS_ANALYZERS_CODEFIXES_VISUALBASIC,
             SYSTEM_WINDOWS_FORMS_DESIGN,
             SYSTEM_WINDOWS_FORMS_PRIMITIVES,
             SYSTEM_WINDOWS_FORMS_PRIVATESOURCEGENERATORS
@@ -86,6 +93,7 @@ namespace WinFormsDevTools
                 .ToArray();
 
             _netDesktopSdksListView.ConfigureDetailsView();
+
             _netDesktopSdksListView.AddItemsWithColumnHeadersFromType(
                 sdkTargets,
                 addSourceDataToTag: true,
@@ -184,12 +192,26 @@ namespace WinFormsDevTools
                 showCommandBatchWindow: true,
                 dryRun: _dryRunCheckBox.Checked);
 
-            TargetFrameworkTargetItem targetFrameworkTarget = (TargetFrameworkTargetItem) _replaceTargetSDKVersionComboBox.SelectedItem;
-            DirectoryInfo targetAssemblyPath = targetFrameworkTarget.Directory;
-            DirectoryInfo targetRefAssemblyPath = targetFrameworkTarget.Directory;
+            TargetFrameworkTargetItem targetFrameworkTarget 
+                = (TargetFrameworkTargetItem) _replaceTargetSDKVersionComboBox.SelectedItem;
+
+            DirectoryInfo targetAssemblyPath = new($"{FrameworkInfo.NetDesktopLibsDirectory}\\{targetFrameworkTarget.Name}");
+
+            DirectoryInfo refDir = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\" +
+                $"{targetFrameworkTarget.Name}\\ref\\" +
+                $"net{MajorMinorVersionString(targetFrameworkTarget.Name)}");
+
+            // Create a new DirectoryInfo for the analyzers directory, which is the same as the ref directory
+            // but with the last part of the path changed to "analyzers".
+            DirectoryInfo analyzersDir = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\" +
+                $"{targetFrameworkTarget.Name}\\analyzers\\dotnet");
+
+            DirectoryInfo csharpAnalyzersDir = new($"{analyzersDir.FullName}\\{CSharpSubfolderPath}");
+            DirectoryInfo visualBasicAnalyzersDir = new($"{analyzersDir.FullName}\\{VisualBasicSubfolderPath}");
 
             await commandBatch.InfoPrintLineAsync($"Destination Assembly directory:{targetAssemblyPath}");
-            await commandBatch.InfoPrintLineAsync($"Destination REF-Assembly directory:{targetRefAssemblyPath}");
+            await commandBatch.InfoPrintLineAsync($"Destination REF-Assembly directory:{refDir.FullName}");
+            await commandBatch.InfoPrintLineAsync($"Destination Analyzers directory:{analyzersDir.FullName}");
             await commandBatch.InfoPrintLineAsync($"");
 
             bool foundCheckedItems = false;
@@ -204,11 +226,67 @@ namespace WinFormsDevTools
                 foundCheckedItems = true;
                 DesktopAssemblyInfo assemblyInfo = (DesktopAssemblyInfo)item.Tag!;
 
+                bool vbFirst = false, csFirst = false;
+
                 foreach (FileInfo fileItem in assemblyInfo.AssemblyFiles)
                 {
+                    // If the file starts with "System.Windows.Forms.Analyzers", copy it to the analyzers directory.
+                    // But. If the file ends with "VisualBasic.dll", we need to copy it in the SubFolder "\\vb", and
+                    // if it ends with "CSharp.dll", we need to copy it in the SubFolder "\\cs".
+                    if (fileItem.Name.StartsWith("System.Windows.Forms.Analyzers"))
+                    {
+                        if (fileItem.Name.EndsWith("VisualBasic.dll"))
+                        {
+                            if (!vbFirst)
+                            {
+                                vbFirst = true;
+
+                                // Create the subfolder "vb" in the analyzers directory if it does not exist:
+                                if (!Directory.Exists(visualBasicAnalyzersDir.FullName))
+                                {
+                                    Directory.CreateDirectory(visualBasicAnalyzersDir.FullName);
+                                }
+                            }
+
+                            await commandBatch.CopyFileCommandAsync(
+                                fileItem,
+                                visualBasicAnalyzersDir,
+                                overrideIfExist: true);
+
+                            continue;
+                        }
+                        else if (fileItem.Name.EndsWith("CSharp.dll"))
+                        {
+                            if (!csFirst)
+                            {
+                                csFirst = true;
+
+                                // Create the subfolder "cs" in the analyzers directory if it does not exist:
+                                if (!Directory.Exists($"{csharpAnalyzersDir}"))
+                                {
+                                    Directory.CreateDirectory(csharpAnalyzersDir.FullName);
+                                }
+                            }
+
+                            await commandBatch.CopyFileCommandAsync(
+                                fileItem,
+                                csharpAnalyzersDir,
+                                overrideIfExist: true);
+
+                            continue;
+                        }
+
+                        await commandBatch.CopyFileCommandAsync(
+                            fileItem,
+                            analyzersDir,
+                            overrideIfExist: true);
+
+                        continue;
+                    }
+
                     await commandBatch.CopyFileCommandAsync(
                         fileItem,
-                        new DirectoryInfo($"{FrameworkInfo.NetDesktopLibsDirectory}\\{targetFrameworkTarget.Name}"),
+                        targetAssemblyPath,
                         overrideIfExist: true);
                 }
 
@@ -216,10 +294,6 @@ namespace WinFormsDevTools
                 {
                     foreach (FileInfo fileItem in assemblyInfo.RefAssemblyFiles)
                     {
-                        DirectoryInfo refDir = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\" +
-                            $"{targetFrameworkTarget.Name}\\ref\\" +
-                            $"net{MajorMinorVersionString(targetFrameworkTarget.Name)}");
-
                         await commandBatch.CopyFileCommandAsync(
                             fileItem,
                             refDir,

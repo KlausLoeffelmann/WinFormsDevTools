@@ -4,7 +4,7 @@
     {
         public async static Task ShowAsync(this Form form)
         {
-            TaskCompletionSource taskCompletionSource = new TaskCompletionSource();
+            TaskCompletionSource taskCompletionSource = new();
 
             if (!form.IsHandleCreated)
             {
@@ -22,7 +22,6 @@
                 }
             }
         }
-
 
         public static void ConfigureDetailsView(
             this ListView listView,
@@ -62,7 +61,7 @@
                     (outer, inner) => new
                     {
                         PropertyInfo = inner,
-                        DisplayName = outer.DisplayName
+                        outer.DisplayName
                     });
 
             listView.Items.Clear();

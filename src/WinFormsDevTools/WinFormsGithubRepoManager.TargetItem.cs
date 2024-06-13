@@ -4,20 +4,13 @@ namespace WinFormsDevTools;
 
 internal partial class WinFormsGitHubRepoManager
 {
-    internal class TargetFrameworkSourceItem
+    internal class TargetFrameworkSourceItem(string name, string tfmPaths, DirectoryInfo directory)
     {
-        public TargetFrameworkSourceItem(string name, string tfmPaths, DirectoryInfo directory)
-        {
-            Name = name;
-            TfmPaths = tfmPaths;
-            Directory = directory;
-        }
+        public string Name { get; init; } = name;
 
-        public string Name { get; init; }
+        public string TfmPaths { get; init; } = tfmPaths;
 
-        public string TfmPaths { get; init; }
-
-        public DirectoryInfo Directory { get; init; }
+        public DirectoryInfo Directory { get; init; } = directory;
 
         public override string ToString()
             => $"{Name} ({Directory.Name}";

@@ -1,32 +1,31 @@
-﻿namespace WinFormsToolLib
+﻿namespace WinFormsToolLib;
+
+public partial class CommandBatchForm : Form
 {
-    public partial class CommandBatchForm : Form
+    public CommandBatchForm(string? windowTitle)
     {
-        public CommandBatchForm(string? windowTitle)
-        {
-            InitializeComponent();
+        InitializeComponent();
 
-            windowTitle ??= $"Command Batch";
+        windowTitle ??= $"Command Batch";
 
-            Text = windowTitle + $" - started {DateTime.Now: ddd, yy/MM/dd hh:mm:ss}";
-        }
-
-        public Task PrintAsync(string? message)
-            => _printableTextBox.PrintAsync(message);
-
-        public Task PrintLineAsync(string? message)
-            => _printableTextBox.PrintLineAsync(message);
-
-        public async Task StartBatchAsync()
-        {
-            _okButton.Enabled = false;
-            await this.ShowAsync();
-        }
-
-        public void EndBatch() 
-            => _okButton.Enabled = true;
-
-        private void OkButton_Click(object sender, EventArgs e) 
-            => Close();
+        Text = windowTitle + $" - started {DateTime.Now: ddd, yy/MM/dd hh:mm:ss}";
     }
+
+    public Task PrintAsync(string? message)
+        => _printableTextBox.PrintAsync(message);
+
+    public Task PrintLineAsync(string? message)
+        => _printableTextBox.PrintLineAsync(message);
+
+    public async Task StartBatchAsync()
+    {
+        _okButton.Enabled = false;
+        await this.ShowAsync();
+    }
+
+    public void EndBatch() 
+        => _okButton.Enabled = true;
+
+    private void OkButton_Click(object sender, EventArgs e) 
+        => Close();
 }

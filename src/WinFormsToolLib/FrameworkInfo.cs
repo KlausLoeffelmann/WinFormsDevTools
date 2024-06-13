@@ -7,8 +7,8 @@ namespace WinFormsToolLib
         private const string PathToNetDesktopLibs = "\\dotnet\\shared\\Microsoft.WindowsDesktop.App";
         private const string PathToNetDesktopRefs = "\\dotnet\\packs\\Microsoft.WindowsDesktop.App.Ref";
 
-        private static DirectoryInfo? s_NetDesktopLibsDirectory;
-        private static DirectoryInfo? s_NetDesktopRefsDirectory;
+        private static DirectoryInfo? s_netDesktopLibsDirectory;
+        private static DirectoryInfo? s_netDesktopRefsDirectory;
 
         public static Dictionary<string, DirectoryInfo>? GetDotNetDesktopSdk(bool getRefPath = false)
         {
@@ -17,8 +17,8 @@ namespace WinFormsToolLib
             DirectoryInfo netDesktopVersionsDirectory =
                 new(programFiles +
                     (getRefPath
-                        ? PathToNetDesktopLibs
-                        : PathToNetDesktopRefs));
+                        ? PathToNetDesktopRefs
+                        : PathToNetDesktopLibs));
 
             Dictionary<string, DirectoryInfo>? result = null;
 
@@ -33,12 +33,12 @@ namespace WinFormsToolLib
         }
 
         public static DirectoryInfo NetDesktopLibsDirectory
-            => s_NetDesktopLibsDirectory ??=
+            => s_netDesktopLibsDirectory ??=
                 new($"{Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)}" +
                     $"{PathToNetDesktopLibs}");
 
         public static DirectoryInfo NetDesktopRefsDirectory
-            => s_NetDesktopRefsDirectory ??=
+            => s_netDesktopRefsDirectory ??=
                 new($"{Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)}" +
                     $"{PathToNetDesktopRefs}");
     }

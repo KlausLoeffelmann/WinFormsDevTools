@@ -10,7 +10,8 @@ internal partial class WinFormsGitHubRepoManager
     public const string BinPath = "\\bin";
     public const string ObjPath = "\\obj";
 
-    // Definition of additional potential Framework Moniker paths, which are TFM independed (.NET Standard):
+    // Definition of additional potential Framework Moniker paths,
+    // which are TFM independent (.NET Standard):
     private static readonly string[] s_additionalTfmPaths =
     [
         "\\netstandard2.0",
@@ -50,7 +51,7 @@ internal partial class WinFormsGitHubRepoManager
 
             for (int i = 0; i < s_additionalTfmPaths.Length; i++)
             {
-                // Replace the last part of the DIrectory with the name of the additional TFM paths:
+                // Replace the last part of the Directory with the name of the additional TFM paths:
                 if (mainTFMTarget.Directory.Parent is DirectoryInfo parent)
                 {
                     // let's test, if the additional TFM exist:

@@ -16,21 +16,21 @@ public class PrintableTextBox : TextBox
             return;
         }
 
-        TaskCompletionSource taskCompletionSource = new TaskCompletionSource();
+        TaskCompletionSource taskCompletionSource = new();
 
         BeginInvoke(() =>
         {
             try
             {
-                Text += message;
+                AppendText(message);
                 SelectionStart = Text.Length - 1;
                 ScrollToCaret();
+
                 taskCompletionSource.SetResult();
             }
             catch (Exception ex)
             {
-                taskCompletionSource
-                    .SetException(ex);
+                taskCompletionSource.SetException(ex);
             }
         });
 
