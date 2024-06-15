@@ -10,6 +10,7 @@ public partial class MainForm
         PublicKeyUpdated,
         InvalidAssembly,
         MissingPublicKey,
-        InvalidXmlFile
+        InvalidXmlFile,
+        OK
     }
 }

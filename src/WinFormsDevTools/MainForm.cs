@@ -198,25 +198,19 @@ public partial class MainForm : Form
         TargetFrameworkTargetItem targetFrameworkTarget
             = (TargetFrameworkTargetItem)_replaceTargetSDKVersionComboBox.SelectedItem;
 
-        DirectoryInfo targetAssemblyPath = new($"{FrameworkInfo.NetDesktopLibsDirectory}\\{targetFrameworkTarget.Name}");
-
-        DirectoryInfo refDir = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\" +
-            $"{targetFrameworkTarget.Name}\\ref\\" +
-            $"net{MajorMinorVersionString(targetFrameworkTarget.Name)}");
-
-        DirectoryInfo packageAssembliesManifestPath = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\" +
-            $"{targetFrameworkTarget.Name}\\data");
+        DirectoryInfo targetSharedAssemblyBasePath = new($"{FrameworkInfo.NetDesktopLibsDirectory}\\{targetFrameworkTarget.Name}");
+        DirectoryInfo targetRefAssemblyBasePath= new($"{FrameworkInfo.NetDesktopRefsDirectory}\\" + $"{targetFrameworkTarget.Name}");
+        DirectoryInfo targetRefAssemblyPath = new($"{targetRefAssemblyBasePath}\\ref\\net{MajorMinorVersionString(targetFrameworkTarget.Name)}");
+        DirectoryInfo packageAssembliesManifestPath = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\{targetFrameworkTarget.Name}\\data");
 
         // Create a new DirectoryInfo for the analyzers directory, which is the same as the ref directory
         // but with the last part of the path changed to "analyzers".
-        DirectoryInfo analyzersDir = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\" +
-            $"{targetFrameworkTarget.Name}\\analyzers\\dotnet");
-
+        DirectoryInfo analyzersDir = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\{targetFrameworkTarget.Name}\\analyzers\\dotnet");
         DirectoryInfo csharpAnalyzersDir = new($"{analyzersDir.FullName}\\{CSharpSubfolderPath}");
         DirectoryInfo visualBasicAnalyzersDir = new($"{analyzersDir.FullName}\\{VisualBasicSubfolderPath}");
 
-        await commandBatch.InfoPrintLineAsync($"Destination Assembly directory:{targetAssemblyPath}");
-        await commandBatch.InfoPrintLineAsync($"Destination REF-Assembly directory:{refDir.FullName}");
+        await commandBatch.InfoPrintLineAsync($"Destination Assembly directory:{targetSharedAssemblyBasePath}");
+        await commandBatch.InfoPrintLineAsync($"Destination REF-Assembly directory:{targetRefAssemblyPath.FullName}");
         await commandBatch.InfoPrintLineAsync($"Destination Analyzers directory:{analyzersDir.FullName}");
         await commandBatch.InfoPrintLineAsync($"");
 
@@ -258,7 +252,7 @@ public partial class MainForm : Form
                 if (!fileItem.Name.StartsWith("System.Windows.Forms.Analyzers"))
                 {
                     currentFileType = "Managed";
-                    targetDir = targetAssemblyPath;
+                    targetDir = targetSharedAssemblyBasePath;
                 }
                 else
                 {
@@ -303,26 +297,12 @@ public partial class MainForm : Form
                     // Update the AssemblyInfo.xml file with the assembly information.
                     AssemblyManifestProcessResult result = UpdateAssemblyInfo(
                         packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
-                        (targetAssemblyPath, new FileInfo($"{targetDir}\\{fileItem.Name}")),
+                        (targetRefAssemblyBasePath, new FileInfo($"{targetDir}\\{fileItem.Name}")),
                         currentFileType,
                         targetFrameworkTarget.Name);
 
-                    var (resultLogString, skipOperation) = result switch
+                    if (await ProcessManifestResult(commandBatch, fileItem, result))
                     {
-                        AssemblyManifestProcessResult.MissingAssembly => ("Missing Assembly", true),
-                        AssemblyManifestProcessResult.InvalidAssembly => ("Invalid Assembly", true),
-                        AssemblyManifestProcessResult.MissingPublicKey => ("Missing Public Key", true),
-                        AssemblyManifestProcessResult.InvalidXmlFile => ("Invalid XML File", true),
-                        AssemblyManifestProcessResult.PublicKeyDoesNotMatch => ("Public Key does not match", true),
-                        AssemblyManifestProcessResult.PublicKeyUpdated => ("Public Key Updated", false),
-                        AssemblyManifestProcessResult.Created => ("Created", false),
-                        _ => ("Unknown", true)
-                    };
-
-                    if (skipOperation)
-                    {
-                        await commandBatch.InfoPrintLineAsync(
-                            $"Skipping {fileItem.Name} - {resultLogString}");
                         continue;
                     }
                 }
@@ -343,29 +323,18 @@ public partial class MainForm : Form
                         continue;
                     }
 
+                    //if (!_dryRunCheckBox.Checked)
+                    //{
                     // Update the AssemblyInfo.xml file with the assembly information.
                     AssemblyManifestProcessResult result = UpdateAssemblyInfo(
                         packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
-                        (targetAssemblyPath, new FileInfo($"{refDir}\\{fileItem.Name}")),
+                        (targetRefAssemblyBasePath, new FileInfo($"{targetRefAssemblyPath}\\{fileItem.Name}")),
                         currentFileType,
                         targetFrameworkTarget.Name);
+                    //}
 
-                    var (resultLogString, skipOperation) = result switch
+                    if (await ProcessManifestResult(commandBatch, fileItem, result))
                     {
-                        AssemblyManifestProcessResult.MissingAssembly => ("Missing Assembly", true),
-                        AssemblyManifestProcessResult.InvalidAssembly => ("Invalid Assembly", true),
-                        AssemblyManifestProcessResult.MissingPublicKey => ("Missing Public Key", true),
-                        AssemblyManifestProcessResult.InvalidXmlFile => ("Invalid XML File", true),
-                        AssemblyManifestProcessResult.PublicKeyDoesNotMatch => ("Public Key does not match", true),
-                        AssemblyManifestProcessResult.PublicKeyUpdated => ("Public Key Updated", false),
-                        AssemblyManifestProcessResult.Created => ("Created", false),
-                        _ => ("Unknown", true)
-                    };
-
-                    if (skipOperation)
-                    {
-                        await commandBatch.InfoPrintLineAsync(
-                            $"Skipping {fileItem.Name} - {resultLogString}");
                         continue;
                     }
 
@@ -374,7 +343,7 @@ public partial class MainForm : Form
 
                     await commandBatch.CopyFileCommandAsync(
                         fileItem,
-                        refDir,
+                        targetRefAssemblyPath,
                         overrideIfExist: true);
                 }
             }
@@ -400,6 +369,30 @@ public partial class MainForm : Form
                 _ => throw new ArgumentException(
                     "Could not figure out .NET Major/Minor Version for Ref Assemblies.")
             };
+        }
+
+        static async Task<bool> ProcessManifestResult(CommandBatch commandBatch, FileInfo fileItem, AssemblyManifestProcessResult result)
+        {
+            var (resultLogString, skipOperation) = result switch
+            {
+                AssemblyManifestProcessResult.MissingAssembly => ("Missing Assembly", true),
+                AssemblyManifestProcessResult.InvalidAssembly => ("Invalid Assembly", true),
+                AssemblyManifestProcessResult.MissingPublicKey => ("Missing Public Key", true),
+                AssemblyManifestProcessResult.InvalidXmlFile => ("Invalid XML File", true),
+                AssemblyManifestProcessResult.PublicKeyDoesNotMatch => ("Public Key does not match", true),
+                AssemblyManifestProcessResult.OK => ("OK", false),
+                AssemblyManifestProcessResult.PublicKeyUpdated => ("Public Key Updated", false),
+                AssemblyManifestProcessResult.Created => ("Created", false),
+                _ => ("Unknown", true)
+            };
+
+            if (skipOperation)
+            {
+                await commandBatch.InfoPrintLineAsync(
+                    $"Skipping {fileItem.Name} - {resultLogString}");
+            }
+
+            return skipOperation;
         }
     }
 
@@ -472,7 +465,7 @@ public partial class MainForm : Form
 
         foreach (var file in fileList.Elements("File"))
         {
-            if (file.Attribute("Path")?.Value == deltaPath)
+            if (file.Attribute("Path")?.Value.Replace('/', '\\') == deltaPath)
             {
                 existingFile = file;
                 break;
@@ -520,7 +513,7 @@ public partial class MainForm : Form
         }
 
         // Default return value (although not all cases are covered).
-        return AssemblyManifestProcessResult.Created;
+        return AssemblyManifestProcessResult.OK;
 
         string GetFileVersion(string assemblyFilePath)
         {
