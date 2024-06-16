@@ -463,6 +463,7 @@ public partial class MainForm : Form
             .Replace(destinationAssemblyFileInfo.targetBasePath.FullName, string.Empty)
             .TrimStart('\\');
 
+        // Not the same as in that Silicon Valley episode, just saying! ;-)
         foreach (var file in fileList.Elements("File"))
         {
             if (file.Attribute("Path")?.Value.Replace('/', '\\') == deltaPath)
@@ -480,10 +481,14 @@ public partial class MainForm : Form
             XElement newFile = new("File",
                 new XAttribute("Type", fileType),
                 new XAttribute("Path", deltaPath),
-                new XAttribute("AssemblyName", assemblyName),
+                new XAttribute("AssemblyName", assemblyName.Name!),
                 new XAttribute("PublicKeyToken", publicKeyToken),
-                new XAttribute("AssemblyVersion", GetAssemblyVersion(destinationAssemblyFilePath)),
-                new XAttribute("FileVersion", GetFileVersion(destinationAssemblyFilePath))
+                new XAttribute(
+                    "AssemblyVersion", 
+                    CreateMainFrameworkVersion(targetFrameworkVersion,GetAssemblyVersion(destinationAssemblyFilePath))),
+                new XAttribute(
+                    "FileVersion", 
+                    CreateMainFrameworkVersion(targetFrameworkVersion, GetFileVersion(destinationAssemblyFilePath)))
             );
 
             fileList.Add(newFile);
@@ -532,7 +537,7 @@ public partial class MainForm : Form
             string[] parts = version.Split('.');
             if (parts.Length >= 4)
             {
-                version = $"{parts[0]}.{parts[1]}.{parts[2]}.0";
+                version = $"{parts[0]}.{parts[1]}.{parts[2]}.{parts[3]}";
             }
 
             return version;
@@ -557,21 +562,39 @@ public partial class MainForm : Form
             string[] parts = version.Split('.');
             if (parts.Length >= 4)
             {
-                version = $"{parts[0]}.{parts[1]}.{parts[2]}.0";
+                version = $"{parts[0]}.{parts[1]}.{parts[2]}.{parts[3]}";
             }
 
             return version;
         }
     }
 
-    private string CreateMainFrameworkVersion(string version)
+    /// <summary>
+    /// Returns the "rounded" version of an assembly, meaning: 9.6.4-dev -> 9.0.0.0.
+    /// If assembly version starts with "42", the rounded Framework version is returned.
+    /// </summary>
+    /// <param name="actualFrameworkVersion"></param>
+    /// <param name="assemblyVersion"></param>
+    /// <returns></returns>
+    private string CreateMainFrameworkVersion(string actualFrameworkVersion, string assemblyVersion)
     {
+        string version;
+
+        if (assemblyVersion.StartsWith("42"))
+        {
+            version = actualFrameworkVersion;
+        }
+        else
+        {
+            version = assemblyVersion;
+        }
+
         string[] parts = version.Split('.');
         if (parts.Length < 4)
         {
             return version;
         }
 
-        return $"{parts[0]}.{parts[1]}.{parts[2]}.0";
+        return $"{parts[0]}.0.0.0";
     }
 }
