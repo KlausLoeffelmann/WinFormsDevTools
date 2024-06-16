@@ -296,10 +296,12 @@ public partial class MainForm : Form
 
                     // Update the AssemblyInfo.xml file with the assembly information.
                     AssemblyManifestProcessResult result = UpdateAssemblyInfo(
-                        packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
-                        (targetRefAssemblyBasePath, new FileInfo($"{targetDir}\\{fileItem.Name}")),
-                        currentFileType,
-                        targetFrameworkTarget.Name);
+                        xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
+                        destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetDir}\\{fileItem.Name}")),
+                        fileType: currentFileType,
+                        targetFrameworkVersion: targetFrameworkTarget.Name,
+                        updatePublicKey: false,
+                        isRefAssembly: false);
 
                     if (await ProcessManifestResult(commandBatch, fileItem, result))
                     {
@@ -327,10 +329,12 @@ public partial class MainForm : Form
                     //{
                     // Update the AssemblyInfo.xml file with the assembly information.
                     AssemblyManifestProcessResult result = UpdateAssemblyInfo(
-                        packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
-                        (targetRefAssemblyBasePath, new FileInfo($"{targetRefAssemblyPath}\\{fileItem.Name}")),
-                        currentFileType,
-                        targetFrameworkTarget.Name);
+                        xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
+                        destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetRefAssemblyPath}\\{fileItem.Name}")),
+                        fileType: currentFileType,
+                        targetFrameworkVersion: targetFrameworkTarget.Name,
+                        updatePublicKey: false,
+                        isRefAssembly: true);
                     //}
 
                     if (await ProcessManifestResult(commandBatch, fileItem, result))
@@ -397,11 +401,12 @@ public partial class MainForm : Form
     }
 
     private AssemblyManifestProcessResult UpdateAssemblyInfo(
-        string xmlFilePath, 
+        string xmlFilePath,
         (DirectoryInfo targetBasePath, FileInfo targetFile) destinationAssemblyFileInfo,
-        string fileType, 
-        string targetFrameworkVersion, 
-        bool updatePublicKey = false)
+        string fileType,
+        string targetFrameworkVersion,
+        bool updatePublicKey,
+        bool isRefAssembly)
     {
         if (!destinationAssemblyFileInfo.targetFile.Exists)
         {
@@ -410,21 +415,22 @@ public partial class MainForm : Form
 
         Assembly assembly;
 
-        try
-        {
-            assembly = Assembly.LoadFile(destinationAssemblyFileInfo.targetFile.FullName);
-
-            if (assembly is null)
+            try
             {
+                assembly = Assembly.LoadFile(destinationAssemblyFileInfo.targetFile.FullName);
+
+                if (assembly is null)
+                {
+                    return AssemblyManifestProcessResult.InvalidAssembly;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Couldn't load image of assembly: {ex.Message}");
                 return AssemblyManifestProcessResult.InvalidAssembly;
             }
-        }
-        catch (Exception)
-        {
-            return AssemblyManifestProcessResult.InvalidAssembly;
-        }
 
-        AssemblyName assemblyName = assembly.GetName();
+            AssemblyName assemblyName = assembly.GetName();
 
         if (assemblyName is null)
         {
@@ -463,14 +469,63 @@ public partial class MainForm : Form
             .Replace(destinationAssemblyFileInfo.targetBasePath.FullName, string.Empty)
             .TrimStart('\\');
 
+        // Create a Hashset which holds the end element of a new type, so we know where to insert a new entry.
+        Dictionary<string, XElement> assemblyTypes = [];
+        string? currentAssemblyType = null;
+        bool multipleTypes = false;
+        XElement lastEntry = null!;
+
         // Not the same as in that Silicon Valley episode, just saying! ;-)
         foreach (var file in fileList.Elements("File"))
         {
-            if (file.Attribute("Path")?.Value.Replace('/', '\\') == deltaPath)
+            // We need to build a list of assembly types, so we know where to insert a new entry.
+            // That list then contains the respective last entry with that specific type.
+            if (currentAssemblyType is null)
+            {
+                currentAssemblyType = file.Attribute("Type")?.Value;
+            }
+            else if (currentAssemblyType != file.Attribute("Type")?.Value)
+            {
+                multipleTypes = true;
+                assemblyTypes.Add(currentAssemblyType, lastEntry);
+                currentAssemblyType = file.Attribute("Type")?.Value;
+            }
+
+            var pathAttr = file.Attribute("Path")?.Value;
+
+            lastEntry = file;
+
+            if (pathAttr is not null && IsPathMatch(pathAttr.AsSpan(), deltaPath))
             {
                 existingFile = file;
                 break;
             }
+        }
+
+        if (existingFile is null && multipleTypes && lastEntry is not null) 
+        {
+            // List only remains important, when we need to extend the list
+            // and need to know where to insert the entry.
+            assemblyTypes.Add(currentAssemblyType!, lastEntry);
+        }
+
+        // Extra non-allocation mile gone for Paul Morgado (and probably half of DevDiv.)
+        static bool IsPathMatch(ReadOnlySpan<char> path, string deltaPath)
+        {
+            if (path.Length != deltaPath.Length)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < path.Length; i++)
+            {
+                if (path[i] != deltaPath[i] && !(path[i] == '/' && deltaPath[i] == '\\'))
+                {
+                    return false;
+                }
+            }
+
+            return true;
         }
 
         if (existingFile is null)
@@ -480,7 +535,7 @@ public partial class MainForm : Form
             // Create a new entry
             XElement newFile = new("File",
                 new XAttribute("Type", fileType),
-                new XAttribute("Path", deltaPath),
+                new XAttribute("Path", deltaPath.Replace('\\', '/')),
                 new XAttribute("AssemblyName", assemblyName.Name!),
                 new XAttribute("PublicKeyToken", publicKeyToken),
                 new XAttribute(
@@ -488,10 +543,19 @@ public partial class MainForm : Form
                     CreateMainFrameworkVersion(targetFrameworkVersion,GetAssemblyVersion(destinationAssemblyFilePath))),
                 new XAttribute(
                     "FileVersion", 
-                    CreateMainFrameworkVersion(targetFrameworkVersion, GetFileVersion(destinationAssemblyFilePath)))
-            );
+                    CreateMainFrameworkVersion(targetFrameworkVersion, GetFileVersion(destinationAssemblyFilePath))),
+                new XAttribute("Profile","WindowsForms"));
 
-            fileList.Add(newFile);
+            // Insert the new entry behind the respective last type entry:
+            if (assemblyTypes.TryGetValue(fileType, out XElement? lastTypeEntry))
+            {
+                lastTypeEntry.AddAfterSelf(newFile);
+            }
+            else
+            {
+                fileList.Add(newFile);
+            }
+
             xmlDoc.Save(xmlFilePath);
 
             return AssemblyManifestProcessResult.Created;
