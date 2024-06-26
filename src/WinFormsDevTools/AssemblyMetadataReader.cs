@@ -69,14 +69,4 @@ internal static class AssemblyMetadataReader
 
         return string.Empty;
     }
-
-    public static void Main()
-    {
-        var assemblyPath = "path_to_your_assembly.dll";
-        var metadata = GetAssemblyMetadata(assemblyPath);
-        Console.WriteLine($"Assembly Name: {metadata.AssemblyName}");
-        Console.WriteLine($"Public Key Token: {metadata.PublicKeyToken}");
-        Console.WriteLine($"Assembly Version: {metadata.AssemblyVersion}");
-        Console.WriteLine($"File Version: {metadata.FileVersion}");
-    }
 }

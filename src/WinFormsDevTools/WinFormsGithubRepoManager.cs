@@ -113,7 +113,7 @@ internal partial class WinFormsGitHubRepoManager
             var uniqueFiles = new HashSet<(string Name, long Size)>();
             var allFiles = new List<FileInfo>();
 
-            var refDirectory = new DirectoryInfo($"{PathToGitHubRepo}{ObjPath}\\{directory.Name}{tfmPath}");
+            var refDirectory = new DirectoryInfo($"{PathToGitHubRepo}{ObjPath}\\{directory.Name}\\{tfmPath}\\ref");
             if (refDirectory.Exists)
             {
                 foreach (var file in refDirectory.GetFiles("*.dll"))

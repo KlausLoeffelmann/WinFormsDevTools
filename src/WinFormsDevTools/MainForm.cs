@@ -182,6 +182,47 @@ public partial class MainForm : Form
 
     private async void CopyCommandButton_Click(object sender, EventArgs e)
     {
+        if (_availableAssembliesListView.Items.Count == 0)
+        {
+            // Show a message box if there are no items in the list view.
+            MessageBox.Show(
+                "No items found in the list view. Please select a runtime version and try again.",
+                "No items found",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+
+            return;
+        }
+
+        // Find the first item in _availableAssembliesListView.Items, whose Tag has a list
+        // of RefAssemblies with at least one item:
+        DesktopAssemblyInfo? firstItem = (from ListViewItem item in _availableAssembliesListView.Items
+                                          let assemblyInfo = (DesktopAssemblyInfo)item.Tag!
+                                          where assemblyInfo.RefAssemblyFiles is not null 
+                                                && assemblyInfo.RefAssemblyFiles.Length > 0
+                                          select assemblyInfo).FirstOrDefault();
+
+        if (firstItem is null)
+        {
+            // Show a message box if there are no items with RefAssemblies in the list view.
+            MessageBox.Show(
+                "No items found in the list view with RefAssemblies. Please select a runtime version and try again.",
+                "No items found",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information);
+
+            return;
+        }
+
+        // Get the source file directories from the first item in the list view.
+        DirectoryInfo sourceAssemblyBasePath = firstItem.AssemblyFiles[0].Directory!;
+        DirectoryInfo sourceRefAssemblyBasePath = default!;
+
+        if (firstItem.RefAssemblyFiles is not null)
+        {
+            sourceRefAssemblyBasePath = firstItem.RefAssemblyFiles[0].Directory!;
+        }
+
         _copyCommandButton.Enabled = false;
         CommandBatch commandBatch = new();
 
@@ -206,12 +247,16 @@ public partial class MainForm : Form
         // Create a new DirectoryInfo for the analyzers directory, which is the same as the ref directory
         // but with the last part of the path changed to "analyzers".
         DirectoryInfo analyzersDir = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\{targetFrameworkTarget.Name}\\analyzers\\dotnet");
-        DirectoryInfo csharpAnalyzersDir = new($"{analyzersDir.FullName}\\{CSharpSubfolderPath}");
+        DirectoryInfo cSharpAnalyzersDir = new($"{analyzersDir.FullName}\\{CSharpSubfolderPath}");
         DirectoryInfo visualBasicAnalyzersDir = new($"{analyzersDir.FullName}\\{VisualBasicSubfolderPath}");
 
         await commandBatch.InfoPrintLineAsync($"Destination Assembly directory:{targetSharedAssemblyBasePath}");
         await commandBatch.InfoPrintLineAsync($"Destination REF-Assembly directory:{targetRefAssemblyPath.FullName}");
         await commandBatch.InfoPrintLineAsync($"Destination Analyzers directory:{analyzersDir.FullName}");
+        await commandBatch.InfoPrintLineAsync($"");
+
+        await commandBatch.InfoPrintLineAsync($"Source Assembly directory:{sourceAssemblyBasePath}");
+        await commandBatch.InfoPrintLineAsync($"Source RefAssembly directory:{sourceRefAssemblyBasePath}\\ref");
         await commandBatch.InfoPrintLineAsync($"");
 
         bool foundCheckedItems = false;
@@ -281,13 +326,13 @@ public partial class MainForm : Form
                             csFirst = true;
 
                             // Create the subfolder "cs" in the analyzers directory if it does not exist:
-                            if (!Directory.Exists($"{csharpAnalyzersDir}"))
+                            if (!Directory.Exists($"{cSharpAnalyzersDir}"))
                             {
-                                Directory.CreateDirectory(csharpAnalyzersDir.FullName);
+                                Directory.CreateDirectory(cSharpAnalyzersDir.FullName);
                             }
                         }
 
-                        targetDir = csharpAnalyzersDir;
+                        targetDir = cSharpAnalyzersDir;
                     }
                     else
                     {
@@ -325,21 +370,21 @@ public partial class MainForm : Form
                         continue;
                     }
 
-                    //if (!_dryRunCheckBox.Checked)
-                    //{
-                    // Update the AssemblyInfo.xml file with the assembly information.
-                    AssemblyManifestProcessResult result = UpdateAssemblyInfo(
+                    if (!_dryRunCheckBox.Checked)
+                    {
+                        // Update the AssemblyInfo.xml file with the assembly information.
+                        AssemblyManifestProcessResult result = UpdateAssemblyInfo(
                         xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
                         destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetRefAssemblyPath}\\{fileItem.Name}")),
                         fileType: currentFileType,
                         targetFrameworkVersion: targetFrameworkTarget.Name,
                         updatePublicKey: false,
                         isRefAssembly: true);
-                    //}
 
-                    if (await ProcessManifestResult(commandBatch, fileItem, result))
-                    {
-                        continue;
+                        if (await ProcessManifestResult(commandBatch, fileItem, result))
+                        {
+                            continue;
+                        }
                     }
 
                     // Add the file to the processed files HashSet
@@ -469,7 +514,7 @@ public partial class MainForm : Form
             .Replace(destinationAssemblyFileInfo.targetBasePath.FullName, string.Empty)
             .TrimStart('\\');
 
-        // Create a Hashset which holds the end element of a new type, so we know where to insert a new entry.
+        // Create a HashSet which holds the end element of a new type, so we know where to insert a new entry.
         Dictionary<string, XElement> assemblyTypes = [];
         string? currentAssemblyType = null;
         bool multipleTypes = false;
