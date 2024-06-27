@@ -55,17 +55,25 @@ public class CommandBatch
         }
     }
 
-    public Task CopyFileCommandAsync(FileInfo sourceFile, DirectoryInfo destinationDirectory, bool overrideIfExist = false)
+    public Task CopyFileCommandAsync(
+        FileInfo sourceFile,
+        DirectoryInfo destinationDirectory,
+        bool overrideIfExist = false,
+        string? comment = default)
     {
         return CopyFileCommandAsync(
             sourceFile,
             new FileInfo($"{destinationDirectory.FullName}\\{sourceFile.Name}"),
-            overrideIfExist);
+            overrideIfExist,
+            comment);
     }
 
-    public async Task CopyFileCommandAsync(FileInfo sourceFile, FileInfo destinationFile, bool overrideIfExist = false)
+    public async Task CopyFileCommandAsync(FileInfo sourceFile, FileInfo destinationFile, bool overrideIfExist, string? comment)
     {
         CheckBatchStarted();
+
+        // We print the comment first, then we check if the source file exists.
+        await InfoPrintAsync(comment);
 
         if (!sourceFile.Exists)
         {

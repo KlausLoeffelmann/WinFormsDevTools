@@ -8,29 +8,52 @@ internal static class AssemblyMetadataReader
 {
     public static AssemblyMetadata GetAssemblyMetadata(string assemblyPath)
     {
-        using var stream = new FileStream(assemblyPath, FileMode.Open, FileAccess.Read, FileShare.Read);
-        using var peReader = new PEReader(stream);
+        FileStream stream = null!;
+        PEReader peReader = null!;
 
-        if (!peReader.HasMetadata)
+        try
         {
-            throw new InvalidOperationException("No metadata found in the specified assembly.");
+            stream = new FileStream(
+                assemblyPath, 
+                FileMode.Open, 
+                FileAccess.Read, 
+                FileShare.ReadWrite);
+
+            peReader = new PEReader(stream);
+
+            if (!peReader.HasMetadata)
+            {
+                throw new InvalidOperationException("No metadata found in the specified assembly.");
+            }
+
+            var metadataReader = peReader.GetMetadataReader();
+            var assemblyDefinition = metadataReader.GetAssemblyDefinition();
+
+            var assemblyName = metadataReader.GetString(assemblyDefinition.Name);
+            var version = assemblyDefinition.Version.ToString();
+            var publicKeyToken = BitConverter.ToString(ComputePublicKeyToken(metadataReader.GetBlobBytes(assemblyDefinition.PublicKey))).Replace("-", "").ToLowerInvariant();
+            var fileVersion = GetFileVersion(metadataReader);
+
+            return new AssemblyMetadata
+            {
+                AssemblyName = $"{assemblyName}, Version={version}, PublicKeyToken={publicKeyToken}",
+                PublicKeyToken = publicKeyToken,
+                AssemblyVersion = version,
+                FileVersion = fileVersion
+            };
+
         }
-
-        var metadataReader = peReader.GetMetadataReader();
-        var assemblyDefinition = metadataReader.GetAssemblyDefinition();
-
-        var assemblyName = metadataReader.GetString(assemblyDefinition.Name);
-        var version = assemblyDefinition.Version.ToString();
-        var publicKeyToken = BitConverter.ToString(ComputePublicKeyToken(metadataReader.GetBlobBytes(assemblyDefinition.PublicKey))).Replace("-", "").ToLowerInvariant();
-        var fileVersion = GetFileVersion(metadataReader);
-
-        return new AssemblyMetadata
+        catch (Exception)
         {
-            AssemblyName = $"{assemblyName}, Version={version}, PublicKeyToken={publicKeyToken}",
-            PublicKeyToken = publicKeyToken,
-            AssemblyVersion = version,
-            FileVersion = fileVersion
-        };
+            throw;
+        }
+        finally
+        {
+            peReader?.Dispose();
+
+            stream?.Close();
+            stream?.Dispose();
+        }
     }
 
     private static byte[] ComputePublicKeyToken(byte[] publicKey)

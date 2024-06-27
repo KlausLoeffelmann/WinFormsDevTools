@@ -370,7 +370,7 @@ public partial class MainForm : Form
                         continue;
                     }
 
-                    if (!_dryRunCheckBox.Checked)
+                    if (false)
                     {
                         // Update the AssemblyInfo.xml file with the assembly information.
                         AssemblyManifestProcessResult result = UpdateAssemblyInfo(
@@ -393,7 +393,8 @@ public partial class MainForm : Form
                     await commandBatch.CopyFileCommandAsync(
                         fileItem,
                         targetRefAssemblyPath,
-                        overrideIfExist: true);
+                        overrideIfExist: true,
+                        comment: "REF: ");
                 }
             }
         }
@@ -458,7 +459,17 @@ public partial class MainForm : Form
             return AssemblyManifestProcessResult.MissingAssembly;
         }
 
-        Assembly assembly;
+        Assembly assembly = null!;
+        AssemblyName? assemblyName;
+        AssemblyMetadata? assemblyMetadata;
+
+        if (isRefAssembly)
+        {
+            assemblyMetadata = AssemblyMetadataReader.GetAssemblyMetadata(
+                destinationAssemblyFileInfo.targetFile.FullName);
+        }
+        else
+        {
 
             try
             {
@@ -474,8 +485,9 @@ public partial class MainForm : Form
                 Debug.WriteLine($"Couldn't load image of assembly: {ex.Message}");
                 return AssemblyManifestProcessResult.InvalidAssembly;
             }
+        }
 
-            AssemblyName assemblyName = assembly.GetName();
+        assemblyName = assembly?.GetName();
 
         if (assemblyName is null)
         {
@@ -584,12 +596,12 @@ public partial class MainForm : Form
                 new XAttribute("AssemblyName", assemblyName.Name!),
                 new XAttribute("PublicKeyToken", publicKeyToken),
                 new XAttribute(
-                    "AssemblyVersion", 
-                    CreateMainFrameworkVersion(targetFrameworkVersion,GetAssemblyVersion(destinationAssemblyFilePath))),
+                    "AssemblyVersion",
+                    CreateMainFrameworkVersion(targetFrameworkVersion, GetAssemblyVersion(destinationAssemblyFilePath))),
                 new XAttribute(
-                    "FileVersion", 
+                    "FileVersion",
                     CreateMainFrameworkVersion(targetFrameworkVersion, GetFileVersion(destinationAssemblyFilePath))),
-                new XAttribute("Profile","WindowsForms"));
+                new XAttribute("Profile", "WindowsForms"));
 
             // Insert the new entry behind the respective last type entry:
             if (assemblyTypes.TryGetValue(fileType, out XElement? lastTypeEntry))
