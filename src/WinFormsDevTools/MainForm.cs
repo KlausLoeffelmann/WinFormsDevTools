@@ -339,19 +339,19 @@ public partial class MainForm : Form
                         targetDir = analyzersDir;
                     }
 
-                    // Update the AssemblyInfo.xml file with the assembly information.
-                    AssemblyManifestProcessResult result = UpdateAssemblyInfo(
-                        xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
-                        destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetDir}\\{fileItem.Name}")),
-                        fileType: currentFileType,
-                        targetFrameworkVersion: targetFrameworkTarget.Name,
-                        updatePublicKey: false,
-                        isRefAssembly: false);
+                    //// Update the AssemblyInfo.xml file with the assembly information.
+                    //AssemblyManifestProcessResult result = UpdateAssemblyInfo(
+                    //    xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
+                    //    destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetDir}\\{fileItem.Name}")),
+                    //    fileType: currentFileType,
+                    //    targetFrameworkVersion: targetFrameworkTarget.Name,
+                    //    updatePublicKey: false,
+                    //    isRefAssembly: false);
 
-                    if (await ProcessManifestResult(commandBatch, fileItem, result))
-                    {
-                        continue;
-                    }
+                    //if (await ProcessManifestResult(commandBatch, fileItem, result))
+                    //{
+                    //    continue;
+                    //}
                 }
 
                 await commandBatch.CopyFileCommandAsync(
@@ -370,22 +370,19 @@ public partial class MainForm : Form
                         continue;
                     }
 
-                    if (false)
-                    {
-                        // Update the AssemblyInfo.xml file with the assembly information.
-                        AssemblyManifestProcessResult result = UpdateAssemblyInfo(
-                        xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
-                        destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetRefAssemblyPath}\\{fileItem.Name}")),
-                        fileType: currentFileType,
-                        targetFrameworkVersion: targetFrameworkTarget.Name,
-                        updatePublicKey: false,
-                        isRefAssembly: true);
+                    // // Update the AssemblyInfo.xml file with the assembly information.
+                    // AssemblyManifestProcessResult result = UpdateAssemblyInfo(
+                    // xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
+                    // destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetRefAssemblyPath}\\{fileItem.Name}")),
+                    // fileType: currentFileType,
+                    // targetFrameworkVersion: targetFrameworkTarget.Name,
+                    // updatePublicKey: false,
+                    // isRefAssembly: true);
 
-                        if (await ProcessManifestResult(commandBatch, fileItem, result))
-                        {
-                            continue;
-                        }
-                    }
+                    // if (await ProcessManifestResult(commandBatch, fileItem, result))
+                    // {
+                    //     continue;
+                    // }
 
                     // Add the file to the processed files HashSet
                     processedFiles.Add(fileItem);
