@@ -497,7 +497,7 @@ public partial class MainForm : Form
             return AssemblyManifestProcessResult.MissingPublicKey;
         }
 
-        string publicKeyToken = BitConverter.ToString(publicTokenBytes).Replace("-", "").ToLowerInvariant();
+        string publicKeyToken = Convert.ToHexStringLower(publicTokenBytes);
 
         XDocument xmlDoc;
 

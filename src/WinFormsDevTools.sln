@@ -7,6 +7,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsDevTools", "WinForm
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsToolLib", "WinFormsToolLib\WinFormsToolLib.csproj", "{5AB54FA3-18FD-4753-9DA8-AF8817B9CE51}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShadowCacheSpy", "ShadowCacheSpy\ShadowCacheSpy.csproj", "{7E3068E0-C548-48E3-8B80-C675A94878CB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_solutionItems", "_solutionItems", "{73E229BA-EB52-425B-92BD-A1ECDA114010}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{7E5D289F-FCB0-4117-862B-C30B0C367D1A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunityToolkit.WinForms.Controls.ConsoleControl", "..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms\ConsoleControl\CommunityToolkit.WinForms.Controls.ConsoleControl.csproj", "{CD59A123-2C34-4251-B9D1-A9EA1003AC96}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CommunityToolkit", "CommunityToolkit", "{F1F2DAAE-0141-4263-8B0A-2CC97AFBB151}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunityToolkit.WinForms.Controls.FileAndFolderSupport", "..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms\FileAndFolderSupport\CommunityToolkit.WinForms.Controls.FileAndFolderSupport.csproj", "{4ACDB1D3-9D29-449F-8663-27AC3498BCE1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunityToolkit.WinForms.Extensions.FormAndControlExtensions", "..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms\FormAndControlExtensions\CommunityToolkit.WinForms.Extensions.FormAndControlExtensions.csproj", "{CDA35A6F-D8CF-47ED-9B36-6AC60009A65F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,9 +38,33 @@ Global
 		{5AB54FA3-18FD-4753-9DA8-AF8817B9CE51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AB54FA3-18FD-4753-9DA8-AF8817B9CE51}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5AB54FA3-18FD-4753-9DA8-AF8817B9CE51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E3068E0-C548-48E3-8B80-C675A94878CB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E3068E0-C548-48E3-8B80-C675A94878CB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E3068E0-C548-48E3-8B80-C675A94878CB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E3068E0-C548-48E3-8B80-C675A94878CB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CD59A123-2C34-4251-B9D1-A9EA1003AC96}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CD59A123-2C34-4251-B9D1-A9EA1003AC96}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CD59A123-2C34-4251-B9D1-A9EA1003AC96}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CD59A123-2C34-4251-B9D1-A9EA1003AC96}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4ACDB1D3-9D29-449F-8663-27AC3498BCE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4ACDB1D3-9D29-449F-8663-27AC3498BCE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4ACDB1D3-9D29-449F-8663-27AC3498BCE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4ACDB1D3-9D29-449F-8663-27AC3498BCE1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CDA35A6F-D8CF-47ED-9B36-6AC60009A65F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CDA35A6F-D8CF-47ED-9B36-6AC60009A65F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CDA35A6F-D8CF-47ED-9B36-6AC60009A65F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CDA35A6F-D8CF-47ED-9B36-6AC60009A65F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{8309985A-2A90-4401-BCEA-E07322C296D9} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
+		{5AB54FA3-18FD-4753-9DA8-AF8817B9CE51} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
+		{7E3068E0-C548-48E3-8B80-C675A94878CB} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
+		{CD59A123-2C34-4251-B9D1-A9EA1003AC96} = {F1F2DAAE-0141-4263-8B0A-2CC97AFBB151}
+		{4ACDB1D3-9D29-449F-8663-27AC3498BCE1} = {F1F2DAAE-0141-4263-8B0A-2CC97AFBB151}
+		{CDA35A6F-D8CF-47ED-9B36-6AC60009A65F} = {F1F2DAAE-0141-4263-8B0A-2CC97AFBB151}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02BB4031-A5D7-45D0-8234-A9AC91240B69}
