@@ -40,6 +40,7 @@
             _tslClock = new ToolStripStatusLabel();
             _console = new CommunityToolkit.WinForms.Controls.ConsoleControl();
             _fileSystemWatcher = new FileSystemWatcher();
+            _tslTickDuration = new ToolStripStatusLabel();
             _menuStrip.SuspendLayout();
             _statusStrip.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)_fileSystemWatcher).BeginInit();
@@ -99,7 +100,7 @@
             // 
             _statusStrip.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
             _statusStrip.ImageScalingSize = new Size(24, 24);
-            _statusStrip.Items.AddRange(new ToolStripItem[] { _tslWatchPath, _tslClock });
+            _statusStrip.Items.AddRange(new ToolStripItem[] { _tslWatchPath, _tslTickDuration, _tslClock });
             _statusStrip.Location = new Point(0, 491);
             _statusStrip.Name = "_statusStrip";
             _statusStrip.Padding = new Padding(1, 0, 17, 0);
@@ -111,7 +112,7 @@
             // 
             _tslWatchPath.Name = "_tslWatchPath";
             _tslWatchPath.Padding = new Padding(3);
-            _tslWatchPath.Size = new Size(878, 36);
+            _tslWatchPath.Size = new Size(779, 36);
             _tslWatchPath.Spring = true;
             _tslWatchPath.Text = "#WatchPath#";
             _tslWatchPath.TextAlign = ContentAlignment.MiddleLeft;
@@ -136,6 +137,12 @@
             _fileSystemWatcher.EnableRaisingEvents = true;
             _fileSystemWatcher.SynchronizingObject = this;
             // 
+            // _tslTickDuration
+            // 
+            _tslTickDuration.Name = "_tslTickDuration";
+            _tslTickDuration.Size = new Size(53, 36);
+            _tslTickDuration.Text = "#TD";
+            // 
             // FrmMain
             // 
             AutoScaleDimensions = new SizeF(12F, 30F);
@@ -148,7 +155,7 @@
             MainMenuStrip = _menuStrip;
             Margin = new Padding(4);
             Name = "FrmMain";
-            Text = "Versions - Log View";
+            Text = "Shadow-Cache Spy";
             _menuStrip.ResumeLayout(false);
             _menuStrip.PerformLayout();
             _statusStrip.ResumeLayout(false);
@@ -172,5 +179,6 @@
         private ToolStripMenuItem testToolStripMenuItem;
         private ToolStripMenuItem testConsoleToolStripMenuItem;
         private FileSystemWatcher _fileSystemWatcher;
+        private ToolStripStatusLabel _tslTickDuration;
     }
 }

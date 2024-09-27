@@ -1,18 +1,24 @@
 using CommunityToolkit.WinForms.Controls;
 using CommunityToolkit.WinForms.Extensions;
+using System.ComponentModel;
+using System.Diagnostics;
 
 namespace ShadowCacheSpy;
 
 public partial class FrmMain : Form
 {
-    private const int WriteLineTestSamples = 1000;
     private readonly WinFormsUserSettingsService _settingsService;
     private AppSettings _appSettings;
     private DateTime _lastEventTime;
+    private readonly AwaitableCancellationTokenSource _timerLoopCancellation;
+    private TimeSpan _lastStopWatchTime;
+    private readonly int _throttle;
+    private FastQueue _averageBuilder = new(100);
 
     public FrmMain()
     {
         InitializeComponent();
+        _timerLoopCancellation = new AwaitableCancellationTokenSource();
 
         _settingsService = new();
         _settingsService.Load();
@@ -59,6 +65,43 @@ public partial class FrmMain : Form
             await _console.WriteLineAsync("Please choose 'File' and 'Options' to set the watch folder.");
             await _console.WriteLineAsync();
         }
+
+        await _console.WriteLineAsync($"Looking for Visual Studio Instances:", style: CustomFontStyle.Bold);
+        await VSSupport.ListVisualStudioInstancesAsync(_console);
+
+        await TimerLoopAsync();
+    }
+
+    private async Task TimerLoopAsync()
+    {
+        var token = _timerLoopCancellation.Token;
+        var pTimer = new PeriodicTimer(TimeSpan.FromMilliseconds(1));
+
+        var stopwatch = Stopwatch.StartNew();
+
+        while (await pTimer.WaitForNextTickAsync())
+        {
+            var stopwatchTime = stopwatch.Elapsed;
+            var delta = stopwatchTime - _lastStopWatchTime;
+            _lastStopWatchTime = stopwatchTime;
+
+            if (token.IsCancellationRequested)
+            {
+                _timerLoopCancellation.AcknowledgeCancellation();
+                return;
+            }
+
+            _averageBuilder.Add(delta.TotalMilliseconds);
+
+            await InvokeAsync(() => _tslClock.Text = $"{DateTime.Now:HH:mm:ss fff}");
+            await InvokeAsync(() => _tslTickDuration.Text = $" (Tick Duration: {_averageBuilder.Average:000} ms)");
+        }
+    }
+
+    protected async override void OnClosing(CancelEventArgs e)
+    {
+        await _timerLoopCancellation.CancelAndWaitForAcknowledgmentAsync();
+        base.OnClosing(e);
     }
 
     protected override void OnClosed(EventArgs e)

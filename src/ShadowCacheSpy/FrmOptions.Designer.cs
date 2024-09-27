@@ -78,7 +78,8 @@
             _watchFolderPicker.Location = new Point(21, 59);
             _watchFolderPicker.Margin = new Padding(4);
             _watchFolderPicker.Name = "_watchFolderPicker";
-            _watchFolderPicker.Size = new Size(732, 31);
+            _watchFolderPicker.Padding = new Padding(3);
+            _watchFolderPicker.Size = new Size(732, 43);
             _watchFolderPicker.TabIndex = 0;
             _watchFolderPicker.Text = "filePathPicker1";
             // 
