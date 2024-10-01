@@ -98,15 +98,15 @@ public partial class FrmMain : Form
         }
     }
 
-    protected async override void OnClosing(CancelEventArgs e)
+    protected async override void OnFormClosing(FormClosingEventArgs e)
     {
         await _timerLoopCancellation.CancelAndWaitForAcknowledgmentAsync();
-        base.OnClosing(e);
+        base.OnFormClosing(e);
     }
 
-    protected override void OnClosed(EventArgs e)
+    protected override void OnFormClosed(FormClosedEventArgs e)
     {
-        base.OnClosed(e);
+        base.OnFormClosed(e);
         _settingsService.SetInstance("appSettings", _appSettings);
         _settingsService.SetInstance("bounds", this.GetRestorableBounds());
         _settingsService.Save();
