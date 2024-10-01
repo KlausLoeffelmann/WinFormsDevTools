@@ -1,6 +1,6 @@
-﻿namespace WinFormsDevTools;
+﻿namespace WinFormsDevTools.Views;
 
-public partial class MainForm
+public partial class DeployRuntimeView
 {
     private enum AssemblyManifestProcessResult
     {

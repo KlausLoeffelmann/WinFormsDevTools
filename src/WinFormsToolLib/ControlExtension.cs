@@ -26,7 +26,7 @@
         public static void ConfigureDetailsView(
             this ListView listView,
             bool fullRowSelect = true,
-            bool gridLines = true,
+            bool gridLines = false,
             bool checkBoxes = false)
         {
             listView.View = View.Details;
@@ -52,12 +52,12 @@
             bool addSourceDataToTag,
             params (string PropertyName, string DisplayName)[] typePropertyColumnHeaderNames)
         {
-            // We're joining the columns we want to have with the type's properties.
+            var properties = typeof(T).GetProperties();
+
             var columnProperties = typePropertyColumnHeaderNames
-                .Join(
-                    typeof(T).GetProperties(),
-                    outerItem => outerItem.PropertyName,    // where outerTable.Name == inner 
-                    innerItem => innerItem.Name,            // (the latter being string already).
+                .Join(properties,
+                    outerItem => outerItem.PropertyName,   
+                    innerItem => innerItem.Name,           
                     (outer, inner) => new
                     {
                         PropertyInfo = inner,
