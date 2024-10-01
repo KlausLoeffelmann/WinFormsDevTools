@@ -2,27 +2,6 @@
 {
     public static class ControlExtension
     {
-        public async static Task ShowAsync(this Form form)
-        {
-            TaskCompletionSource taskCompletionSource = new();
-
-            if (!form.IsHandleCreated)
-            {
-                form.Load += Form_Load;
-                form.Show();
-                await taskCompletionSource.Task;
-            }
-
-            void Form_Load(object? sender, EventArgs e)
-            {
-                if (sender is Form form)
-                {
-                    form.Load -= Form_Load;
-                    taskCompletionSource.SetResult();
-                }
-            }
-        }
-
         public static void ConfigureDetailsView(
             this ListView listView,
             bool fullRowSelect = true,

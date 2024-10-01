@@ -12,11 +12,13 @@ public class CommandBatch
     private StringBuilder? _protocolStorage;
     private bool _newline = true;
 
-    public async Task StartBatchAsync(
+    public Task StartBatchAsync(
         bool showCommandBatchWindow = true,
         bool dryRun = false,
         string? windowTitle = null)
     {
+        Task batchTask = Task.CompletedTask;
+
         if (_batchStarted)
         {
             throw new ArgumentException("Batch has already started and cannot be started twice.");
@@ -29,10 +31,12 @@ public class CommandBatch
         if (_showCommandBatchWindow)
         {
             _commandBatchWindow = new CommandBatchForm(windowTitle);
-            await _commandBatchWindow.StartBatchAsync();
+            batchTask = _commandBatchWindow.StartBatchAsync();
         }
 
         _protocolStorage = new();
+
+        return batchTask;
     }
 
     public string EndBatch(string? endOfBatchComment)

@@ -17,10 +17,10 @@ public partial class CommandBatchForm : Form
     public Task PrintLineAsync(string? message)
         => _printableTextBox.PrintLineAsync(message);
 
-    public async Task StartBatchAsync()
+    public Task StartBatchAsync()
     {
         _okButton.Enabled = false;
-        await this.ShowAsync();
+        return ShowAsync();
     }
 
     public void EndBatch() 

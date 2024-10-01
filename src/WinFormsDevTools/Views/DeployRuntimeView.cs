@@ -209,194 +209,202 @@ public partial class DeployRuntimeView : UserControl
             return;
         }
 
-        await commandBatch.StartBatchAsync(
+        var batchTask = commandBatch.StartBatchAsync(
             windowTitle: "Copy .NET Desktop runtime assemblies",
             showCommandBatchWindow: true,
             dryRun: _dryRunCheckBox.Checked);
 
-        TargetFrameworkTargetItem targetFrameworkTarget
-            = (TargetFrameworkTargetItem)_replaceTargetSDKVersionComboBox.SelectedItem;
-
-        DirectoryInfo targetSharedAssemblyBasePath = new($"{FrameworkInfo.NetDesktopLibsDirectory}\\{targetFrameworkTarget.Name}");
-        DirectoryInfo targetRefAssemblyBasePath = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\" + $"{targetFrameworkTarget.Name}");
-        DirectoryInfo targetRefAssemblyPath = new($"{targetRefAssemblyBasePath}\\ref\\net{MajorMinorVersionString(targetFrameworkTarget.Name)}");
-        DirectoryInfo packageAssembliesManifestPath = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\{targetFrameworkTarget.Name}\\data");
-
-        // Create a new DirectoryInfo for the analyzers directory, which is the same as the ref directory
-        // but with the last part of the path changed to "analyzers".
-        DirectoryInfo analyzersDir = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\{targetFrameworkTarget.Name}\\analyzers\\dotnet");
-        DirectoryInfo cSharpAnalyzersDir = new($"{analyzersDir.FullName}\\{CSharpSubfolderPath}");
-        DirectoryInfo visualBasicAnalyzersDir = new($"{analyzersDir.FullName}\\{VisualBasicSubfolderPath}");
-
-        await commandBatch.InfoPrintLineAsync($"Destination Assembly directory:{targetSharedAssemblyBasePath}");
-        await commandBatch.InfoPrintLineAsync($"Destination REF-Assembly directory:{targetRefAssemblyPath.FullName}");
-        await commandBatch.InfoPrintLineAsync($"Destination Analyzers directory:{analyzersDir.FullName}");
-        await commandBatch.InfoPrintLineAsync($"");
-
-        await commandBatch.InfoPrintLineAsync($"Source Assembly directory:{sourceAssemblyBasePath}");
-        await commandBatch.InfoPrintLineAsync($"Source RefAssembly directory:{sourceRefAssemblyBasePath}\\ref");
-        await commandBatch.InfoPrintLineAsync($"");
-
-        bool foundCheckedItems = false;
-
-        string currentFileType = "Managed";
-
-        DirectoryInfo targetDir;
-
-        // Create a HashSet to store the processed files.
-        HashSet<FileInfo> processedFiles = [];
-
-        foreach (ListViewItem item in _availableAssembliesListView.Items)
+        var processTask=Task.Run(async () =>
         {
-            if (!item.Checked)
+            // We're only reading.
+            Control.CheckForIllegalCrossThreadCalls = false;
+
+            TargetFrameworkTargetItem targetFrameworkTarget = null!;
+            targetFrameworkTarget = (TargetFrameworkTargetItem)_replaceTargetSDKVersionComboBox.SelectedItem;
+
+            DirectoryInfo targetSharedAssemblyBasePath = new($"{FrameworkInfo.NetDesktopLibsDirectory}\\{targetFrameworkTarget.Name}");
+            DirectoryInfo targetRefAssemblyBasePath = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\" + $"{targetFrameworkTarget.Name}");
+            DirectoryInfo targetRefAssemblyPath = new($"{targetRefAssemblyBasePath}\\ref\\net{MajorMinorVersionString(targetFrameworkTarget.Name)}");
+            DirectoryInfo packageAssembliesManifestPath = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\{targetFrameworkTarget.Name}\\data");
+
+            // Create a new DirectoryInfo for the analyzers directory, which is the same as the ref directory
+            // but with the last part of the path changed to "analyzers".
+            DirectoryInfo analyzersDir = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\{targetFrameworkTarget.Name}\\analyzers\\dotnet");
+            DirectoryInfo cSharpAnalyzersDir = new($"{analyzersDir.FullName}\\{CSharpSubfolderPath}");
+            DirectoryInfo visualBasicAnalyzersDir = new($"{analyzersDir.FullName}\\{VisualBasicSubfolderPath}");
+
+            await commandBatch.InfoPrintLineAsync($"Destination Assembly directory:{targetSharedAssemblyBasePath}");
+            await commandBatch.InfoPrintLineAsync($"Destination REF-Assembly directory:{targetRefAssemblyPath.FullName}");
+            await commandBatch.InfoPrintLineAsync($"Destination Analyzers directory:{analyzersDir.FullName}");
+            await commandBatch.InfoPrintLineAsync($"");
+
+            await commandBatch.InfoPrintLineAsync($"Source Assembly directory:{sourceAssemblyBasePath}");
+            await commandBatch.InfoPrintLineAsync($"Source RefAssembly directory:{sourceRefAssemblyBasePath}\\ref");
+            await commandBatch.InfoPrintLineAsync($"");
+
+            bool foundCheckedItems = false;
+
+            string currentFileType = "Managed";
+
+            DirectoryInfo targetDir;
+
+            // Create a HashSet to store the processed files.
+            HashSet<FileInfo> processedFiles = [];
+
+            foreach (ListViewItem item in _availableAssembliesListView.Items)
             {
-                continue;
-            }
-
-            foundCheckedItems = true;
-            DesktopAssemblyInfo assemblyInfo = (DesktopAssemblyInfo)item.Tag!;
-
-            bool vbFirst = false, csFirst = false;
-
-            foreach (FileInfo fileItem in assemblyInfo.AssemblyFiles)
-            {
-                // Check if the file has already been processed
-                if (processedFiles.Contains(fileItem))
+                if (!item.Checked)
                 {
                     continue;
                 }
 
-                // Add the file to the processed files HashSet
-                processedFiles.Add(fileItem);
+                foundCheckedItems = true;
+                DesktopAssemblyInfo assemblyInfo = (DesktopAssemblyInfo)item.Tag!;
 
-                // If the file starts with "System.Windows.Forms.Analyzers", copy it to the analyzers directory.
-                // But. If the file ends with "VisualBasic.dll", we need to copy it in the SubFolder "\\vb", and
-                // if it ends with "CSharp.dll", we need to copy it in the SubFolder "\\cs".
-                if (!fileItem.Name.StartsWith("System.Windows.Forms.Analyzers"))
-                {
-                    currentFileType = "Managed";
-                    targetDir = targetSharedAssemblyBasePath;
-                }
-                else
-                {
-                    currentFileType = "Analyzer";
+                bool vbFirst = false, csFirst = false;
 
-                    if (fileItem.Name.EndsWith("VisualBasic.dll"))
+                foreach (FileInfo fileItem in assemblyInfo.AssemblyFiles)
+                {
+                    // Check if the file has already been processed
+                    if (processedFiles.Contains(fileItem))
                     {
-                        if (!vbFirst)
-                        {
-                            vbFirst = true;
-
-                            // Create the vb subfolder in the analyzers directory if it does not exist:
-                            if (!Directory.Exists(visualBasicAnalyzersDir.FullName))
-                            {
-                                Directory.CreateDirectory(visualBasicAnalyzersDir.FullName);
-                            }
-                        }
-
-                        targetDir = visualBasicAnalyzersDir;
-
+                        continue;
                     }
-                    else if (fileItem.Name.EndsWith("CSharp.dll"))
+
+                    // Add the file to the processed files HashSet
+                    processedFiles.Add(fileItem);
+
+                    // If the file starts with "System.Windows.Forms.Analyzers", copy it to the analyzers directory.
+                    // But. If the file ends with "VisualBasic.dll", we need to copy it in the SubFolder "\\vb", and
+                    // if it ends with "CSharp.dll", we need to copy it in the SubFolder "\\cs".
+                    if (!fileItem.Name.StartsWith("System.Windows.Forms.Analyzers"))
                     {
-                        if (!csFirst)
-                        {
-                            csFirst = true;
-
-                            // Create the subfolder "cs" in the analyzers directory if it does not exist:
-                            if (!Directory.Exists($"{cSharpAnalyzersDir}"))
-                            {
-                                Directory.CreateDirectory(cSharpAnalyzersDir.FullName);
-                            }
-                        }
-
-                        targetDir = cSharpAnalyzersDir;
+                        currentFileType = "Managed";
+                        targetDir = targetSharedAssemblyBasePath;
                     }
                     else
                     {
-                        targetDir = analyzersDir;
+                        currentFileType = "Analyzer";
+
+                        if (fileItem.Name.EndsWith("VisualBasic.dll"))
+                        {
+                            if (!vbFirst)
+                            {
+                                vbFirst = true;
+
+                                // Create the vb subfolder in the analyzers directory if it does not exist:
+                                if (!Directory.Exists(visualBasicAnalyzersDir.FullName))
+                                {
+                                    Directory.CreateDirectory(visualBasicAnalyzersDir.FullName);
+                                }
+                            }
+
+                            targetDir = visualBasicAnalyzersDir;
+
+                        }
+                        else if (fileItem.Name.EndsWith("CSharp.dll"))
+                        {
+                            if (!csFirst)
+                            {
+                                csFirst = true;
+
+                                // Create the subfolder "cs" in the analyzers directory if it does not exist:
+                                if (!Directory.Exists($"{cSharpAnalyzersDir}"))
+                                {
+                                    Directory.CreateDirectory(cSharpAnalyzersDir.FullName);
+                                }
+                            }
+
+                            targetDir = cSharpAnalyzersDir;
+                        }
+                        else
+                        {
+                            targetDir = analyzersDir;
+                        }
+
+                        //// Update the AssemblyInfo.xml file with the assembly information.
+                        //AssemblyManifestProcessResult result = UpdateAssemblyInfo(
+                        //    xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
+                        //    destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetDir}\\{fileItem.Name}")),
+                        //    fileType: currentFileType,
+                        //    targetFrameworkVersion: targetFrameworkTarget.Name,
+                        //    updatePublicKey: false,
+                        //    isRefAssembly: false);
+
+                        //if (await ProcessManifestResult(commandBatch, fileItem, result))
+                        //{
+                        //    continue;
+                        //}
                     }
 
-                    //// Update the AssemblyInfo.xml file with the assembly information.
-                    //AssemblyManifestProcessResult result = UpdateAssemblyInfo(
-                    //    xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
-                    //    destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetDir}\\{fileItem.Name}")),
-                    //    fileType: currentFileType,
-                    //    targetFrameworkVersion: targetFrameworkTarget.Name,
-                    //    updatePublicKey: false,
-                    //    isRefAssembly: false);
-
-                    //if (await ProcessManifestResult(commandBatch, fileItem, result))
-                    //{
-                    //    continue;
-                    //}
+                    await commandBatch.CopyFileCommandAsync(
+                        fileItem,
+                        targetDir,
+                        overrideIfExist: true);
                 }
 
-                await commandBatch.CopyFileCommandAsync(
-                    fileItem,
-                    targetDir,
-                    overrideIfExist: true);
-            }
-
-            if (assemblyInfo.RefAssemblyFiles is null)
-            {
-                continue;
-            }
-
-            foreach (FileInfo fileItem in assemblyInfo.RefAssemblyFiles)
-            {
-                // Check if the file has already been processed
-                if (processedFiles.Contains(fileItem))
+                if (assemblyInfo.RefAssemblyFiles is null)
                 {
                     continue;
                 }
 
-                // // Update the AssemblyInfo.xml file with the assembly information.
-                // AssemblyManifestProcessResult result = UpdateAssemblyInfo(
-                // xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
-                // destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetRefAssemblyPath}\\{fileItem.Name}")),
-                // fileType: currentFileType,
-                // targetFrameworkVersion: targetFrameworkTarget.Name,
-                // updatePublicKey: false,
-                // isRefAssembly: true);
+                foreach (FileInfo fileItem in assemblyInfo.RefAssemblyFiles)
+                {
+                    // Check if the file has already been processed
+                    if (processedFiles.Contains(fileItem))
+                    {
+                        continue;
+                    }
 
-                // if (await ProcessManifestResult(commandBatch, fileItem, result))
-                // {
-                //     continue;
-                // }
+                    // // Update the AssemblyInfo.xml file with the assembly information.
+                    // AssemblyManifestProcessResult result = UpdateAssemblyInfo(
+                    // xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
+                    // destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetRefAssemblyPath}\\{fileItem.Name}")),
+                    // fileType: currentFileType,
+                    // targetFrameworkVersion: targetFrameworkTarget.Name,
+                    // updatePublicKey: false,
+                    // isRefAssembly: true);
 
-                // Add the file to the processed files HashSet
-                processedFiles.Add(fileItem);
+                    // if (await ProcessManifestResult(commandBatch, fileItem, result))
+                    // {
+                    //     continue;
+                    // }
 
-                await commandBatch.CopyFileCommandAsync(
-                    fileItem,
-                    targetRefAssemblyPath,
-                    overrideIfExist: true,
-                    comment: "REF: ");
+                    // Add the file to the processed files HashSet
+                    processedFiles.Add(fileItem);
+
+                    await commandBatch.CopyFileCommandAsync(
+                        fileItem,
+                        targetRefAssemblyPath,
+                        overrideIfExist: true,
+                        comment: "REF: ");
+                }
             }
-        }
 
-        if (!foundCheckedItems)
-        {
-            await commandBatch.InfoPrintLineAsync("No items were selected, found nothing to copy.");
-        }
-
-        commandBatch.EndBatch("End of Command Batch.");
-
-        _copyCommandButton.Enabled = true;
-
-        static string MajorMinorVersionString(string versionString)
-        {
-            string[] items = versionString.Split('.');
-
-            return items.Length switch
+            if (!foundCheckedItems)
             {
-                1 => $"{items[0]}.0",
-                > 1 => $"{items[0]}.{items[1]}",
-                _ => throw new ArgumentException(
-                    "Could not figure out .NET Major/Minor Version for Ref Assemblies.")
-            };
-        }
+                await commandBatch.InfoPrintLineAsync("No items were selected, found nothing to copy.");
+            }
+
+            commandBatch.EndBatch("End of Command Batch.");
+
+            _copyCommandButton.Enabled = true;
+
+            static string MajorMinorVersionString(string versionString)
+            {
+                string[] items = versionString.Split('.');
+
+                return items.Length switch
+                {
+                    1 => $"{items[0]}.0",
+                    > 1 => $"{items[0]}.{items[1]}",
+                    _ => throw new ArgumentException(
+                        "Could not figure out .NET Major/Minor Version for Ref Assemblies.")
+                };
+            }
+        });
+
+        await Task.WhenAll(batchTask, processTask);
 
         static async Task<bool> ProcessManifestResult(CommandBatch commandBatch, FileInfo fileItem, AssemblyManifestProcessResult result)
         {

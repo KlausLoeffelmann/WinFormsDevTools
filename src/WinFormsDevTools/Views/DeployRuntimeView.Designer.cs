@@ -100,6 +100,7 @@
             _copyCommandButton.TabIndex = 23;
             _copyCommandButton.Text = "Copy...";
             _copyCommandButton.UseVisualStyleBackColor = true;
+            _copyCommandButton.Click += CopyCommandButton_Click;
             // 
             // _checkForRespectiveRefAssembliesCheckBox
             // 
@@ -181,6 +182,7 @@
             _pickPathToArtefactsButton.TabIndex = 25;
             _pickPathToArtefactsButton.Text = "...";
             _pickPathToArtefactsButton.UseVisualStyleBackColor = true;
+            _pickPathToArtefactsButton.Click += PickPathToArtefactsButton_Click;
             // 
             // DeployRuntimeView
             // 
