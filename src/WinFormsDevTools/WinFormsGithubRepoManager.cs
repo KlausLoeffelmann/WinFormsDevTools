@@ -1,4 +1,4 @@
-﻿namespace WinFormsDevTools;
+﻿namespace WfRuntimeDeploy;
 
 /// <summary>
 ///  Provides functionality to extract the available generated assemblies 

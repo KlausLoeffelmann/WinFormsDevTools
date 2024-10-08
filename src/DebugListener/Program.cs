@@ -1,4 +1,4 @@
-namespace WfRuntimeDeploy
+namespace DebugListener
 {
     internal static class Program
     {
@@ -12,7 +12,7 @@ namespace WfRuntimeDeploy
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
             Application.SetColorMode(SystemColorMode.System);
-            Application.Run(new MainForm());
+            Application.Run(new FrmMain());
         }
     }
 }

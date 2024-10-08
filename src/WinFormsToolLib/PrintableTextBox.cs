@@ -1,4 +1,4 @@
-﻿namespace WinFormsToolLib;
+﻿namespace WinFormsDevToolsLib;
 
 public class PrintableTextBox : TextBox
 {

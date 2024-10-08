@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms\ModernTabControl\ModernTabControl.csproj" />
-    <ProjectReference Include="..\WinFormsToolLib\WinFormsToolLib.csproj" />
+    <ProjectReference Include="..\WinFormsToolLib\WinFormsDevToolsLib.csproj" />
   </ItemGroup>
 
   <ItemGroup>

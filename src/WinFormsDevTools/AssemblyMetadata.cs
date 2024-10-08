@@ -1,4 +1,4 @@
-﻿namespace WinFormsDevTools;
+﻿namespace WfRuntimeDeploy;
 
 internal readonly struct AssemblyMetadata
 {

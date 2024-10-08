@@ -1,4 +1,4 @@
-﻿namespace WinFormsDevTools
+﻿namespace WfRuntimeDeploy
 {
     partial class PathShortCutControl
     {

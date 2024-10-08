@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace WinFormsToolLib
+namespace WinFormsDevToolsLib
 {
     public class FrameworkInfo
     {

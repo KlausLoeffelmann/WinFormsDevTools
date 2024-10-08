@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32605.63
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsDevTools", "WinFormsDevTools\WinFormsDevTools.csproj", "{8309985A-2A90-4401-BCEA-E07322C296D9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WfRuntimeDeploy", "WinFormsDevTools\WfRuntimeDeploy.csproj", "{8309985A-2A90-4401-BCEA-E07322C296D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsToolLib", "WinFormsToolLib\WinFormsToolLib.csproj", "{5AB54FA3-18FD-4753-9DA8-AF8817B9CE51}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsDevToolsLib", "WinFormsToolLib\WinFormsDevToolsLib.csproj", "{5AB54FA3-18FD-4753-9DA8-AF8817B9CE51}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShadowCacheSpy", "ShadowCacheSpy\ShadowCacheSpy.csproj", "{7E3068E0-C548-48E3-8B80-C675A94878CB}"
 EndProject
@@ -13,6 +13,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_solutionItems", "_solution
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
 		NuGet.config = NuGet.config
+		..\README.md = ..\README.md
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Apps", "Apps", "{7E5D289F-FCB0-4117-862B-C30B0C367D1A}"
@@ -26,6 +27,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunityToolkit.WinForms.Extensions.FormAndControlExtensions", "..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms\FormAndControlExtensions\CommunityToolkit.WinForms.Extensions.FormAndControlExtensions.csproj", "{CDA35A6F-D8CF-47ED-9B36-6AC60009A65F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModernTabControl", "..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms\ModernTabControl\ModernTabControl.csproj", "{C9A7DF7D-CFA1-4DFE-A8B6-506D244D24E4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugListener", "DebugListener\DebugListener.csproj", "{B0FAD5E9-FE3E-4F9D-80F2-765036393F2D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -61,6 +64,10 @@ Global
 		{C9A7DF7D-CFA1-4DFE-A8B6-506D244D24E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C9A7DF7D-CFA1-4DFE-A8B6-506D244D24E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C9A7DF7D-CFA1-4DFE-A8B6-506D244D24E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B0FAD5E9-FE3E-4F9D-80F2-765036393F2D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B0FAD5E9-FE3E-4F9D-80F2-765036393F2D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B0FAD5E9-FE3E-4F9D-80F2-765036393F2D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B0FAD5E9-FE3E-4F9D-80F2-765036393F2D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -73,6 +80,7 @@ Global
 		{4ACDB1D3-9D29-449F-8663-27AC3498BCE1} = {F1F2DAAE-0141-4263-8B0A-2CC97AFBB151}
 		{CDA35A6F-D8CF-47ED-9B36-6AC60009A65F} = {F1F2DAAE-0141-4263-8B0A-2CC97AFBB151}
 		{C9A7DF7D-CFA1-4DFE-A8B6-506D244D24E4} = {F1F2DAAE-0141-4263-8B0A-2CC97AFBB151}
+		{B0FAD5E9-FE3E-4F9D-80F2-765036393F2D} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02BB4031-A5D7-45D0-8234-A9AC91240B69}

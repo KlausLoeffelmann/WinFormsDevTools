@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace WinFormsDevTools;
+namespace WfRuntimeDeploy;
 
 internal partial class WinFormsGitHubRepoManager
 {

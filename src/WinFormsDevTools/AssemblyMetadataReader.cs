@@ -2,7 +2,7 @@
 using System.Reflection.PortableExecutable;
 using System.Security.Cryptography;
 
-namespace WinFormsDevTools;
+namespace WfRuntimeDeploy;
 
 internal static class AssemblyMetadataReader
 {

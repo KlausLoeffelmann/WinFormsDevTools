@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace WinFormsDevTools
+namespace WfRuntimeDeploy
 {
     public partial class PathShortCutControl : UserControl
     {

@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace WinFormsToolLib;
+namespace WinFormsDevToolsLib;
 
 public class CommandBatch
 {

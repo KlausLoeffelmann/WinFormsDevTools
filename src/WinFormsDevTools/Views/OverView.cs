@@ -1,7 +1,7 @@
-﻿using WinFormsToolLib;
-using static WinFormsDevTools.WinFormsGitHubRepoManager;
+﻿using WinFormsDevToolsLib;
+using static WfRuntimeDeploy.WinFormsGitHubRepoManager;
 
-namespace WinFormsDevTools.Views;
+namespace WfRuntimeDeploy.Views;
 
 public partial class OverView : UserControl
 {

@@ -1,4 +1,4 @@
-﻿namespace WinFormsDevTools.Views
+﻿namespace WfRuntimeDeploy.Views
 {
     partial class DeployRuntimeView
     {

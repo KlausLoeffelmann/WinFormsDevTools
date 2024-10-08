@@ -1,4 +1,4 @@
-﻿namespace WinFormsToolLib
+﻿namespace WinFormsDevToolsLib
 {
     partial class CommandBatchForm
     {
@@ -76,7 +76,7 @@
 
         #endregion
 
-        private WinFormsToolLib.PrintableTextBox _printableTextBox;
+        private WinFormsDevToolsLib.PrintableTextBox _printableTextBox;
         private Button _okButton;
     }
 }
