@@ -1,6 +1,5 @@
 using CommunityToolkit.WinForms.Controls;
 using CommunityToolkit.WinForms.Extensions;
-using System.ComponentModel;
 using System.Diagnostics;
 
 namespace ShadowCacheSpy;
@@ -12,7 +11,6 @@ public partial class FrmMain : Form
     private DateTime _lastEventTime;
     private readonly AwaitableCancellationTokenSource _timerLoopCancellation;
     private TimeSpan _lastStopWatchTime;
-    private readonly int _throttle;
     private FastQueue _averageBuilder = new(100);
 
     public FrmMain()

@@ -1,10 +1,17 @@
-namespace DebugListener
+using System.Text;
+
+namespace DebugListener;
+
+public partial class FrmMain : Form
 {
-    public partial class FrmMain : Form
+    public FrmMain()
     {
-        public FrmMain()
-        {
-            InitializeComponent();
-        }
+        InitializeComponent();
+    }
+
+    protected async override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+        await _logView.StartListeningAsync();
     }
 }
