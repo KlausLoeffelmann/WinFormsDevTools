@@ -5,7 +5,7 @@ using static DebugListener.ExtendedDebugInfo;
 namespace DebugListener;
 
 [StructLayout(LayoutKind.Explicit)]
-public readonly struct ExtendedDebugInfo(
+public readonly partial struct ExtendedDebugInfo(
     DateTime dateTime,
     ushort threadId = default,
     ushort methodId = default,
@@ -28,6 +28,34 @@ public readonly struct ExtendedDebugInfo(
     [FieldOffset(18)]
     private readonly DebugInfoCommandId _command = command;
 
+    // Lookup for ProcessId(index => string)
+    private static readonly Dictionary<int, Dictionary<ushort, string>> _processStringLookup = [];
+
+    // Lookup for ProcessId(string => Index)
+    private static readonly Dictionary<int, Dictionary<string, ushort>> _processStringReverseLookup = [];
+
+    public unsafe static ExtendedDebugInfo FromByteArray(byte[] data) =>
+        // Ensure the data is the correct size
+        data.Length != sizeof(ExtendedDebugInfo)
+            ? throw new ArgumentException("Data must be the same size as the ExtendedDebugInfo struct.")
+            : Unsafe.As<byte, ExtendedDebugInfo>(ref data[0]);
+
+    public unsafe static (ExtendedDebugInfo debugInfo, string message) FromBase64LeadMessage(string data)
+    {
+        // First 20 bytes are the ExtendedDebugInfo struct, then the message.
+        byte[] buffer = Convert.FromBase64String(data[..20]);
+        ExtendedDebugInfo debugInfo = FromByteArray(buffer);
+        string message = data[20..];
+
+        return (debugInfo, message);
+    }
+
+    public unsafe static ExtendedDebugInfo FromBase64(string data)
+    {
+        byte[] buffer = Convert.FromBase64String(data);
+        return FromByteArray(buffer);
+    }
+
     public readonly unsafe byte[] ToByteArray()
     {
         byte[] result = new byte[sizeof(ExtendedDebugInfo)];
@@ -36,25 +64,50 @@ public readonly struct ExtendedDebugInfo(
         return result;
     }
 
-    public unsafe static ExtendedDebugInfo FromByteArray(byte[] data) =>
-        // Ensure the data is the correct size
-        data.Length != sizeof(ExtendedDebugInfo)
-            ? throw new ArgumentException("Data must be the same size as the ExtendedDebugInfo struct.")
-            : Unsafe.As<byte, ExtendedDebugInfo>(ref data[0]);
-
-    public enum DebugInfoCommandId : ushort
+    public readonly unsafe string ToBase64()
     {
-        Message = 0,
-        MethodNameDefinition = 1,
-        FileNameDefinition = 2,
-        ProcessNameDefinition = 3,
-        CategoryDefinition = 4,
-        SignalStart = 100,
-        SignalReset = 101,
-        SignalStop = 102,
-        SignalPause = 103,
-        SignalResume = 104,
-        SignalTerminate = 105,
-        SignalLapTime = 106,
+        byte[] data = ToByteArray();
+        return Convert.ToBase64String(data);
     }
+
+    public static bool AddOrGetProcessStringIndex(int processId, string value, out ushort stringId)
+    {
+        if (!_processStringReverseLookup.TryGetValue(processId, out Dictionary<string, ushort>? reverseLookup))
+        {
+            reverseLookup = [];
+            Dictionary<ushort, string> lookup = [];
+
+            _processStringReverseLookup.Add(processId, reverseLookup);
+            _processStringLookup.Add(processId, lookup);
+
+            stringId = (ushort)reverseLookup.Count;
+            reverseLookup.Add(value, stringId);
+            lookup.Add(stringId, value);
+
+            return true;
+        }
+
+        if (!reverseLookup.TryGetValue(value, out ushort innerStringId))
+        {
+            Dictionary<ushort, string> lookup = _processStringLookup[processId];
+
+            innerStringId = (ushort)reverseLookup.Count;
+            reverseLookup.Add(value, innerStringId);
+            lookup.Add(innerStringId, value);
+            stringId = innerStringId;
+
+            return true;
+        }
+
+        stringId = innerStringId;
+
+        return false;
+    }
+
+    public static string? GetProcessString(int processId, ushort index) =>
+        _processStringLookup.TryGetValue(processId, out Dictionary<ushort, string>? processStringLookup)
+            ? processStringLookup.TryGetValue(index, out string? value)
+                ? value
+                : null
+            : null;
 }

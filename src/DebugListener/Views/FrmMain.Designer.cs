@@ -1,4 +1,6 @@
-﻿namespace DebugListener
+﻿using DebugListener.Views;
+
+namespace DebugListener
 {
     partial class FrmMain
     {
@@ -30,11 +32,12 @@
         {
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
-            saveLogToolStripMenuItem = new ToolStripMenuItem();
+            _tsmSaveLog = new ToolStripMenuItem();
             toolStripMenuItem1 = new ToolStripSeparator();
-            quitToolStripMenuItem = new ToolStripMenuItem();
+            _tsmQuit = new ToolStripMenuItem();
             viewToolStripMenuItem = new ToolStripMenuItem();
-            clearToolStripMenuItem = new ToolStripMenuItem();
+            _tsmClear = new ToolStripMenuItem();
+            _tsmShowStopWatch = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
             _tslInfo = new ToolStripStatusLabel();
             _tslDateTime = new ToolStripStatusLabel();
@@ -42,6 +45,12 @@
             dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
+            toolStripMenuItem2 = new ToolStripSeparator();
+            onlyShowEntriesWithExtendedInfoDataToolStripMenuItem = new ToolStripMenuItem();
+            showDifferentProcessesInDifferentColorsToolStripMenuItem = new ToolStripMenuItem();
+            leaveSpaceBetweenProcessesToolStripMenuItem = new ToolStripMenuItem();
+            toolsToolStripMenuItem = new ToolStripMenuItem();
+            optionsToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)_logView).BeginInit();
@@ -51,7 +60,7 @@
             // 
             menuStrip1.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
             menuStrip1.ImageScalingSize = new Size(24, 24);
-            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, viewToolStripMenuItem });
+            menuStrip1.Items.AddRange(new ToolStripItem[] { fileToolStripMenuItem, viewToolStripMenuItem, toolsToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
             menuStrip1.Size = new Size(960, 38);
@@ -60,40 +69,47 @@
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { saveLogToolStripMenuItem, toolStripMenuItem1, quitToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { _tsmSaveLog, toolStripMenuItem1, _tsmQuit });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(62, 34);
             fileToolStripMenuItem.Text = "&File";
             // 
-            // saveLogToolStripMenuItem
+            // _tsmSaveLog
             // 
-            saveLogToolStripMenuItem.Name = "saveLogToolStripMenuItem";
-            saveLogToolStripMenuItem.Size = new Size(214, 38);
-            saveLogToolStripMenuItem.Text = "Save log...";
+            _tsmSaveLog.Name = "_tsmSaveLog";
+            _tsmSaveLog.Size = new Size(214, 38);
+            _tsmSaveLog.Text = "Save log...";
             // 
             // toolStripMenuItem1
             // 
             toolStripMenuItem1.Name = "toolStripMenuItem1";
             toolStripMenuItem1.Size = new Size(211, 6);
             // 
-            // quitToolStripMenuItem
+            // _tsmQuit
             // 
-            quitToolStripMenuItem.Name = "quitToolStripMenuItem";
-            quitToolStripMenuItem.Size = new Size(214, 38);
-            quitToolStripMenuItem.Text = "Quit";
+            _tsmQuit.Name = "_tsmQuit";
+            _tsmQuit.Size = new Size(214, 38);
+            _tsmQuit.Text = "Quit";
             // 
             // viewToolStripMenuItem
             // 
-            viewToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { clearToolStripMenuItem });
+            viewToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { _tsmClear, _tsmShowStopWatch, toolStripMenuItem2, onlyShowEntriesWithExtendedInfoDataToolStripMenuItem, showDifferentProcessesInDifferentColorsToolStripMenuItem, leaveSpaceBetweenProcessesToolStripMenuItem });
             viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             viewToolStripMenuItem.Size = new Size(76, 34);
-            viewToolStripMenuItem.Text = "&View";
+            viewToolStripMenuItem.Text = "View";
             // 
-            // clearToolStripMenuItem
+            // _tsmClear
             // 
-            clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            clearToolStripMenuItem.Size = new Size(166, 38);
-            clearToolStripMenuItem.Text = "Clear";
+            _tsmClear.Name = "_tsmClear";
+            _tsmClear.Size = new Size(535, 38);
+            _tsmClear.Text = "Clear";
+            // 
+            // _tsmShowStopWatch
+            // 
+            _tsmShowStopWatch.Name = "_tsmShowStopWatch";
+            _tsmShowStopWatch.Size = new Size(535, 38);
+            _tsmShowStopWatch.Text = "Show Stopwatch";
+            _tsmShowStopWatch.Click += TsmShowStopWatch_Click;
             // 
             // statusStrip1
             // 
@@ -119,7 +135,7 @@
             _tslDateTime.Size = new Size(69, 30);
             _tslDateTime.Text = "#time";
             // 
-            // logView1
+            // _logView
             // 
             _logView.AllowUserToAddRows = false;
             _logView.AllowUserToDeleteRows = false;
@@ -127,7 +143,7 @@
             _logView.Dock = DockStyle.Fill;
             _logView.Location = new Point(0, 38);
             _logView.MultiSelect = false;
-            _logView.Name = "logView1";
+            _logView.Name = "_logView";
             _logView.ReadOnly = true;
             _logView.RowHeadersVisible = false;
             _logView.RowHeadersWidth = 62;
@@ -150,7 +166,7 @@
             dataGridViewTextBoxColumn2.MinimumWidth = 8;
             dataGridViewTextBoxColumn2.Name = "dataGridViewTextBoxColumn2";
             dataGridViewTextBoxColumn2.ReadOnly = true;
-            dataGridViewTextBoxColumn2.Width = 120;
+            dataGridViewTextBoxColumn2.Width = 150;
             // 
             // dataGridViewTextBoxColumn3
             // 
@@ -159,6 +175,42 @@
             dataGridViewTextBoxColumn3.MinimumWidth = 8;
             dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
             dataGridViewTextBoxColumn3.ReadOnly = true;
+            // 
+            // toolStripMenuItem2
+            // 
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new Size(532, 6);
+            // 
+            // onlyShowEntriesWithExtendedInfoDataToolStripMenuItem
+            // 
+            onlyShowEntriesWithExtendedInfoDataToolStripMenuItem.Name = "onlyShowEntriesWithExtendedInfoDataToolStripMenuItem";
+            onlyShowEntriesWithExtendedInfoDataToolStripMenuItem.Size = new Size(535, 38);
+            onlyShowEntriesWithExtendedInfoDataToolStripMenuItem.Text = "Only show entries with extended info data";
+            // 
+            // showDifferentProcessesInDifferentColorsToolStripMenuItem
+            // 
+            showDifferentProcessesInDifferentColorsToolStripMenuItem.Name = "showDifferentProcessesInDifferentColorsToolStripMenuItem";
+            showDifferentProcessesInDifferentColorsToolStripMenuItem.Size = new Size(535, 38);
+            showDifferentProcessesInDifferentColorsToolStripMenuItem.Text = "Show different processes in different colors";
+            // 
+            // leaveSpaceBetweenProcessesToolStripMenuItem
+            // 
+            leaveSpaceBetweenProcessesToolStripMenuItem.Name = "leaveSpaceBetweenProcessesToolStripMenuItem";
+            leaveSpaceBetweenProcessesToolStripMenuItem.Size = new Size(535, 38);
+            leaveSpaceBetweenProcessesToolStripMenuItem.Text = "Leave space between processes changes";
+            // 
+            // toolsToolStripMenuItem
+            // 
+            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { optionsToolStripMenuItem });
+            toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            toolsToolStripMenuItem.Size = new Size(79, 34);
+            toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // optionsToolStripMenuItem
+            // 
+            optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
+            optionsToolStripMenuItem.Size = new Size(270, 38);
+            optionsToolStripMenuItem.Text = "Options";
             // 
             // FrmMain
             // 
@@ -186,11 +238,11 @@
 
         private MenuStrip menuStrip1;
         private ToolStripMenuItem fileToolStripMenuItem;
-        private ToolStripMenuItem saveLogToolStripMenuItem;
+        private ToolStripMenuItem _tsmSaveLog;
         private ToolStripSeparator toolStripMenuItem1;
-        private ToolStripMenuItem quitToolStripMenuItem;
+        private ToolStripMenuItem _tsmQuit;
         private ToolStripMenuItem viewToolStripMenuItem;
-        private ToolStripMenuItem clearToolStripMenuItem;
+        private ToolStripMenuItem _tsmClear;
         private StatusStrip statusStrip1;
         private ToolStripStatusLabel _tslInfo;
         private ToolStripStatusLabel _tslDateTime;
@@ -198,5 +250,12 @@
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn1;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn2;
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
+        private ToolStripMenuItem _tsmShowStopWatch;
+        private ToolStripSeparator toolStripMenuItem2;
+        private ToolStripMenuItem onlyShowEntriesWithExtendedInfoDataToolStripMenuItem;
+        private ToolStripMenuItem showDifferentProcessesInDifferentColorsToolStripMenuItem;
+        private ToolStripMenuItem leaveSpaceBetweenProcessesToolStripMenuItem;
+        private ToolStripMenuItem toolsToolStripMenuItem;
+        private ToolStripMenuItem optionsToolStripMenuItem;
     }
 }

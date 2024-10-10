@@ -75,6 +75,7 @@ public class DebugMessageListener : Component
     private async Task ListenForMessagesAsync()
     {
         DateTime timeStamp;
+        byte[] buffer = new byte[20];
 
         while (true)
         {
@@ -84,9 +85,21 @@ public class DebugMessageListener : Component
 
             // Read the process ID and message
             int processId = accessor.ReadInt32(0);
-            string message = ReadNullTerminatedString(accessor, 4);
-
-            await OnDebugMessageReceivedAsync(new DebugMessageEventArgs(timeStamp, processId, message));
+            int extendedDebugInfo = accessor.ReadUInt16(4);
+            if (extendedDebugInfo == 0x4242)
+            {
+                // Read the extended debug info
+                accessor.ReadArray(0, buffer, 0, 20);
+                string message = ReadNullTerminatedString(accessor, 20);
+                ExtendedDebugInfo debugInfo = ExtendedDebugInfo.FromByteArray(buffer);
+                await OnDebugMessageReceivedAsync(new DebugMessageEventArgs(timeStamp, processId, debugInfo, message));
+            }
+            else
+            {
+                // Read the message
+                string message = ReadNullTerminatedString(accessor, 4);
+                await OnDebugMessageReceivedAsync(new DebugMessageEventArgs(timeStamp, processId, null, message));
+            }
 
             // Signal that the buffer is ready for the next message
             bufferReadyEvent.Set();

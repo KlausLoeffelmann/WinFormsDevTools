@@ -10,7 +10,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms\FormAndControlExtensions\CommunityToolkit.WinForms.Extensions.FormAndControlExtensions.csproj" />
     <ProjectReference Include="..\AsyncSupport\CommunityToolkit.WinForms.AsyncSupport.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
   </ItemGroup>
 
 </Project>

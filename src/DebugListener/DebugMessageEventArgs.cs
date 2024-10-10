@@ -6,9 +6,8 @@
 /// <remarks>
 ///  Initializes a new instance of the <see cref="DebugMessageEventArgs"/> class.
 /// </remarks>
-/// <param name="processId">The process ID of the source of the debug message.</param>
-/// <param name="message">The debug message.</param>
-public class DebugMessageEventArgs(DateTime timeStamp, int processId, string message) : EventArgs
+public class DebugMessageEventArgs(DateTime timeStamp, int processId, ExtendedDebugInfo? debugInfo, string message) 
+    : EventArgs
 {
     /// <summary>
     ///  Gets the process ID of the source of the debug message.
@@ -24,4 +23,6 @@ public class DebugMessageEventArgs(DateTime timeStamp, int processId, string mes
     ///  Get the timestamp of the debug message.
     /// </summary>
     public DateTime Timestamp { get; } = timeStamp;
+
+    public ExtendedDebugInfo? DebugInfo { get; } = debugInfo;
 }

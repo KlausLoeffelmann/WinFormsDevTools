@@ -1,3 +1,4 @@
+using CommunityToolkit.WinForms.ComponentModel;
 using CommunityToolkit.WinForms.Controls;
 using CommunityToolkit.WinForms.Extensions;
 using System.Diagnostics;
@@ -6,7 +7,7 @@ namespace ShadowCacheSpy;
 
 public partial class FrmMain : Form
 {
-    private readonly WinFormsUserSettingsService _settingsService;
+    private readonly IUserSettingsService _settingsService;
     private AppSettings _appSettings;
     private DateTime _lastEventTime;
     private readonly AwaitableCancellationTokenSource _timerLoopCancellation;
@@ -18,8 +19,7 @@ public partial class FrmMain : Form
         InitializeComponent();
         _timerLoopCancellation = new AwaitableCancellationTokenSource();
 
-        _settingsService = new();
-        _settingsService.Load();
+        _settingsService = WinFormsUserSettingsService.CreateAndLoad();
         _appSettings = _settingsService.GetInstance("appSettings", new AppSettings());
 
         _fileSystemWatcher.EnableRaisingEvents = true;
