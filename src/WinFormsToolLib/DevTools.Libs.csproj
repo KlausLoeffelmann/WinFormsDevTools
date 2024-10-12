@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\AsyncSupport\CommunityToolkit.WinForms.AsyncSupport.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Compile Update="CommandBatchForm.cs" />
     <Compile Update="DebugListener\DebugMessageListener.cs">
       <SubType>Component</SubType>

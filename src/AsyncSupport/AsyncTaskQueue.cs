@@ -5,11 +5,12 @@ namespace CommunityToolkit.WinForms.AsyncSupport;
 /// <summary>
 ///  Represents a queue for managing asynchronous tasks.
 /// </summary>
-public class AsyncTaskQueue : IDisposable
+public sealed class AsyncTaskQueue : IDisposable
 {
     private readonly ConcurrentQueue<Func<Task>> _taskQueue = new();
     private readonly SemaphoreSlim _signal = new(0);
     private readonly CancellationTokenSource _cts = new();
+    private readonly SynchronizationContext _syncContext;
     private readonly Task _processingTask;
 
     /// <summary>
@@ -17,6 +18,12 @@ public class AsyncTaskQueue : IDisposable
     /// </summary>
     public AsyncTaskQueue()
     {
+        if (SynchronizationContext.Current is null)
+        {
+            throw new InvalidOperationException("Synchronization context is null.");
+        }
+
+        _syncContext = SynchronizationContext.Current;
         _processingTask = Task.Run(ProcessQueueAsync);
     }
 
@@ -25,25 +32,29 @@ public class AsyncTaskQueue : IDisposable
     /// </summary>
     private async Task ProcessQueueAsync()
     {
-        while (!_cts.Token.IsCancellationRequested)
+        try
         {
-            await _signal.WaitAsync(_cts.Token);
-
-            if (_cts.Token.IsCancellationRequested)
-                break;
-
-            while (_taskQueue.TryDequeue(out var workItem))
+            while (!_cts.Token.IsCancellationRequested)
             {
-                try
+                await _signal.WaitAsync(_cts.Token);
+
+                if (_cts.Token.IsCancellationRequested)
+                    break;
+
+                while (_taskQueue.TryDequeue(out var workItem))
                 {
                     await workItem();
                 }
-                catch (Exception ex)
-                {
-                    // Handle exceptions as needed
-                    Console.WriteLine($"Task error: {ex.Message}");
-                }
             }
+        }
+        catch (Exception ex)
+        {
+            AggregateException aggregateException = new(
+                "Running an async queue caused an exception. See the inner exception for details.",
+                ex);
+
+            // Throw the exception on the thread which created the queue.
+            _syncContext.Post(_ => throw aggregateException, null);
         }
     }
 

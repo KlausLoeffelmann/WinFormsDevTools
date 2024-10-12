@@ -2,6 +2,7 @@
 using System.IO.MemoryMappedFiles;
 using System.Security.AccessControl;
 using System.Security.Principal;
+using static DevTools.Libs.DebugListener.WinFormsPerformanceLogging;
 
 namespace DevTools.Libs.DebugListener;
 

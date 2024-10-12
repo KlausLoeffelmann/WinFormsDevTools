@@ -2,6 +2,7 @@
 using DevTools.Libs.DebugListener;
 using System.ComponentModel;
 using System.Diagnostics;
+using static DevTools.Libs.DebugListener.WinFormsPerformanceLogging;
 
 namespace DebugListener.Views;
 
