@@ -3,11 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32605.63
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WfRuntimeDeploy", "WinFormsDevTools\WfRuntimeDeploy.csproj", "{8309985A-2A90-4401-BCEA-E07322C296D9}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.RuntimeDeploy", "WinFormsDevTools\DevTools.RuntimeDeploy.csproj", "{8309985A-2A90-4401-BCEA-E07322C296D9}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsDevToolsLib", "WinFormsToolLib\WinFormsDevToolsLib.csproj", "{5AB54FA3-18FD-4753-9DA8-AF8817B9CE51}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.Libs", "WinFormsToolLib\DevTools.Libs.csproj", "{5AB54FA3-18FD-4753-9DA8-AF8817B9CE51}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ShadowCacheSpy", "ShadowCacheSpy\ShadowCacheSpy.csproj", "{7E3068E0-C548-48E3-8B80-C675A94878CB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.ShadowCacheSpy", "ShadowCacheSpy\DevTools.ShadowCacheSpy.csproj", "{7E3068E0-C548-48E3-8B80-C675A94878CB}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_solutionItems", "_solutionItems", "{73E229BA-EB52-425B-92BD-A1ECDA114010}"
 	ProjectSection(SolutionItems) = preProject
@@ -28,11 +28,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunityToolkit.WinForms.E
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ModernTabControl", "..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms\ModernTabControl\ModernTabControl.csproj", "{C9A7DF7D-CFA1-4DFE-A8B6-506D244D24E4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DebugListener", "DebugListener\DebugListener.csproj", "{B0FAD5E9-FE3E-4F9D-80F2-765036393F2D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.DebugListener", "DebugListener\DevTools.DebugListener.csproj", "{B0FAD5E9-FE3E-4F9D-80F2-765036393F2D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunityToolkit.WinForms.ComponentModel", "..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms\ComponentModel\CommunityToolkit.WinForms.ComponentModel.csproj", "{AD49B305-354A-4E01-B510-F1D482C6D71A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunityToolkit.WinForms.AsyncSupport", "AsyncSupport\CommunityToolkit.WinForms.AsyncSupport.csproj", "{A3ADC47F-ECAE-4A03-B714-46AA511041CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.Benchmarks", "App.Benchmarks\DevTools.Benchmarks.csproj", "{540A2792-082E-4A45-BBA2-2093C72C4874}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -80,6 +82,10 @@ Global
 		{A3ADC47F-ECAE-4A03-B714-46AA511041CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A3ADC47F-ECAE-4A03-B714-46AA511041CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A3ADC47F-ECAE-4A03-B714-46AA511041CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{540A2792-082E-4A45-BBA2-2093C72C4874}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{540A2792-082E-4A45-BBA2-2093C72C4874}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{540A2792-082E-4A45-BBA2-2093C72C4874}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{540A2792-082E-4A45-BBA2-2093C72C4874}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,6 +101,7 @@ Global
 		{B0FAD5E9-FE3E-4F9D-80F2-765036393F2D} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
 		{AD49B305-354A-4E01-B510-F1D482C6D71A} = {F1F2DAAE-0141-4263-8B0A-2CC97AFBB151}
 		{A3ADC47F-ECAE-4A03-B714-46AA511041CD} = {F1F2DAAE-0141-4263-8B0A-2CC97AFBB151}
+		{540A2792-082E-4A45-BBA2-2093C72C4874} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02BB4031-A5D7-45D0-8234-A9AC91240B69}

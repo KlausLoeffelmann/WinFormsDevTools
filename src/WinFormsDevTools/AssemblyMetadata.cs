@@ -1,4 +1,4 @@
-﻿namespace WfRuntimeDeploy;
+﻿namespace DevTools.RuntimeDeploy;
 
 internal readonly struct AssemblyMetadata
 {

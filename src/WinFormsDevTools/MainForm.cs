@@ -1,9 +1,9 @@
-using static WfRuntimeDeploy.WinFormsGitHubRepoManager;
-using WinFormsDevToolsLib;
+using DevTools.RuntimeDeploy.Views;
 using System.ComponentModel;
-using WfRuntimeDeploy.Views;
+using WinFormsDevToolsLib;
+using static DevTools.RuntimeDeploy.WinFormsGitHubRepoManager;
 
-namespace WfRuntimeDeploy;
+namespace DevTools.RuntimeDeploy;
 
 public partial class MainForm : Form
 {

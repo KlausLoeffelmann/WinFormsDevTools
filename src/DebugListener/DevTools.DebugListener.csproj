@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms\FormAndControlExtensions\CommunityToolkit.WinForms.Extensions.FormAndControlExtensions.csproj" />
     <ProjectReference Include="..\AsyncSupport\CommunityToolkit.WinForms.AsyncSupport.csproj" />
+    <ProjectReference Include="..\WinFormsToolLib\DevTools.Libs.csproj" />
   </ItemGroup>
 
   <ItemGroup>

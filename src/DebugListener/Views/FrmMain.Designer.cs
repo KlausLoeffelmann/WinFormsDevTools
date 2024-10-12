@@ -30,6 +30,7 @@ namespace DebugListener
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             menuStrip1 = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             _tsmSaveLog = new ToolStripMenuItem();
@@ -38,6 +39,13 @@ namespace DebugListener
             viewToolStripMenuItem = new ToolStripMenuItem();
             _tsmClear = new ToolStripMenuItem();
             _tsmShowStopWatch = new ToolStripMenuItem();
+            toolStripMenuItem2 = new ToolStripSeparator();
+            _tsmOnlyShowExtendedInfoData = new ToolStripMenuItem();
+            vmMenuOptionSettingsBindingSource = new BindingSource(components);
+            _tsmShowDifferentProcessColors = new ToolStripMenuItem();
+            _tsmLeaveSpaceBetweenProcesses = new ToolStripMenuItem();
+            toolsToolStripMenuItem = new ToolStripMenuItem();
+            _tsmToolsOptions = new ToolStripMenuItem();
             statusStrip1 = new StatusStrip();
             _tslInfo = new ToolStripStatusLabel();
             _tslDateTime = new ToolStripStatusLabel();
@@ -45,13 +53,8 @@ namespace DebugListener
             dataGridViewTextBoxColumn1 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn2 = new DataGridViewTextBoxColumn();
             dataGridViewTextBoxColumn3 = new DataGridViewTextBoxColumn();
-            toolStripMenuItem2 = new ToolStripSeparator();
-            onlyShowEntriesWithExtendedInfoDataToolStripMenuItem = new ToolStripMenuItem();
-            showDifferentProcessesInDifferentColorsToolStripMenuItem = new ToolStripMenuItem();
-            leaveSpaceBetweenProcessesToolStripMenuItem = new ToolStripMenuItem();
-            toolsToolStripMenuItem = new ToolStripMenuItem();
-            optionsToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)vmMenuOptionSettingsBindingSource).BeginInit();
             statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)_logView).BeginInit();
             SuspendLayout();
@@ -93,7 +96,7 @@ namespace DebugListener
             // 
             // viewToolStripMenuItem
             // 
-            viewToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { _tsmClear, _tsmShowStopWatch, toolStripMenuItem2, onlyShowEntriesWithExtendedInfoDataToolStripMenuItem, showDifferentProcessesInDifferentColorsToolStripMenuItem, leaveSpaceBetweenProcessesToolStripMenuItem });
+            viewToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { _tsmClear, _tsmShowStopWatch, toolStripMenuItem2, _tsmOnlyShowExtendedInfoData, _tsmShowDifferentProcessColors, _tsmLeaveSpaceBetweenProcesses });
             viewToolStripMenuItem.Name = "viewToolStripMenuItem";
             viewToolStripMenuItem.Size = new Size(76, 34);
             viewToolStripMenuItem.Text = "View";
@@ -110,6 +113,47 @@ namespace DebugListener
             _tsmShowStopWatch.Size = new Size(535, 38);
             _tsmShowStopWatch.Text = "Show Stopwatch";
             _tsmShowStopWatch.Click += TsmShowStopWatch_Click;
+            // 
+            // toolStripMenuItem2
+            // 
+            toolStripMenuItem2.Name = "toolStripMenuItem2";
+            toolStripMenuItem2.Size = new Size(532, 6);
+            // 
+            // _tsmOnlyShowExtendedInfoData
+            // 
+            _tsmOnlyShowExtendedInfoData.DataBindings.Add(new Binding("Checked", vmMenuOptionSettingsBindingSource, "OnlyShowExtendedDebugInfo", true));
+            _tsmOnlyShowExtendedInfoData.Name = "_tsmOnlyShowExtendedInfoData";
+            _tsmOnlyShowExtendedInfoData.Size = new Size(535, 38);
+            _tsmOnlyShowExtendedInfoData.Text = "Only show entries with extended info data";
+            // 
+            // vmMenuOptionSettingsBindingSource
+            // 
+            vmMenuOptionSettingsBindingSource.DataSource = typeof(ViewModels.VmMenuOptionSettings);
+            // 
+            // _tsmShowDifferentProcessColors
+            // 
+            _tsmShowDifferentProcessColors.Name = "_tsmShowDifferentProcessColors";
+            _tsmShowDifferentProcessColors.Size = new Size(535, 38);
+            _tsmShowDifferentProcessColors.Text = "Show different processes in different colors";
+            // 
+            // _tsmLeaveSpaceBetweenProcesses
+            // 
+            _tsmLeaveSpaceBetweenProcesses.Name = "_tsmLeaveSpaceBetweenProcesses";
+            _tsmLeaveSpaceBetweenProcesses.Size = new Size(535, 38);
+            _tsmLeaveSpaceBetweenProcesses.Text = "Leave space between processes changes";
+            // 
+            // toolsToolStripMenuItem
+            // 
+            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { _tsmToolsOptions });
+            toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
+            toolsToolStripMenuItem.Size = new Size(79, 34);
+            toolsToolStripMenuItem.Text = "Tools";
+            // 
+            // _tsmToolsOptions
+            // 
+            _tsmToolsOptions.Name = "_tsmToolsOptions";
+            _tsmToolsOptions.Size = new Size(192, 38);
+            _tsmToolsOptions.Text = "Options";
             // 
             // statusStrip1
             // 
@@ -176,42 +220,6 @@ namespace DebugListener
             dataGridViewTextBoxColumn3.Name = "dataGridViewTextBoxColumn3";
             dataGridViewTextBoxColumn3.ReadOnly = true;
             // 
-            // toolStripMenuItem2
-            // 
-            toolStripMenuItem2.Name = "toolStripMenuItem2";
-            toolStripMenuItem2.Size = new Size(532, 6);
-            // 
-            // onlyShowEntriesWithExtendedInfoDataToolStripMenuItem
-            // 
-            onlyShowEntriesWithExtendedInfoDataToolStripMenuItem.Name = "onlyShowEntriesWithExtendedInfoDataToolStripMenuItem";
-            onlyShowEntriesWithExtendedInfoDataToolStripMenuItem.Size = new Size(535, 38);
-            onlyShowEntriesWithExtendedInfoDataToolStripMenuItem.Text = "Only show entries with extended info data";
-            // 
-            // showDifferentProcessesInDifferentColorsToolStripMenuItem
-            // 
-            showDifferentProcessesInDifferentColorsToolStripMenuItem.Name = "showDifferentProcessesInDifferentColorsToolStripMenuItem";
-            showDifferentProcessesInDifferentColorsToolStripMenuItem.Size = new Size(535, 38);
-            showDifferentProcessesInDifferentColorsToolStripMenuItem.Text = "Show different processes in different colors";
-            // 
-            // leaveSpaceBetweenProcessesToolStripMenuItem
-            // 
-            leaveSpaceBetweenProcessesToolStripMenuItem.Name = "leaveSpaceBetweenProcessesToolStripMenuItem";
-            leaveSpaceBetweenProcessesToolStripMenuItem.Size = new Size(535, 38);
-            leaveSpaceBetweenProcessesToolStripMenuItem.Text = "Leave space between processes changes";
-            // 
-            // toolsToolStripMenuItem
-            // 
-            toolsToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { optionsToolStripMenuItem });
-            toolsToolStripMenuItem.Name = "toolsToolStripMenuItem";
-            toolsToolStripMenuItem.Size = new Size(79, 34);
-            toolsToolStripMenuItem.Text = "Tools";
-            // 
-            // optionsToolStripMenuItem
-            // 
-            optionsToolStripMenuItem.Name = "optionsToolStripMenuItem";
-            optionsToolStripMenuItem.Size = new Size(270, 38);
-            optionsToolStripMenuItem.Text = "Options";
-            // 
             // FrmMain
             // 
             AutoScaleDimensions = new SizeF(12F, 30F);
@@ -227,6 +235,7 @@ namespace DebugListener
             Text = "WinForms Debug Listener";
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)vmMenuOptionSettingsBindingSource).EndInit();
             statusStrip1.ResumeLayout(false);
             statusStrip1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)_logView).EndInit();
@@ -252,10 +261,11 @@ namespace DebugListener
         private DataGridViewTextBoxColumn dataGridViewTextBoxColumn3;
         private ToolStripMenuItem _tsmShowStopWatch;
         private ToolStripSeparator toolStripMenuItem2;
-        private ToolStripMenuItem onlyShowEntriesWithExtendedInfoDataToolStripMenuItem;
-        private ToolStripMenuItem showDifferentProcessesInDifferentColorsToolStripMenuItem;
-        private ToolStripMenuItem leaveSpaceBetweenProcessesToolStripMenuItem;
+        private ToolStripMenuItem _tsmOnlyShowExtendedInfoData;
+        private ToolStripMenuItem _tsmShowDifferentProcessColors;
+        private ToolStripMenuItem _tsmLeaveSpaceBetweenProcesses;
         private ToolStripMenuItem toolsToolStripMenuItem;
-        private ToolStripMenuItem optionsToolStripMenuItem;
+        private ToolStripMenuItem _tsmToolsOptions;
+        private BindingSource vmMenuOptionSettingsBindingSource;
     }
 }

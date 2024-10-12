@@ -2,13 +2,16 @@
 
   <PropertyGroup>
     <TargetFramework>net9.0-windows</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Update="CommandBatchForm.cs" />
+    <PackageReference Include="BenchmarkDotNet" Version="0.14.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\WinFormsToolLib\DevTools.Libs.csproj" />
   </ItemGroup>
 
 </Project>

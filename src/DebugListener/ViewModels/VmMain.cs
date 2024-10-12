@@ -2,13 +2,13 @@
 
 namespace DebugListener.ViewModels;
 
-internal partial class VmMain : ObservableObject
+public partial class VmMain : ObservableObject
 {
     [ObservableProperty]
     private VmMenuOptionSettings _menuOptions = new();
 }
 
-internal partial class VmMenuOptionSettings : ObservableObject
+public partial class VmMenuOptionSettings : ObservableObject
 {
     [ObservableProperty]
     private bool _onlyShowExtendedDebugInfo;

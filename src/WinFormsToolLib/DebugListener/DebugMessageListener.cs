@@ -3,7 +3,7 @@ using System.IO.MemoryMappedFiles;
 using System.Security.AccessControl;
 using System.Security.Principal;
 
-namespace DebugListener;
+namespace DevTools.Libs.DebugListener;
 
 /// <summary>
 ///  Listens for debug messages from a shared memory buffer.

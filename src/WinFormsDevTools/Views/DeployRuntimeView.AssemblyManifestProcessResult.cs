@@ -1,4 +1,4 @@
-﻿namespace WfRuntimeDeploy.Views;
+﻿namespace DevTools.RuntimeDeploy.Views;
 
 public partial class DeployRuntimeView
 {

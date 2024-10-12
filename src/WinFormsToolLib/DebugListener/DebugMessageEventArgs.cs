@@ -1,4 +1,4 @@
-﻿namespace DebugListener;
+﻿namespace DevTools.Libs.DebugListener;
 
 /// <summary>
 ///  Provides data for the <see cref="DebugMessageListener.DebugMessageReceivedAsync"/> event.

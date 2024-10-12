@@ -1,21 +1,20 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 
-namespace WfRuntimeDeploy
+namespace DevTools.RuntimeDeploy;
+
+internal partial class WinFormsGitHubRepoManager
 {
-    internal partial class WinFormsGitHubRepoManager
+    internal class TargetFrameworkTargetItem
     {
-        internal class TargetFrameworkTargetItem
-        {
-            [AllowNull]
-            public string Name { get; set; }
+        [AllowNull]
+        public string Name { get; set; }
 
-            [AllowNull]
-            public string PathFullName { get; set; }
+        [AllowNull]
+        public string PathFullName { get; set; }
 
-            [AllowNull]
-            public DirectoryInfo Directory { get; set; }
+        [AllowNull]
+        public DirectoryInfo Directory { get; set; }
 
-            public override string ToString() => Name;
-        }
+        public override string ToString() => Name;
     }
 }

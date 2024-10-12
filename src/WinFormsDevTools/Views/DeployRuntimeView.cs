@@ -3,9 +3,10 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Xml.Linq;
 using WinFormsDevToolsLib;
-using static WfRuntimeDeploy.WinFormsGitHubRepoManager;
+using static DevTools.RuntimeDeploy.WinFormsGitHubRepoManager;
+using static WfRuntimeDeployDevTools.RuntimeDeploy.WinFormsGitHubRepoManager;
 
-namespace WfRuntimeDeploy.Views;
+namespace DevTools.RuntimeDeploy.Views;
 
 public partial class DeployRuntimeView : UserControl
 {

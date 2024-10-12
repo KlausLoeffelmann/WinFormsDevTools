@@ -1,4 +1,4 @@
-﻿namespace DebugListener;
+﻿namespace DevTools.Libs.DebugListener;
 
 public readonly partial struct ExtendedDebugInfo
 {
