@@ -14,6 +14,13 @@ public partial class MainForm : Form
     {
         InitializeComponent();
 
+        _overView = new OverView();
+        _deployRuntimeView = new DeployRuntimeView();
+
+        _tabControl.AddTab("Overview", _overView);
+        _tabControl.AddTab("Deploy Runtime", _deployRuntimeView);
+        _tabControl.TabChanged += TabControl_TabChanged;
+
         SdkFolders = FrameworkInfo.GetDotNetDesktopSdk(false);
 
         if (SdkFolders is null)
@@ -30,13 +37,6 @@ public partial class MainForm : Form
                 Directory = item
             })
             .ToArray();
-
-        _overView = new OverView();
-        _deployRuntimeView = new DeployRuntimeView();
-
-        _tabControl.AddTab("Overview", _overView);
-        _tabControl.AddTab("Deploy Runtime", _deployRuntimeView);
-        _tabControl.TabChanged += TabControl_TabChanged;
     }
 
     private void TabControl_TabChanged(object? sender, EventArgs e)

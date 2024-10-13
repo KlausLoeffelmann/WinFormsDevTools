@@ -8,20 +8,109 @@ using System.Runtime.CompilerServices;
 
 namespace DevTools.Libs.DebugListener;
 
-public partial class WinFormsPerformanceLogging
+public partial class WinFormsPerformanceLogging() : IDisposable
 {
     private readonly Stopwatch _stopwatch = Stopwatch.StartNew();
-    private readonly AsyncTaskQueue? _taskQueue = new();
+    private readonly AsyncTaskQueue _asyncTaskQueue = new();
 
-    [Conditional("DEBUG")]
-    public void DPrint(
+    private static WinFormsPerformanceLogging? s_instance;
+    private bool _disposedValue;
+
+    /// <summary>
+    ///  Gets the instance of <see cref="WinFormsPerformanceLogging"/>.
+    /// </summary>
+    /// <param name="serviceProvider">The service provider.</param>
+    /// <returns>The instance of <see cref="WinFormsPerformanceLogging"/>.</returns>
+    public static WinFormsPerformanceLogging? GetInstance()
+    {
+        if (s_instance is not null)
+        {
+            ((IDisposable)s_instance).Dispose();
+            s_instance = null;
+        }
+
+        return s_instance ??= new WinFormsPerformanceLogging();
+    }
+
+    /// <summary>
+    ///  Gets the singleton instance of <see cref="WinFormsPerformanceLogging"/>.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">Thrown when the instance has not been initialized.</exception>
+    public static WinFormsPerformanceLogging Instance
+        => s_instance
+            ?? throw new InvalidOperationException(
+                "The WinFormsPerformanceLogging instance has not been initialized.");
+
+    /// <summary>
+    ///  Prints a trace message.
+    /// </summary>
+    /// <param name="message">The message to print.</param>
+    /// <param name="category">The category of the message.</param>
+    /// <param name="memberName">The name of the member calling this method.</param>
+    /// <param name="filePath">The file path of the source code.</param>
+    /// <param name="lineNumber">The line number in the source code.</param>
+    public static void TPrint(
         string message,
         string? category = null,
         [CallerMemberName] string? memberName = default,
         [CallerFilePath] string? filePath = default,
         [CallerLineNumber] int lineNumber = -1)
     {
-        TimeSpan elapsedMilliseconds = _stopwatch.Elapsed;
+        DateTime timestamp = DateTime.Now;
+        WinFormsPerformanceLogging? instance = Instance;
+        int threadId = Environment.CurrentManagedThreadId;
+
+        Instance._asyncTaskQueue.Enqueue(
+            () => Instance.DPrintAsync(
+                timestamp,
+                threadId,
+                message,
+                category,
+                memberName,
+                filePath,
+                lineNumber));
+    }
+
+    /// <summary>
+    ///  Prints a debug message.
+    /// </summary>
+    /// <param name="message">The message to print.</param>
+    /// <param name="category">The category of the message.</param>
+    /// <param name="memberName">The name of the member calling this method.</param>
+    /// <param name="filePath">The file path of the source code.</param>
+    /// <param name="lineNumber">The line number in the source code.</param>
+    [Conditional("DEBUG")]
+    public static void DPrint(
+        string message,
+        string? category = null,
+        [CallerMemberName] string? memberName = default,
+        [CallerFilePath] string? filePath = default,
+        [CallerLineNumber] int lineNumber = -1)
+    {
+        DateTime timestamp = DateTime.Now;
+        WinFormsPerformanceLogging? instance = Instance;
+        int threadId = Environment.CurrentManagedThreadId;
+
+        Instance._asyncTaskQueue.Enqueue(
+            () => Instance.DPrintAsync(
+                timestamp,
+                threadId,
+                message,
+                category,
+                memberName,
+                filePath,
+                lineNumber));
+    }
+
+    private Task DPrintAsync(
+        DateTime timeStamp,
+        int threadId,
+        string message,
+        string? category = null,
+        [CallerMemberName] string? memberName = default,
+        [CallerFilePath] string? filePath = default,
+        [CallerLineNumber] int lineNumber = -1)
+    {
         int processId = Process.GetCurrentProcess().Id;
 
         ushort categoryStringId = 0;
@@ -38,7 +127,7 @@ public partial class WinFormsPerformanceLogging
                 stringId: out ushort stringId))
             {
                 debugInfo = new(
-                    timestamp: elapsedMilliseconds,
+                    timestamp: timeStamp,
                     processId: (ushort)processId,
                     categoryId: stringId,
                     command: ExtendedDebugInfo.DebugInfoCommandId.CategoryDefinition);
@@ -53,7 +142,7 @@ public partial class WinFormsPerformanceLogging
             if (ExtendedDebugInfo.AddOrGetProcessStringIndex(processId, memberName!, out ushort stringId))
             {
                 debugInfo = new(
-                    timestamp: elapsedMilliseconds,
+                    timestamp: timeStamp,
                     processId: (ushort)processId,
                     methodId: stringId,
                     command: ExtendedDebugInfo.DebugInfoCommandId.MethodNameDefinition);
@@ -71,7 +160,7 @@ public partial class WinFormsPerformanceLogging
             if (ExtendedDebugInfo.AddOrGetProcessStringIndex(processId, filePath!, out ushort stringId))
             {
                 debugInfo = new(
-                    timestamp: elapsedMilliseconds,
+                    timestamp: timeStamp,
                     processId: (ushort)processId,
                     filenameId: stringId,
                     command: ExtendedDebugInfo.DebugInfoCommandId.FileNameDefinition);
@@ -82,7 +171,7 @@ public partial class WinFormsPerformanceLogging
         }
 
         debugInfo = new(
-            timestamp: elapsedMilliseconds,
+            timestamp: timeStamp,
             processId: (ushort)processId,
             threadId: (ushort)Thread.CurrentThread.ManagedThreadId,
             methodId: memberNameStringId,
@@ -91,5 +180,26 @@ public partial class WinFormsPerformanceLogging
             command: ExtendedDebugInfo.DebugInfoCommandId.Message);
 
         Debug.Print($"{debugInfo.ToBase64()}{message}");
+        return Task.CompletedTask;
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        if (!_disposedValue)
+        {
+            if (disposing)
+            {
+                _asyncTaskQueue.Dispose();
+            }
+
+            _disposedValue = true;
+        }
+    }
+
+    void IDisposable.Dispose()
+    {
+        // Do not change this code. Put cleanup code in 'Dispose(bool disposing)' method
+        Dispose(disposing: true);
+        GC.SuppressFinalize(this);
     }
 }

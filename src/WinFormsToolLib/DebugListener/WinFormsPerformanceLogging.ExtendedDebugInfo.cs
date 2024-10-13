@@ -15,19 +15,20 @@ public partial class WinFormsPerformanceLogging
     /// </summary>
     [StructLayout(LayoutKind.Explicit)]
     public readonly partial struct ExtendedDebugInfo(
-        TimeSpan timestamp,
+        DateTime timestamp,
         ushort processId,
         ushort threadId = default,
         ushort methodId = default,
+        ushort lineNo = default,
         ushort filenameId = default,
         ushort categoryId = default,
-        DebugInfoCommandId command = default)
+        ExtendedDebugInfo.DebugInfoCommandId command = default)
     {
         [FieldOffset(0)]
         private readonly ushort _leadIn = 0x4242;
 
         [FieldOffset(2)]
-        private readonly TimeSpan _timeStamp = timestamp;
+        private readonly DateTime _timeStamp = timestamp;
 
         [FieldOffset(10)]
         private readonly ushort _threadId = threadId;
@@ -36,21 +37,24 @@ public partial class WinFormsPerformanceLogging
         private readonly ushort _methodId = methodId;
 
         [FieldOffset(14)]
-        private readonly ushort _filenameId = filenameId;
+        private readonly ushort _lineNo = lineNo;
 
         [FieldOffset(16)]
-        private readonly ushort _categoryId = categoryId;
+        private readonly ushort _filenameId = filenameId;
 
         [FieldOffset(18)]
-        private readonly DebugInfoCommandId _command = command;
+        private readonly ushort _categoryId = categoryId;
 
         [FieldOffset(20)]
+        private readonly DebugInfoCommandId _command = command;
+
+        [FieldOffset(22)]
         private readonly ushort _processId = processId;
 
         /// <summary>
         ///  Gets the timestamp.
         /// </summary>
-        public readonly TimeSpan Timestamp => _timeStamp;
+        public readonly DateTime Timestamp => _timeStamp;
 
         /// <summary>
         ///  Gets the process ID.
@@ -60,12 +64,17 @@ public partial class WinFormsPerformanceLogging
         /// <summary>
         ///  Gets the thread ID.
         /// </summary>
-        public readonly string ThreadId => _processStringLookup[_processId][_threadId];
+        public readonly int ThreadId => _threadId;
 
         /// <summary>
         ///  Gets the method name.
         /// </summary>
         public readonly string Method => _processStringLookup[_processId][_methodId];
+
+        /// <summary>
+        ///  Gets the Lino No.
+        /// </summary>
+        public readonly int LineNo => _lineNo;
 
         /// <summary>
         ///  Gets the filename.
@@ -106,10 +115,10 @@ public partial class WinFormsPerformanceLogging
         /// <returns>The instance of ExtendedDebugInfo and the message.</returns>
         public unsafe static (ExtendedDebugInfo debugInfo, string message) FromBase64LeadMessage(string data)
         {
-            // First 20 bytes are the ExtendedDebugInfo struct, then the message.
-            byte[] buffer = Convert.FromBase64String(data[..20]);
+            // First 22 bytes are the ExtendedDebugInfo struct, then the message.
+            byte[] buffer = Convert.FromBase64String(data[..(sizeof(ExtendedDebugInfo) - 2)]);
             ExtendedDebugInfo debugInfo = FromByteArray(buffer);
-            string message = data[20..];
+            string message = data[(sizeof(ExtendedDebugInfo) - 2)..];
 
             return (debugInfo, message);
         }

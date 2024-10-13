@@ -6,7 +6,7 @@ using static DevTools.Libs.DebugListener.WinFormsPerformanceLogging;
 
 namespace DebugListener.Views;
 
-public class LogView : DataGridView
+public partial class LogView : DataGridView
 {
     private const int MaxRows = 10000;
     private readonly BindingList<LogEntry> _logEntries;
@@ -16,6 +16,7 @@ public class LogView : DataGridView
     private readonly Dictionary<int, Color> _processColors = [];
     private int _colorProcessIndex = 0;
     private int _lastProcessId = 0;
+    private DateTime _lastTimestamp;
 
     public LogView()
     {
@@ -73,17 +74,21 @@ public class LogView : DataGridView
         Columns!.Add("Timestamp", "Timestamp");
         Columns.Add("Duration", "Duration");
         Columns.Add("ProcessId", "Process ID");
-        Columns.Add("CodeFile", "CodeFile");
+        Columns.Add("ThreadId", "Thread ID");
+        Columns.Add("Method", "Method");
         Columns.Add("LineNo", "Line No");
         Columns.Add("Message", "Message");
+        Columns.Add("CodeFile", "CodeFile");
 
         // Adjust column widths
         Columns["Timestamp"]!.Width = 170;
         Columns["Duration"]!.Width = 150;
         Columns["ProcessId"]!.Width = 150;
-        Columns["CodeFile"]!.Width = 200;
+        Columns["ThreadId"]!.Width = 150;
+        Columns["Method"]!.Width = 250;
         Columns["LineNo"]!.Width = 140;
         Columns["Message"]!.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
+        Columns["CodeFile"]!.Width = 200;
     }
 
     private void LogView_CellValueNeeded(object? sender, DataGridViewCellValueEventArgs e)
@@ -91,47 +96,109 @@ public class LogView : DataGridView
         if (e.RowIndex >= 0 && e.RowIndex < _logEntries.Count)
         {
             LogEntry logEntry = _logEntries[e.RowIndex];
-            if (logEntry.debugInfo is null)
+            if (logEntry.DebugInfo is ExtendedDebugInfo debugInfo)
             {
-                if (OnlyShowExtendedDebugInfo)
-                {
-                    return;
-                }
+                logEntry.Timestamp = debugInfo.Timestamp;
 
+            }
+
+            TimeSpan duration = logEntry.Timestamp - _lastTimestamp;
+            logEntry.Duration = duration;
+
+            if (OnlyShowExtendedDebugInfo)
+            {
                 switch (e.ColumnIndex)
                 {
                     case 0:
-                        e.Value = $"[{logEntry.debugInfo.Value:HH:mm:ss-fff}]";
+                        e.Value = $"[{logEntry.Timestamp:HH:mm:ss-fff}]";
                         break;
 
                     case 1:
-                        e.Value = $"[{logEntry.Timestamp:HH:mm:ss-fff}]";
+                        e.Value = $"[{logEntry.Duration:HH\\:mm\\:ss\\-fff}]";
                         break;
 
                     case 2:
                         e.Value = $"[{logEntry.ProcessId:00000}]";
-                        if (ColorProcesses && _lastProcessId != logEntry.ProcessId)
-                        {
-                            _lastProcessId = logEntry.ProcessId;
-                            if (_processColors.TryGetValue(logEntry.ProcessId, out var color))
-                            {
-                                Rows[e.RowIndex].Tag = color;
-                            }
-                            else
-                            {
-                                Rows[e.RowIndex].Tag = _processForeColors[_colorProcessIndex++ % _processForeColors.Count];
-                            }
-                        }
+                        SetProcessRowColor(e, logEntry);
                         break;
 
-                    case 3:
+                    case 6:
                         e.Value = logEntry.Message;
                         break;
+
+                    default:
+                        e.Value = $"- - -";
+                        break;
+                }
+
+                _lastTimestamp = logEntry.Timestamp;
+
+                return;
+            }
+
+            if (logEntry.DebugInfo is null)
+            {
+                return;
+            }
+
+            switch (e.ColumnIndex)
+            {
+                case 0:
+                    e.Value = $"[{logEntry.Timestamp:HH:mm:ss-fff}]";
+                    break;
+
+                case 1:
+                    e.Value = $"[{logEntry.Duration:HH\\:mm\\:ss\\-fff}]";
+                    break;
+
+                case 2:
+                    e.Value = $"[{logEntry.ProcessId:00000}]";
+                    SetProcessRowColor(e, logEntry);
+                    break;
+
+                case 3:
+                    e.Value = $"[{logEntry.DebugInfo.Value.ThreadId:00000}]";
+                    break;
+
+                case 4:
+                    e.Value = $"[{logEntry.DebugInfo.Value.Method}]";
+                    break;
+
+                case 5:
+                    e.Value = $"[{logEntry.DebugInfo.Value.LineNo:00000}]";
+                    break;
+
+                case 6:
+                    e.Value = logEntry.Message;
+                    break;
+
+                case 7:
+                    e.Value = logEntry.DebugInfo.Value.Filename;
+                    break;
+
+                case 8:
+                    e.Value = logEntry.DebugInfo.Value.Category;
+                    break;
+            }
+
+            _lastTimestamp = logEntry.Timestamp;
+        }
+
+        void SetProcessRowColor(DataGridViewCellValueEventArgs e, LogEntry logEntry)
+        {
+            if (ColorProcesses && _lastProcessId != logEntry.ProcessId)
+            {
+                _lastProcessId = logEntry.ProcessId;
+                if (_processColors.TryGetValue(logEntry.ProcessId, out var color))
+                {
+                    Rows[e.RowIndex].Tag = color;
+                }
+                else
+                {
+                    Rows[e.RowIndex].Tag = _processForeColors[_colorProcessIndex++ % _processForeColors.Count];
                 }
             }
         }
-
-        Debug.Print("CellValue needed!");
     }
 
     //private void LogView_RowPrePaint(object? sender, DataGridViewRowPrePaintEventArgs e)
@@ -187,8 +254,6 @@ public class LogView : DataGridView
             RowCount = 0;
         }
     }
-
-    private record LogEntry(DateTime Timestamp, int ProcessId, string? Message, ExtendedDebugInfo? debugInfo);
 
     private static List<Color> GetGoodContrastDarkModeForeColors()
     {

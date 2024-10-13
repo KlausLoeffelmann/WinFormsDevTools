@@ -6,3 +6,5 @@
 using System.Diagnostics.CodeAnalysis;
 
 [assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:DevTools.Benchmarks.DebugInfoTestClass.TestExtendedDebugInfo")]
+[assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:DevTools.Benchmarks.DebugInfoTestClass.BenchmarkSimpleDebugMessage")]
+[assembly: SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<Pending>", Scope = "member", Target = "~M:DevTools.Benchmarks.DebugInfoTestClass.BenchmarkSimpleDebugMessageWithCategory")]
