@@ -28,6 +28,11 @@ public partial class FrmMain : Form
         await _logView.StartListeningAsync();
     }
 
+    private void _tsmClear_Click(object sender, EventArgs e)
+    {
+        _logView.Clear();
+    }
+
     private void TsmShowStopWatch_Click(object sender, EventArgs e)
     {
         FrmStopwatch frmStopwatch = new();

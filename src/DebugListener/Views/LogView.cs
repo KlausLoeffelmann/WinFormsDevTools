@@ -1,7 +1,6 @@
 ﻿using CommunityToolkit.WinForms.AsyncSupport;
 using DevTools.Libs.DebugListener;
 using System.ComponentModel;
-using System.Diagnostics;
 using static DevTools.Libs.DebugListener.WinFormsPerformanceLogging;
 
 namespace DebugListener.Views;
@@ -82,7 +81,7 @@ public partial class LogView : DataGridView
 
         // Adjust column widths
         Columns["Timestamp"]!.Width = 170;
-        Columns["Duration"]!.Width = 150;
+        Columns["Duration"]!.Width = 160;
         Columns["ProcessId"]!.Width = 150;
         Columns["ThreadId"]!.Width = 150;
         Columns["Method"]!.Width = 250;
@@ -114,7 +113,7 @@ public partial class LogView : DataGridView
                         break;
 
                     case 1:
-                        e.Value = $"[{logEntry.Duration:HH\\:mm\\:ss\\-fff}]";
+                        e.Value = $"[{logEntry.Duration:hh\\:mm\\:ss\\-fff}]";
                         break;
 
                     case 2:
@@ -218,6 +217,12 @@ public partial class LogView : DataGridView
 
     //    Debug.Print("Row pre-paint!");
     //}
+
+    internal void Clear()
+    {
+        _logEntries.Clear();
+        RowCount = 0;
+    }
 
     public async Task AddLogEntryAsync(DateTime timestamp, int processId, string message, ExtendedDebugInfo? debugInfo)
     {

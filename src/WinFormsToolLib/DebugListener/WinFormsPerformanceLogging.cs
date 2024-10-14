@@ -37,9 +37,7 @@ public partial class WinFormsPerformanceLogging() : IDisposable
     /// </summary>
     /// <exception cref="InvalidOperationException">Thrown when the instance has not been initialized.</exception>
     public static WinFormsPerformanceLogging Instance
-        => s_instance
-            ?? throw new InvalidOperationException(
-                "The WinFormsPerformanceLogging instance has not been initialized.");
+        => s_instance ??= GetInstance()!;
 
     /// <summary>
     ///  Prints a trace message.
@@ -57,7 +55,6 @@ public partial class WinFormsPerformanceLogging() : IDisposable
         [CallerLineNumber] int lineNumber = -1)
     {
         DateTime timestamp = DateTime.Now;
-        WinFormsPerformanceLogging? instance = Instance;
         int threadId = Environment.CurrentManagedThreadId;
 
         Instance._asyncTaskQueue.Enqueue(
@@ -88,7 +85,6 @@ public partial class WinFormsPerformanceLogging() : IDisposable
         [CallerLineNumber] int lineNumber = -1)
     {
         DateTime timestamp = DateTime.Now;
-        WinFormsPerformanceLogging? instance = Instance;
         int threadId = Environment.CurrentManagedThreadId;
 
         Instance._asyncTaskQueue.Enqueue(

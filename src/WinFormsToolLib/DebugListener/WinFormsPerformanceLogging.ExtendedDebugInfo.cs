@@ -4,12 +4,15 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Text;
 using static DevTools.Libs.DebugListener.WinFormsPerformanceLogging.ExtendedDebugInfo;
 
 namespace DevTools.Libs.DebugListener;
 
 public partial class WinFormsPerformanceLogging
 {
+    private static readonly string s_leadIn = Encoding.UTF8.GetString([0x42, 0x42]);
+
     /// <summary>
     ///  Represents extended debug information.
     /// </summary>
@@ -104,7 +107,7 @@ public partial class WinFormsPerformanceLogging
         /// <returns>The instance of ExtendedDebugInfo.</returns>
         public unsafe static ExtendedDebugInfo FromByteArray(byte[] data) =>
             // Ensure the data is the correct size
-            data.Length != sizeof(ExtendedDebugInfo) - 2
+            data.Length != sizeof(ExtendedDebugInfo)
                 ? throw new ArgumentException("Data must be the same size as the ExtendedDebugInfo struct.")
                 : Unsafe.As<byte, ExtendedDebugInfo>(ref data[0]);
 
@@ -115,10 +118,11 @@ public partial class WinFormsPerformanceLogging
         /// <returns>The instance of ExtendedDebugInfo and the message.</returns>
         public unsafe static (ExtendedDebugInfo debugInfo, string message) FromBase64LeadMessage(string data)
         {
-            // First 22 bytes are the ExtendedDebugInfo struct, then the message.
-            byte[] buffer = Convert.FromBase64String(data[..(sizeof(ExtendedDebugInfo) - 2)]);
+            // First 34 bytes are the ExtendedDebugInfo struct, then the message.
+            string dataString = data[2..34];
+            byte[] buffer = Convert.FromBase64String(dataString);
             ExtendedDebugInfo debugInfo = FromByteArray(buffer);
-            string message = data[(sizeof(ExtendedDebugInfo) - 2)..];
+            string message = data[34..];
 
             return (debugInfo, message);
         }
@@ -147,13 +151,13 @@ public partial class WinFormsPerformanceLogging
         }
 
         /// <summary>
-        ///  Converts the instance of ExtendedDebugInfo to a base64 string.
+        ///  Converts the instance of ExtendedDebugInfo to a base64 string, but doesn't code the 4242-lead-in.
         /// </summary>
         /// <returns>The base64 string.</returns>
         public readonly unsafe string ToBase64()
         {
             byte[] data = ToByteArray();
-            return Convert.ToBase64String(data);
+            return s_leadIn + Convert.ToBase64String(data, 2, sizeof(ExtendedDebugInfo) - 2);
         }
 
         /// <summary>

@@ -8,23 +8,32 @@ namespace CommunityToolkit.WinForms.AsyncSupport;
 public sealed class AsyncTaskQueue : IDisposable
 {
     private readonly ConcurrentQueue<Func<Task>> _taskQueue = new();
-    private readonly SemaphoreSlim _signal = new(0);
+    private readonly SemaphoreSlim _enqueueSignal = new(0);
+    private readonly SemaphoreSlim _availableSlots;
+    private readonly ManualResetEventSlim _taskStartedEvent;
     private readonly CancellationTokenSource _cts = new();
     private readonly SynchronizationContext _syncContext;
     private readonly Task _processingTask;
+    private readonly TaskCompletionSource _completionSource = new();
+    private int _maxQueuedItems;
 
     /// <summary>
     ///  Initializes a new instance of the <see cref="AsyncTaskQueue"/> class.
     /// </summary>
-    public AsyncTaskQueue()
+    public AsyncTaskQueue(int maxQueuedItems = 10000)
     {
         if (SynchronizationContext.Current is null)
         {
-            throw new InvalidOperationException("Synchronization context is null.");
+            SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
         }
 
-        _syncContext = SynchronizationContext.Current;
+        _syncContext = SynchronizationContext.Current!;
+        _maxQueuedItems = maxQueuedItems;
+        _availableSlots = new SemaphoreSlim(maxQueuedItems);
+
+        _taskStartedEvent = new ManualResetEventSlim(false);
         _processingTask = Task.Run(ProcessQueueAsync);
+        _taskStartedEvent.Wait();
     }
 
     /// <summary>
@@ -32,11 +41,13 @@ public sealed class AsyncTaskQueue : IDisposable
     /// </summary>
     private async Task ProcessQueueAsync()
     {
+        _taskStartedEvent.Set();
+
         try
         {
             while (!_cts.Token.IsCancellationRequested)
             {
-                await _signal.WaitAsync(_cts.Token);
+                await _enqueueSignal.WaitAsync(_cts.Token);
 
                 if (_cts.Token.IsCancellationRequested)
                     break;
@@ -44,6 +55,12 @@ public sealed class AsyncTaskQueue : IDisposable
                 while (_taskQueue.TryDequeue(out var workItem))
                 {
                     await workItem();
+                    _availableSlots.Release(); // Release a slot after processing
+                }
+
+                if (_taskQueue.IsEmpty)
+                {
+                    _completionSource.TrySetResult(); // Signal all tasks are processed
                 }
             }
         }
@@ -59,27 +76,36 @@ public sealed class AsyncTaskQueue : IDisposable
     }
 
     /// <summary>
-    ///  Enqueues an asynchronous method to be executed.
+    ///  Enqueues an asynchronous method to be executed and waits if the queue is full.
     /// </summary>
     /// <param name="asyncMethod">The asynchronous method to enqueue.</param>
+    /// <returns>A task that completes when the method is enqueued.</returns>
+    public async Task EnqueueAsync(Func<Task> asyncMethod)
+    {
+        await _availableSlots.WaitAsync(); // Wait if max queue items are reached
+        _taskQueue.Enqueue(asyncMethod);
+        _enqueueSignal.Release();
+    }
+
     public void Enqueue(Func<Task> asyncMethod)
     {
+        _availableSlots.Wait();
         _taskQueue.Enqueue(asyncMethod);
-        _signal.Release();
+        _enqueueSignal.Release();
     }
 
     /// <summary>
-    ///  Enqueues an asynchronous method to be executed and returns a completed task.
+    ///  Returns a task that completes when all tasks in the queue have been processed.
     /// </summary>
-    /// <param name="asyncMethod">The asynchronous method to enqueue.</param>
-    /// <returns>A completed task.</returns>
-    public Task EnqueueAsync(Func<Task> asyncMethod)
+    public async Task WaitProcessedAsync()
     {
-        _taskQueue.Enqueue(asyncMethod);
-        _signal.Release();
-
-        return Task.CompletedTask;
+        // Wait for the task processing completion or cancellation
+        await Task.WhenAny(
+            _completionSource.Task, 
+            Task.Run(() => _cts.Token.WaitHandle.WaitOne()));
     }
+
+    public int Count => _taskQueue.Count;
 
     /// <summary>
     ///  Releases all resources used by the <see cref="AsyncTaskQueue"/>.
@@ -87,9 +113,10 @@ public sealed class AsyncTaskQueue : IDisposable
     public void Dispose()
     {
         _cts.Cancel();
-        _signal.Release();
+        _enqueueSignal.Release();
         _processingTask.Wait();
+        _availableSlots.Dispose();
+        _enqueueSignal.Dispose();
         _cts.Dispose();
-        _signal.Dispose();
     }
 }
