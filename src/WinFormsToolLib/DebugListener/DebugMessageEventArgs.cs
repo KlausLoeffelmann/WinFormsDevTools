@@ -8,23 +8,11 @@ namespace DevTools.Libs.DebugListener;
 /// <remarks>
 ///  Initializes a new instance of the <see cref="DebugMessageEventArgs"/> class.
 /// </remarks>
-public class DebugMessageEventArgs(DateTime timeStamp, int processId, ExtendedDebugInfo? debugInfo, string message) 
+public class DebugMessageEventArgs(DebugMessage debugMessage) 
     : EventArgs
 {
     /// <summary>
-    ///  Gets the process ID of the source of the debug message.
-    /// </summary>
-    public int ProcessId { get; } = processId;
-
-    /// <summary>
     ///  Gets the debug message.
     /// </summary>
-    public string Message { get; } = message;
-
-    /// <summary>
-    ///  Get the timestamp of the debug message.
-    /// </summary>
-    public DateTime Timestamp { get; } = timeStamp;
-
-    public ExtendedDebugInfo? DebugInfo { get; } = debugInfo;
+    public DebugMessage DebugMessage { get; } = debugMessage;
 }

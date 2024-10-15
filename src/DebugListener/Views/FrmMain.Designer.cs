@@ -194,6 +194,7 @@ namespace DebugListener
             _logView.Location = new Point(0, 38);
             _logView.MultiSelect = false;
             _logView.Name = "_logView";
+            _logView.OnlyShowExtendedDebugInfo = false;
             _logView.ReadOnly = true;
             _logView.RowHeadersVisible = false;
             _logView.RowHeadersWidth = 62;

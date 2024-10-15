@@ -3,6 +3,7 @@ using System.IO.MemoryMappedFiles;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using static DevTools.Libs.DebugListener.WinFormsPerformanceLogging;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DevTools.Libs.DebugListener;
 
@@ -76,7 +77,6 @@ public class DebugMessageListener : Component
     private async Task ListenForMessagesAsync()
     {
         DateTime timeStamp;
-        byte[] buffer = new byte[34];
 
         while (true)
         {
@@ -89,17 +89,18 @@ public class DebugMessageListener : Component
             int extendedDebugInfo = accessor.ReadUInt16(4);
             if (extendedDebugInfo == 0x4242)
             {
-                // Read the extended debug info
-                accessor.ReadArray(4, buffer, 0, 34);
+                // Read the extended debug info and the string.
+                Span<byte> buffer = ReadBytesUntilNullByte(accessor, 4);
                 string data = System.Text.Encoding.Default.GetString(buffer);
-                var (debugInfo, message) = ExtendedDebugInfo.FromBase64LeadMessage(data);
-                await OnDebugMessageReceivedAsync(new DebugMessageEventArgs(timeStamp, processId, debugInfo, message));
+                DebugMessage debugMessage = new(timeStamp, processId, data);
+                await OnDebugMessageReceivedAsync(new DebugMessageEventArgs(debugMessage));
             }
             else
             {
                 // Read the message
                 string message = ReadNullTerminatedString(accessor, 4);
-                await OnDebugMessageReceivedAsync(new DebugMessageEventArgs(timeStamp, processId, null, message));
+                DebugMessage debugMessage = new(timeStamp, processId, message);
+                await OnDebugMessageReceivedAsync(new DebugMessageEventArgs(debugMessage));
             }
 
             // Signal that the buffer is ready for the next message
@@ -135,6 +136,20 @@ public class DebugMessageListener : Component
         if (nullIndex < 0) nullIndex = maxMessageLength;
 
         return System.Text.Encoding.Default.GetString(buffer, 0, nullIndex);
+    }
+
+    private static Span<byte> ReadBytesUntilNullByte(MemoryMappedViewAccessor accessor, long offset)
+    {
+        byte[] buffer = new byte[4096];
+        int bytesRead = 0;
+        byte b;
+        while ((b = accessor.ReadByte(offset + bytesRead)) != 0)
+        {
+            buffer[bytesRead] = b;
+            bytesRead++;
+        }
+
+        return new Span<byte>(buffer, 0, bytesRead);
     }
 
     /// <summary>

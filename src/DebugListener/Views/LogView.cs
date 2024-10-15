@@ -8,26 +8,24 @@ namespace DebugListener.Views;
 public partial class LogView : DataGridView
 {
     private const int MaxRows = 10000;
-    private readonly BindingList<LogEntry> _logEntries;
+
+    private readonly BindingList<DebugMessage> _debugMessage;
     private readonly DebugMessageListener _debugMessageListener;
     private readonly AsyncTaskQueue _taskQueue = new();
-    private readonly List<Color> _processForeColors;
+    private readonly List<Color> _foreColors;
     private readonly Dictionary<int, Color> _processColors = [];
-    private int _colorProcessIndex = 0;
-    private int _lastProcessId = 0;
-    private DateTime _lastTimestamp;
+    private int _colorProcessIndex = -1;
 
     public LogView()
     {
         InitializeComponents();
         _debugMessageListener = new DebugMessageListener();
         _debugMessageListener.DebugMessageReceivedAsync += DebugMessageListener_DebugMessageReceivedAsync; ;
-        _logEntries = [];
+        _debugMessage = [];
         VirtualMode = true;
-        CellValueNeeded += LogView_CellValueNeeded;
-        RowCount = _logEntries.Count;
+        RowCount = _debugMessage.Count;
 
-        _processForeColors = Application.IsDarkModeEnabled 
+        _foreColors = Application.IsDarkModeEnabled 
             ? GetGoodContrastDarkModeForeColors() 
             : GetGoodContrastLightModeForeColors();
     }
@@ -37,14 +35,40 @@ public partial class LogView : DataGridView
     [EditorBrowsable(EditorBrowsableState.Never)]
     public new DataGridViewColumnCollection? Columns => base.Columns;
 
-    public async Task StartListeningAsync()
-    {
-        await _debugMessageListener.StartListeningAsync();
-    }
+    public async Task StartListeningAsync() 
+        => await _debugMessageListener.StartListeningAsync();
 
     private async Task DebugMessageListener_DebugMessageReceivedAsync(object sender, DebugMessageEventArgs e)
     {
-        await _taskQueue.EnqueueAsync(() => AddLogEntryAsync(e.Timestamp, e.ProcessId, e.Message, e.DebugInfo));
+        if (OnlyShowExtendedDebugInfo && e.DebugMessage.DebugInfo.HasValue || !OnlyShowExtendedDebugInfo)
+        {
+            await _taskQueue.EnqueueAsync(() => AddLogEntryAsync(e.DebugMessage));
+        }
+    }
+
+    protected override void OnRowsAdded(DataGridViewRowsAddedEventArgs e)
+    {
+        base.OnRowsAdded(e);
+
+        if (ColorProcesses && e.RowIndex > 0)
+        {
+            var processId = _debugMessage[e.RowIndex].ProcessId;
+            if (_processColors.TryGetValue(processId, out Color value))
+            {
+                _debugMessage[e.RowIndex].ForeColor = value;
+            }
+            else
+            {
+                _colorProcessIndex++;
+                if (_colorProcessIndex >= _foreColors.Count)
+                {
+                    _colorProcessIndex = 0;
+                }
+
+                _debugMessage[e.RowIndex].ForeColor = _foreColors[_colorProcessIndex];
+                _processColors.Add(processId, _foreColors[_colorProcessIndex]);
+            }
+        }
     }
 
     [DefaultValue(true)]
@@ -84,168 +108,88 @@ public partial class LogView : DataGridView
         Columns["Duration"]!.Width = 160;
         Columns["ProcessId"]!.Width = 150;
         Columns["ThreadId"]!.Width = 150;
-        Columns["Method"]!.Width = 250;
+        Columns["Method"]!.Width = 300;
         Columns["LineNo"]!.Width = 140;
         Columns["Message"]!.AutoSizeMode = DataGridViewAutoSizeColumnMode.Fill;
         Columns["CodeFile"]!.Width = 200;
     }
 
-    private void LogView_CellValueNeeded(object? sender, DataGridViewCellValueEventArgs e)
+    protected override void OnRowPrePaint(DataGridViewRowPrePaintEventArgs e)
     {
-        if (e.RowIndex >= 0 && e.RowIndex < _logEntries.Count)
-        {
-            LogEntry logEntry = _logEntries[e.RowIndex];
-            if (logEntry.DebugInfo is ExtendedDebugInfo debugInfo)
-            {
-                logEntry.Timestamp = debugInfo.Timestamp;
+        base.OnRowPrePaint(e);
 
-            }
-
-            TimeSpan duration = logEntry.Timestamp - _lastTimestamp;
-            logEntry.Duration = duration;
-
-            if (OnlyShowExtendedDebugInfo)
-            {
-                switch (e.ColumnIndex)
-                {
-                    case 0:
-                        e.Value = $"[{logEntry.Timestamp:HH:mm:ss-fff}]";
-                        break;
-
-                    case 1:
-                        e.Value = $"[{logEntry.Duration:hh\\:mm\\:ss\\-fff}]";
-                        break;
-
-                    case 2:
-                        e.Value = $"[{logEntry.ProcessId:00000}]";
-                        SetProcessRowColor(e, logEntry);
-                        break;
-
-                    case 6:
-                        e.Value = logEntry.Message;
-                        break;
-
-                    default:
-                        e.Value = $"- - -";
-                        break;
-                }
-
-                _lastTimestamp = logEntry.Timestamp;
-
-                return;
-            }
-
-            if (logEntry.DebugInfo is null)
-            {
-                return;
-            }
-
-            switch (e.ColumnIndex)
-            {
-                case 0:
-                    e.Value = $"[{logEntry.Timestamp:HH:mm:ss-fff}]";
-                    break;
-
-                case 1:
-                    e.Value = $"[{logEntry.Duration:HH\\:mm\\:ss\\-fff}]";
-                    break;
-
-                case 2:
-                    e.Value = $"[{logEntry.ProcessId:00000}]";
-                    SetProcessRowColor(e, logEntry);
-                    break;
-
-                case 3:
-                    e.Value = $"[{logEntry.DebugInfo.Value.ThreadId:00000}]";
-                    break;
-
-                case 4:
-                    e.Value = $"[{logEntry.DebugInfo.Value.Method}]";
-                    break;
-
-                case 5:
-                    e.Value = $"[{logEntry.DebugInfo.Value.LineNo:00000}]";
-                    break;
-
-                case 6:
-                    e.Value = logEntry.Message;
-                    break;
-
-                case 7:
-                    e.Value = logEntry.DebugInfo.Value.Filename;
-                    break;
-
-                case 8:
-                    e.Value = logEntry.DebugInfo.Value.Category;
-                    break;
-            }
-
-            _lastTimestamp = logEntry.Timestamp;
-        }
-
-        void SetProcessRowColor(DataGridViewCellValueEventArgs e, LogEntry logEntry)
-        {
-            if (ColorProcesses && _lastProcessId != logEntry.ProcessId)
-            {
-                _lastProcessId = logEntry.ProcessId;
-                if (_processColors.TryGetValue(logEntry.ProcessId, out var color))
-                {
-                    Rows[e.RowIndex].Tag = color;
-                }
-                else
-                {
-                    Rows[e.RowIndex].Tag = _processForeColors[_colorProcessIndex++ % _processForeColors.Count];
-                }
-            }
-        }
+        DataGridViewCellStyle style = Rows[e.RowIndex].DefaultCellStyle;
+        style.ForeColor = _debugMessage[e.RowIndex].ForeColor ?? ForeColor;
     }
 
-    //private void LogView_RowPrePaint(object? sender, DataGridViewRowPrePaintEventArgs e)
-    //{
-    //    if (e.RowIndex >= 0 && e.RowIndex < _logEntries.Count)
-    //    {
-    //        DataGridViewCellStyle style = Rows[e.RowIndex].DefaultCellStyle;
-    //        if (Rows[e.RowIndex].Tag is Color color)
-    //        {
-    //            style.ForeColor = color;
-    //        }
-    //        else
-    //        {
-    //            style.ForeColor = ForeColor;
-    //        }
-    //    }
+    protected override void OnCellValueNeeded(DataGridViewCellValueEventArgs e)
+    {
+        base.OnCellValueNeeded(e);
+        if (e.RowIndex >= 0 && e.RowIndex < _debugMessage.Count)
+        {
+            DebugMessage debugMessage = _debugMessage[e.RowIndex];
 
-    //    Debug.Print("Row pre-paint!");
-    //}
+            TimeSpan duration = e.RowIndex == 0
+                ? TimeSpan.Zero
+                : debugMessage.Timestamp - _debugMessage[e.RowIndex - 1].Timestamp;
+
+            debugMessage.Duration = duration;
+
+            if (debugMessage.DebugInfo is null)
+            {
+                e.Value = e.ColumnIndex switch
+                {
+                    0 => $"{debugMessage.Timestamp:HH:mm:ss-fff}",
+                    1 => $"{debugMessage.Duration:hh\\:mm\\:ss\\-fff}",
+                    2 => $"{debugMessage.ProcessId:00000}",
+                    6 => debugMessage.Message,
+                    _ => $"- - -",
+                };
+
+                return;
+            }
+
+            e.Value = e.ColumnIndex switch
+            {
+                0 => $"{debugMessage.Timestamp:HH:mm:ss-fff}",
+                1 => $"{debugMessage.Duration:hh\\:mm\\:ss\\-fff}",
+                2 => $"{debugMessage.ProcessId:00000}",
+                3 => $"{debugMessage.DebugInfo.Value.ThreadId:00000}",
+                4 => $"{debugMessage.MethodName}",
+                5 => $"{debugMessage.DebugInfo.Value.LineNo:00000}",
+                6 => debugMessage.Message,
+                7 => debugMessage.FilePath,
+                8 => debugMessage.Category,
+                _ => $"- - -",
+            };
+        }
+    }
 
     internal void Clear()
     {
-        _logEntries.Clear();
+        _debugMessage.Clear();
         RowCount = 0;
     }
 
-    public async Task AddLogEntryAsync(DateTime timestamp, int processId, string message, ExtendedDebugInfo? debugInfo)
-    {
-        await InvokeAsync(() =>
-        {
-            _logEntries.Add(new LogEntry(timestamp, processId, message, debugInfo));
-
-            RowCount = _logEntries.Count;
-
-            // Limit the number of entries
-            if (_logEntries.Count > MaxRows)
+    public async Task AddLogEntryAsync(DebugMessage debugMessage) 
+        => await InvokeAsync(() =>
             {
-                _logEntries.RemoveAt(0);
-                RowCount = _logEntries.Count;
-            }
+                _debugMessage.Add(debugMessage);
+                RowCount = _debugMessage.Count;
 
-            // Auto-scroll to the latest entry
-            if (Rows.Count > 0)
-            {
-                FirstDisplayedScrollingRowIndex = Rows.Count - 1;
-            }
-        });
-    }
+                // Limit the number of entries
+                if (_debugMessage.Count > MaxRows)
+                {
+                    _debugMessage.RemoveAt(0);
+                    RowCount = _debugMessage.Count;
+                }
+
+                // Auto-scroll to the latest entry
+                if (Rows.Count > 0)
+                {
+                    FirstDisplayedScrollingRowIndex = Rows.Count - 1;
+                }
+            });
 
     public void ClearLogs()
     {
@@ -255,7 +199,7 @@ public partial class LogView : DataGridView
         }
         else
         {
-            _logEntries.Clear();
+            _debugMessage.Clear();
             RowCount = 0;
         }
     }

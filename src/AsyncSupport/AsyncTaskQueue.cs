@@ -12,9 +12,9 @@ public sealed class AsyncTaskQueue : IDisposable
     private readonly SemaphoreSlim _availableSlots;
     private readonly ManualResetEventSlim _taskStartedEvent;
     private readonly CancellationTokenSource _cts = new();
-    private readonly SynchronizationContext _syncContext;
     private readonly Task _processingTask;
     private readonly TaskCompletionSource _completionSource = new();
+    private readonly TaskScheduler _uiScheduler;
     private int _maxQueuedItems;
 
     /// <summary>
@@ -22,12 +22,7 @@ public sealed class AsyncTaskQueue : IDisposable
     /// </summary>
     public AsyncTaskQueue(int maxQueuedItems = 10000)
     {
-        if (SynchronizationContext.Current is null)
-        {
-            SynchronizationContext.SetSynchronizationContext(new SynchronizationContext());
-        }
-
-        _syncContext = SynchronizationContext.Current!;
+        _uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
         _maxQueuedItems = maxQueuedItems;
         _availableSlots = new SemaphoreSlim(maxQueuedItems);
 
@@ -70,8 +65,12 @@ public sealed class AsyncTaskQueue : IDisposable
                 "Running an async queue caused an exception. See the inner exception for details.",
                 ex);
 
-            // Throw the exception on the thread which created the queue.
-            _syncContext.Post(_ => throw aggregateException, null);
+            // Make sure we throw on the main thread.
+            await Task.Factory.StartNew(() =>
+            {
+                // This runs on the UI thread
+                throw aggregateException;
+            }, CancellationToken.None, TaskCreationOptions.None, _uiScheduler);
         }
     }
 
