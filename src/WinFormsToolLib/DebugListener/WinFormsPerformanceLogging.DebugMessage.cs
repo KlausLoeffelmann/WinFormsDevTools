@@ -52,11 +52,11 @@ public partial class WinFormsPerformanceLogging
         public DateTime Timestamp { get; }
         public TimeSpan Duration { get; set; }
         public int ProcessId { get; }
-        public ExtendedDebugInfo? DebugInfo { get; private set; }
-        public string? FilePath { get; private set; }
-        public string? Message { get; private set; }
-        public string? MethodName { get; private set; }
-        public string? Category { get; private set; }
+        public ExtendedDebugInfo? DebugInfo { get; set; }
+        public string? FilePath { get; set; }
+        public string? Message { get; set; }
+        public string? MethodName { get; set; }
+        public string? Category { get; set; }
         public Color? ForeColor { get; set; }
         public Color? BackColor { get; set; }
         public object? Tag { get; set; }
