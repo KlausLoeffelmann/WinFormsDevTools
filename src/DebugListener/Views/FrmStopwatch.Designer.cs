@@ -32,9 +32,10 @@
             // 
             // FrmStopwatch
             // 
-            AutoScaleDimensions = new SizeF(10F, 25F);
+            AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(721, 245);
+            ClientSize = new Size(578, 117);
+            Margin = new Padding(2);
             Name = "FrmStopwatch";
             Text = "FrmStopwatch";
             ResumeLayout(false);

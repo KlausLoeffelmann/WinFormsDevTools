@@ -7,7 +7,11 @@ namespace DebugListener.Views;
 
 public partial class LogView : DataGridView
 {
+    public event EventHandler<LogViewSelectionChangedEventArgs>? LogViewSelectionChanged;
+    
     private const int MaxRows = 10000;
+    private const string DefaultDateTimeFormatString = "HH:mm:ss-fff";
+    private const string DefaultTimeSpanFormatString = "hh\\:mm\\:ss\\-fff";
 
     private readonly BindingList<DebugMessage> _debugMessage;
     private readonly DebugMessageListener _debugMessageListener;
@@ -19,10 +23,13 @@ public partial class LogView : DataGridView
     public LogView()
     {
         InitializeComponents();
+
+        MultiSelect = true;
+        VirtualMode = true;
+
         _debugMessageListener = new DebugMessageListener();
         _debugMessageListener.DebugMessageReceivedAsync += DebugMessageListener_DebugMessageReceivedAsync; ;
         _debugMessage = [];
-        VirtualMode = true;
         RowCount = _debugMessage.Count;
 
         _foreColors = Application.IsDarkModeEnabled 
@@ -44,6 +51,116 @@ public partial class LogView : DataGridView
         {
             await _taskQueue.EnqueueAsync(() => AddLogEntryAsync(e.DebugMessage));
         }
+    }
+
+    protected override void OnSelectionChanged(EventArgs e)
+    {
+        LogViewSelectionChangedEventArgs eArgs;
+            
+        base.OnSelectionChanged(e);
+
+        if (SelectedRows.Count == 0)
+        {
+            eArgs = new(-1, [], TimeSpan.Zero, TimeSpan.Zero, TimeSpan.Zero);
+            LogViewSelectionChanged?.Invoke(this, eArgs);
+
+            return;
+        }
+
+        if (SelectedRows.Count == 1)
+        {
+            var processDuration = CalculateProcessDuration(_debugMessage[SelectedRows[0].Index].ProcessId);
+            var threadDuration = CalculateThreadDuration((short)(_debugMessage[SelectedRows[0].Index].DebugInfo?.ThreadId ?? 0));
+            var totalDuration = CalculateTotalDuration();
+
+            eArgs = new(
+                SelectedRows[0].Index,
+                SelectedDebugMessages,
+                processDuration,
+                threadDuration,
+                totalDuration);
+
+            LogViewSelectionChanged?.Invoke(this, eArgs);
+
+            return;
+        }
+
+        var rangeDuration = CalculateTotalDuration();
+
+        eArgs = new(
+            SelectedRows[0].Index,
+            SelectedDebugMessages,
+            rangeDuration,
+            rangeDuration,
+            rangeDuration);
+
+        LogViewSelectionChanged?.Invoke(this, eArgs);
+    }
+
+    private DebugMessage[] SelectedDebugMessages
+    {
+        get
+        {
+            List<DebugMessage> selectedRows = [];
+            foreach (DataGridViewRow row in SelectedRows)
+            {
+                selectedRows.Add(_debugMessage[row.Index]);
+            }
+
+            return [.. selectedRows];
+        }
+    }
+
+    private TimeSpan CalculateThreadDuration(short threadId)
+    {
+        TimeSpan duration = TimeSpan.Zero;
+        for (int i = 0; i < _debugMessage.Count; i++)
+        {
+            if (_debugMessage[i].DebugInfo?.ThreadId == threadId)
+            {
+                duration += _debugMessage[i].Duration;
+            }
+        }
+        return duration;
+    }
+
+    private TimeSpan CalculateProcessDuration(int processId)
+    {
+        TimeSpan duration = TimeSpan.Zero;
+        for (int i = 0; i < _debugMessage.Count; i++)
+        {
+            if (_debugMessage[i].ProcessId == processId)
+            {
+                duration += _debugMessage[i].Duration;
+            }
+        }
+        return duration;
+    }
+
+    private TimeSpan CalculateTotalDuration()
+    {
+        TimeSpan duration = TimeSpan.Zero;
+
+        if (SelectedRows.Count == 1)
+        {
+            // We calculate the total duration from the first row to the selected row:
+            for (int i = 0; i <= SelectedRows[0].Index; i++)
+            {
+                duration += _debugMessage[i].Duration;
+            }
+
+            return duration;
+        }
+
+        for (int i = 0; i < _debugMessage.Count; i++)
+        {
+            if (Rows[i].Selected)
+            {
+                duration += _debugMessage[i].Duration;
+            }
+        }
+
+        return duration;
     }
 
     protected override void OnRowsAdded(DataGridViewRowsAddedEventArgs e)
@@ -79,6 +196,12 @@ public partial class LogView : DataGridView
 
     [DefaultValue(true)]
     public bool OnlyShowExtendedDebugInfo { get; set; } = true;
+
+    [DefaultValue(DefaultTimeSpanFormatString)]
+    public string TimeSpanFormatString { get; set; } = DefaultDateTimeFormatString;
+
+    [DefaultValue(DefaultDateTimeFormatString)]
+    public string DateTimeFormatString { get; set; } = DefaultDateTimeFormatString;
 
     private void InitializeComponents()
     {
@@ -139,8 +262,8 @@ public partial class LogView : DataGridView
             {
                 e.Value = e.ColumnIndex switch
                 {
-                    0 => $"{debugMessage.Timestamp:HH:mm:ss-fff}",
-                    1 => $"{debugMessage.Duration:hh\\:mm\\:ss\\-fff}",
+                    0 => $"{debugMessage.Timestamp.ToString(DateTimeFormatString)}",
+                    1 => $"{debugMessage.Duration.ToString(TimeSpanFormatString)}",
                     2 => $"{debugMessage.ProcessId:00000}",
                     6 => debugMessage.Message,
                     _ => $"- - -",
@@ -151,8 +274,8 @@ public partial class LogView : DataGridView
 
             e.Value = e.ColumnIndex switch
             {
-                0 => $"{debugMessage.Timestamp:HH:mm:ss-fff}",
-                1 => $"{debugMessage.Duration:hh\\:mm\\:ss\\-fff}",
+                0 => $"{debugMessage.Timestamp.ToString(DateTimeFormatString)}",
+                1 => $"{debugMessage.Duration.ToString(TimeSpanFormatString)}",
                 2 => $"{debugMessage.ProcessId:00000}",
                 3 => $"{debugMessage.DebugInfo.Value.ThreadId:00000}",
                 4 => $"{debugMessage.MethodName}",
@@ -165,7 +288,7 @@ public partial class LogView : DataGridView
         }
     }
 
-    internal void Clear()
+    public void Clear()
     {
         _debugMessage.Clear();
         RowCount = 0;
@@ -206,33 +329,29 @@ public partial class LogView : DataGridView
 
     private static List<Color> GetGoodContrastDarkModeForeColors()
     {
-        // Return a list of colors, which can be well read in dark mode on a black background:
+        // Return a list of colors with high contrast on a black background
         return
         [
-            Color.White,
-            Color.Yellow,
-            Color.Cyan,
-            Color.Lime,
-            Color.Magenta,
-            Color.Orange,
-            Color.Pink,
-            Color.Purple,
-            Color.Red,
-            Color.Silver,
-            Color.Turquoise,
-            Color.Violet,
-            Color.White,
-            Color.Yellow,
-            Color.Cyan,
-            Color.Lime,
-            Color.Magenta,
-            Color.Orange,
-            Color.Pink,
-            Color.Purple,
-            Color.Red,
-            Color.Silver,
-            Color.Turquoise,
-            Color.Violet
+            Color.FromArgb(255, 255, 255), // White
+            Color.FromArgb(255, 255, 0),   // Yellow
+            Color.FromArgb(0, 255, 255),   // Cyan
+            Color.FromArgb(0, 255, 0),     // Lime
+            Color.FromArgb(255, 0, 255),   // Magenta
+            Color.FromArgb(255, 165, 0),   // Orange
+            Color.FromArgb(255, 192, 203), // Pink
+            Color.FromArgb(255, 105, 180), // Hot Pink
+            Color.FromArgb(173, 216, 230), // Light Blue
+            Color.FromArgb(144, 238, 144), // Light Green
+            Color.FromArgb(255, 182, 193), // Light Pink
+            Color.FromArgb(250, 250, 210), // Light Goldenrod Yellow
+            Color.FromArgb(240, 230, 140), // Khaki
+            Color.FromArgb(255, 228, 225), // Misty Rose
+            Color.FromArgb(255, 240, 245), // Lavender Blush
+            Color.FromArgb(245, 245, 220), // Beige
+            Color.FromArgb(230, 230, 250), // Lavender
+            Color.FromArgb(240, 255, 255), // Azure
+            Color.FromArgb(255, 250, 240), // Floral White
+            Color.FromArgb(255, 239, 213), // Papaya Whip
         ];
     }
 

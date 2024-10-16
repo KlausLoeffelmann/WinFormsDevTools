@@ -5,17 +5,13 @@ namespace DebugListener.ViewModels;
 public partial class VmMain : ObservableObject
 {
     [ObservableProperty]
-    private VmMenuOptionSettings _menuOptions = new();
-}
-
-public partial class VmMenuOptionSettings : ObservableObject
-{
-    [ObservableProperty]
-    private bool _onlyShowExtendedDebugInfo;
-
-    [ObservableProperty]
-    private bool _colorProcesses;
+    private VmMenuOptionSettings _menuOptions = new()
+    {
+        ColorProcesses = true,
+        OnlyShowExtendedDebugInfo = true,
+        LeaveSpaceBetweenProcesses = true
+    };
 
     [ObservableProperty]
-    private bool _leaveSpaceBetweenProcesses;
+    private VmOptions _options = new();
 }
