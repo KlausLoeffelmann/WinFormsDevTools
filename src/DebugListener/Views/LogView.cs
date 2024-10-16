@@ -20,6 +20,8 @@ public partial class LogView : DataGridView
     private readonly Dictionary<int, Color> _processColors = [];
     private int _colorProcessIndex = -1;
 
+    private Font? _boldFont;
+
     public LogView()
     {
         InitializeComponents();
@@ -203,6 +205,8 @@ public partial class LogView : DataGridView
     [DefaultValue(DefaultDateTimeFormatString)]
     public string DateTimeFormatString { get; set; } = DefaultDateTimeFormatString;
 
+    private Font BoldFont => _boldFont ??= new(Font, FontStyle.Bold);
+
     private void InitializeComponents()
     {
         // Set properties
@@ -242,6 +246,11 @@ public partial class LogView : DataGridView
         base.OnRowPrePaint(e);
 
         DataGridViewCellStyle style = Rows[e.RowIndex].DefaultCellStyle;
+        if (_debugMessage[e.RowIndex].DebugInfo?.Command== ExtendedDebugInfo.DebugInfoCommandId.ImportantMessage)
+        {
+            style.Font = BoldFont;
+        }
+
         style.ForeColor = _debugMessage[e.RowIndex].ForeColor ?? ForeColor;
     }
 

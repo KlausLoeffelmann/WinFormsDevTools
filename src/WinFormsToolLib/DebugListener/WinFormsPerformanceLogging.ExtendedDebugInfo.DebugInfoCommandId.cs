@@ -11,10 +11,10 @@ public partial class WinFormsPerformanceLogging
         public enum DebugInfoCommandId : ushort
         {
             Message = 0,
-            MethodNameDefinition = 1,
-            FileNameDefinition = 2,
-            ProcessNameDefinition = 3,
-            CategoryDefinition = 4,
+            ImportantMessage = 1,
+            HighlyImportantMessage = 2,
+            CriticalMessage = 3,
+            ExceptionMessage = 4,
             SignalStart = 100,
             SignalReset = 101,
             SignalStop = 102,

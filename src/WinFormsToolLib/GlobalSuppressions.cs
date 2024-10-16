@@ -5,5 +5,5 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Performance", "CA1840:Use 'Environment.CurrentManagedThreadId'", Justification = "Be compatible with WinForms Designer code base.", Scope = "member", Target = "~M:DevTools.Libs.DebugListener.WinFormsPerformanceLogging.DPrint(System.String,System.String,System.String,System.String,System.Int32)")]
+[assembly: SuppressMessage("Performance", "CA1840:Use 'Environment.CurrentManagedThreadId'", Justification = "Be compatible with WinForms Designer code base.", Scope = "member", Target = "~M:DevTools.Libs.DebugListener.WinFormsPerformanceLogging.PerfDbgTrace(System.String,System.String,System.String,System.String,System.Int32)")]
 [assembly: SuppressMessage("Performance", "CA1837:Use 'Environment.ProcessId'", Justification = "Be compatible with WinForms Designer code base.", Scope = "member", Target = "~M:DevTools.Libs.DebugListener.WinFormsPerformanceLogging.DPrintAsync(System.String,System.String,System.String,System.String,System.Int32)~System.Threading.Tasks.Task")]

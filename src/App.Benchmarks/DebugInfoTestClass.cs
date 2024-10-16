@@ -47,43 +47,43 @@ public class DebugInfoTestClass
     [Benchmark(OperationsPerInvoke = 500)]
     public void BenchmarkSimpleDebugMessage00()
     {
-        TPrint(s_sampleDebugStrings[s_random.Next(0, s_sampleDebugStrings.Count)]);
+        PerfTrace(s_sampleDebugStrings[s_random.Next(0, s_sampleDebugStrings.Count)]);
     }
 
     [Benchmark(OperationsPerInvoke = 9999)]
     public void BenchmarkSimpleDebugMessage01()
     {
-        TPrint(s_sampleDebugStrings[s_random.Next(0, s_sampleDebugStrings.Count)]);
+        PerfTrace(s_sampleDebugStrings[s_random.Next(0, s_sampleDebugStrings.Count)]);
     }
 
     [Benchmark(OperationsPerInvoke = 20000)]
     public void BenchmarkSimpleDebugMessage02()
     {
-        TPrint(s_sampleDebugStrings[s_random.Next(0, s_sampleDebugStrings.Count)]);
+        PerfTrace(s_sampleDebugStrings[s_random.Next(0, s_sampleDebugStrings.Count)]);
     }
 
 
     [Benchmark(OperationsPerInvoke = 500)]
     public void BenchmarkSimpleDebugMessageWithCategory00()
     {
-        TPrint(
+        PerfTrace(
             s_sampleDebugStrings[s_random.Next(0, s_sampleDebugStrings.Count)],
-            s_sampleDebugCategories[s_random.Next(0, s_sampleDebugCategories.Count)]);
+            category: s_sampleDebugCategories[s_random.Next(0, s_sampleDebugCategories.Count)]);
     }
 
     [Benchmark(OperationsPerInvoke = 9999)]
     public void BenchmarkSimpleDebugMessageWithCategory01()
     {
-        TPrint(
+        PerfTrace(
             s_sampleDebugStrings[s_random.Next(0, s_sampleDebugStrings.Count)],
-            s_sampleDebugCategories[s_random.Next(0, s_sampleDebugCategories.Count)]);
+            category: s_sampleDebugCategories[s_random.Next(0, s_sampleDebugCategories.Count)]);
     }
 
     [Benchmark(OperationsPerInvoke = 20000)]
     public void BenchmarkSimpleDebugMessageWithCategory02()
     {
-        TPrint(
+        PerfTrace(
             s_sampleDebugStrings[s_random.Next(0, s_sampleDebugStrings.Count)],
-            s_sampleDebugCategories[s_random.Next(0, s_sampleDebugCategories.Count)]);
+            category: s_sampleDebugCategories[s_random.Next(0, s_sampleDebugCategories.Count)]);
     }
 }

@@ -47,8 +47,9 @@ public partial class WinFormsPerformanceLogging() : IDisposable
     /// <param name="memberName">The name of the member calling this method.</param>
     /// <param name="filePath">The file path of the source code.</param>
     /// <param name="lineNumber">The line number in the source code.</param>
-    public static void TPrint(
+    public static void PerfTrace(
         string message,
+        bool markImportant = false,
         string? category = null,
         [CallerMemberName] string? memberName = default,
         [CallerFilePath] string? filePath = default,
@@ -58,10 +59,11 @@ public partial class WinFormsPerformanceLogging() : IDisposable
         int threadId = Environment.CurrentManagedThreadId;
 
         Instance._asyncTaskQueue.Enqueue(
-            () => Instance.DPrintAsync(
+            () => Instance.DebugPrintAsync(
                 timestamp,
                 threadId,
                 message,
+                markImportant,
                 category,
                 memberName,
                 filePath,
@@ -77,8 +79,9 @@ public partial class WinFormsPerformanceLogging() : IDisposable
     /// <param name="filePath">The file path of the source code.</param>
     /// <param name="lineNumber">The line number in the source code.</param>
     [Conditional("DEBUG")]
-    public static void DPrint(
+    public static void PerfDbgTrace(
         string message,
+        bool markImportant = false,
         string? category = null,
         [CallerMemberName] string? memberName = default,
         [CallerFilePath] string? filePath = default,
@@ -88,20 +91,27 @@ public partial class WinFormsPerformanceLogging() : IDisposable
         int threadId = Environment.CurrentManagedThreadId;
 
         Instance._asyncTaskQueue.Enqueue(
-            () => Instance.DPrintAsync(
+            () => Instance.DebugPrintAsync(
                 timestamp,
                 threadId,
                 message,
+                markImportant,
                 category,
                 memberName,
                 filePath,
                 lineNumber));
     }
 
-    private Task DPrintAsync(
+    // Comes down to an Win32 OutputDebugString call, which we can intercept via Shared Memory.
+    // By encoding some additional information in the message, we can provide more context.
+    // For example, we can include the process ID, thread ID, line number, and category.
+    // Also, and that's more important, we get the time stamp from the source, not from
+    // the tool which then acts as the listener. This is important for performance analysis.
+    private Task DebugPrintAsync(
         DateTime timeStamp,
         int threadId,
         string message,
+        bool markImportant = false,
         string? category = null,
         [CallerMemberName] string? memberName = default,
         [CallerFilePath] string? filePath = default,
@@ -115,7 +125,9 @@ public partial class WinFormsPerformanceLogging() : IDisposable
             processId: (ushort)processId,
             threadId: (ushort)threadId,
             lineNo: (ushort)lineNumber,
-            command: ExtendedDebugInfo.DebugInfoCommandId.Message);
+            command: markImportant
+                ? ExtendedDebugInfo.DebugInfoCommandId.ImportantMessage
+                : ExtendedDebugInfo.DebugInfoCommandId.Message);
 
         string combineMessage = $"{debugInfo.ToBase64()}[[{(category ?? "---")}]][[{(memberName ?? "---")}]][[{(filePath ?? "---")}]][[{(message ?? "---")}]]";
 
