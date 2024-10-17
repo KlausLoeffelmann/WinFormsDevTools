@@ -3,7 +3,6 @@ using System.IO.MemoryMappedFiles;
 using System.Security.AccessControl;
 using System.Security.Principal;
 using static DevTools.Libs.DebugListener.WinFormsPerformanceLogging;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace DevTools.Libs.DebugListener;
 

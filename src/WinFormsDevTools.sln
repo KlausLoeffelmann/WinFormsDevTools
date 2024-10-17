@@ -40,6 +40,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.TestsX", "DevTools
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CommunityToolkit.WinForms.TestsX", "..\..\CommunityToolkit.WinForms\tests\cs\CommunityToolkit.WinForms.TestsX\CommunityToolkit.WinForms.TestsX.csproj", "{00AD19D2-5C8C-4757-8419-E76464F887E9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.FakeDesignToolsServer", "DevTools.FakeDesignToolsServer\DevTools.FakeDesignToolsServer.csproj", "{B687AA0A-DEE9-4738-BAFD-559BDF340875}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -98,6 +100,10 @@ Global
 		{00AD19D2-5C8C-4757-8419-E76464F887E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{00AD19D2-5C8C-4757-8419-E76464F887E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{00AD19D2-5C8C-4757-8419-E76464F887E9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B687AA0A-DEE9-4738-BAFD-559BDF340875}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B687AA0A-DEE9-4738-BAFD-559BDF340875}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B687AA0A-DEE9-4738-BAFD-559BDF340875}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B687AA0A-DEE9-4738-BAFD-559BDF340875}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -116,6 +122,7 @@ Global
 		{540A2792-082E-4A45-BBA2-2093C72C4874} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
 		{F7BEDA40-1B70-41C6-B8A5-B5135555EA35} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
 		{00AD19D2-5C8C-4757-8419-E76464F887E9} = {F1F2DAAE-0141-4263-8B0A-2CC97AFBB151}
+		{B687AA0A-DEE9-4738-BAFD-559BDF340875} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02BB4031-A5D7-45D0-8234-A9AC91240B69}

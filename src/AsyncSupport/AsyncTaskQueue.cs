@@ -14,7 +14,7 @@ public sealed class AsyncTaskQueue : IDisposable
     private readonly CancellationTokenSource _cts = new();
     private readonly Task _processingTask;
     private readonly TaskCompletionSource _completionSource = new();
-    private readonly TaskScheduler _uiScheduler;
+    private readonly TaskScheduler? _uiScheduler;
     private int _maxQueuedItems;
 
     /// <summary>
@@ -22,7 +22,18 @@ public sealed class AsyncTaskQueue : IDisposable
     /// </summary>
     public AsyncTaskQueue(int maxQueuedItems = 10000)
     {
-        _uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+        try
+        {
+            _uiScheduler = TaskScheduler.FromCurrentSynchronizationContext();
+        }
+        catch (Exception ex) when (ex is not StackOverflowException
+            and not OutOfMemoryException
+            and not ThreadAbortException
+            and not AccessViolationException)
+        {
+            // Ignore exceptions that can be thrown when there is no synchronization context.
+        }
+
         _maxQueuedItems = maxQueuedItems;
         _availableSlots = new SemaphoreSlim(maxQueuedItems);
 
@@ -65,12 +76,20 @@ public sealed class AsyncTaskQueue : IDisposable
                 "Running an async queue caused an exception. See the inner exception for details.",
                 ex);
 
-            // Make sure we throw on the main thread.
-            await Task.Factory.StartNew(() =>
+            if (_uiScheduler is null)
             {
-                // This runs on the UI thread
                 throw aggregateException;
-            }, CancellationToken.None, TaskCreationOptions.None, _uiScheduler);
+            }
+
+            await Task.Factory.StartNew(
+                action: () =>
+                {
+                    // This runs on the UI thread
+                    throw aggregateException;
+                },
+                cancellationToken: CancellationToken.None,
+                creationOptions: TaskCreationOptions.None,
+                scheduler: _uiScheduler);
         }
     }
 
