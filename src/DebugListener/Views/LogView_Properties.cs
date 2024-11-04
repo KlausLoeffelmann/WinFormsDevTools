@@ -1,7 +1,4 @@
-﻿using CommunityToolkit.WinForms.AsyncSupport;
-using DevTools.Libs.DebugListener;
-using System.ComponentModel;
-using System.Text;
+﻿using System.ComponentModel;
 using static DevTools.Libs.DebugListener.WinFormsPerformanceLogging;
 
 namespace DebugListener.Views;

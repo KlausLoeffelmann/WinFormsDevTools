@@ -1,4 +1,6 @@
-﻿namespace ShadowCacheSpy
+﻿using CommunityToolkit.WinForms.Controls;
+
+namespace ShadowCacheSpy
 {
     partial class FrmOptions
     {
@@ -106,6 +108,6 @@
         private Button _btnOK;
         private Button _btnCancel;
         private GroupBox groupBox1;
-        private CommunityToolkit.WinForms.Controls.FilePathPicker _watchFolderPicker;
+        private FilePathPicker _watchFolderPicker;
     }
 }

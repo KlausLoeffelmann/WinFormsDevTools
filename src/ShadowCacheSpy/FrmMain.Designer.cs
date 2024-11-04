@@ -1,4 +1,6 @@
-﻿namespace ShadowCacheSpy
+﻿using CommunityToolkit.WinForms.Controls;
+
+namespace ShadowCacheSpy
 {
     partial class FrmMain
     {
@@ -173,7 +175,7 @@
         private ToolStripSeparator toolStripMenuItem1;
         private ToolStripMenuItem _tsmQuit;
         private StatusStrip _statusStrip;
-        private CommunityToolkit.WinForms.Controls.ConsoleControl _console;
+        private ConsoleControl _console;
         private ToolStripStatusLabel _tslWatchPath;
         private ToolStripStatusLabel _tslClock;
         private ToolStripMenuItem testToolStripMenuItem;

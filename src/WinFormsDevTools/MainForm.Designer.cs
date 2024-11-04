@@ -1,4 +1,6 @@
-﻿namespace DevTools.RuntimeDeploy;
+﻿using CommunityToolkit.WinForms.FluentUI;
+
+namespace DevTools.RuntimeDeploy;
 
 partial class MainForm
 {
@@ -28,7 +30,7 @@ partial class MainForm
     /// </summary>
     private void InitializeComponent()
     {
-        _tabControl = new CommunityToolkit.WinForms.ModernTabControl.ModernTabControl();
+        _tabControl = new FluentTabControl();
         SuspendLayout();
         // 
         // _tabControl
@@ -55,5 +57,5 @@ partial class MainForm
 
     #endregion
 
-    private CommunityToolkit.WinForms.ModernTabControl.ModernTabControl _tabControl;
+    private FluentTabControl _tabControl;
 }

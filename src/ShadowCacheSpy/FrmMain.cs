@@ -110,14 +110,14 @@ public partial class FrmMain : Form
         _settingsService.Save();
     }
 
-    private void Options_Click(object sender, EventArgs e)
+    private async void Options_Click(object sender, EventArgs e)
     {
         var optionsDialog = new FrmOptions();
-        var result = optionsDialog.ShowDialog(ref _appSettings!);
+        var result = await optionsDialog.ShowDialogAsync(_appSettings!);
 
-        if (result.FormDialogResult == DialogResult.OK)
+        if (result.DialogResult == CommunityToolkit.DesktopGeneric.Mvvm.DialogResult.First)
         {
-            _appSettings = result.Result!;
+            _appSettings = result.ReturnValue!;
             _settingsService.Save();
             _fileSystemWatcher.Path = _appSettings.WatchFolder!;
             _fileSystemWatcher.IncludeSubdirectories = true;

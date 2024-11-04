@@ -9,6 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms.AsyncSupport\CommunityToolkit.WinForms.AsyncSupport.csproj" />
     <ProjectReference Include="..\AsyncSupport\CommunityToolkit.WinForms.AsyncSupport.csproj" />
   </ItemGroup>
 

@@ -1,10 +1,15 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
 
 namespace ShadowCacheSpy;
 
-public class AppSettings 
+public partial class AppSettings : ObservableObject
 {
-    public string? WatchFolder { get; set; }
-    public DateTime? DateCreated { get; set; }
-    public DateTime? DateModified { get; set; }
+    [ObservableProperty]
+    private string? _watchFolder;
+
+    [ObservableProperty]
+    private DateTime? _dateCreated;
+    
+    [ObservableProperty]
+    private DateTime? _dateModified;
 }

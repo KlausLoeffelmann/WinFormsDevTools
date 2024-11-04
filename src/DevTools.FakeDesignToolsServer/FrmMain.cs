@@ -9,7 +9,7 @@ public partial class FrmMain : Form
     public FrmMain()
     {
         InitializeComponent();
-        _timer = new System.Threading.Timer(new TimerCallback(KeepAliveNotifier), null, 0, 1000);
+        _timer = new System.Threading.Timer(new TimerCallback(KeepAliveNotifier), null, 0, 5000);
 
         _tsmQuitProcess.Click += (sender, e) =>
         {
