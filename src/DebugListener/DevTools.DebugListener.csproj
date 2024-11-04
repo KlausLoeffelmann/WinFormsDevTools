@@ -12,13 +12,12 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms.AsyncSupport\CommunityToolkit.WinForms.AsyncSupport.csproj" />
     <ProjectReference Include="..\..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms.FormAndControlExtensions\CommunityToolkit.WinForms.Extensions.FormAndControlExtensions.csproj" />
-    <ProjectReference Include="..\..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms\FormAndControlExtensions\CommunityToolkit.WinForms.Extensions.FormAndControlExtensions.csproj" />
     <ProjectReference Include="..\AsyncSupport\CommunityToolkit.WinForms.AsyncSupport.csproj" />
     <ProjectReference Include="..\WinFormsToolLib\DevTools.Libs.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0-preview1" />
   </ItemGroup>
 
   <ItemGroup>
