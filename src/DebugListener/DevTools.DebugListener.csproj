@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -10,7 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms.AsyncSupport\CommunityToolkit.WinForms.AsyncSupport.csproj" />
     <ProjectReference Include="..\..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms.FormAndControlExtensions\CommunityToolkit.WinForms.Extensions.FormAndControlExtensions.csproj" />
     <ProjectReference Include="..\AsyncSupport\CommunityToolkit.WinForms.AsyncSupport.csproj" />
     <ProjectReference Include="..\WinFormsToolLib\DevTools.Libs.csproj" />

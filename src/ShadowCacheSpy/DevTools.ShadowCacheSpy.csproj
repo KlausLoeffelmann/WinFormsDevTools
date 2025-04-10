@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows</TargetFramework>
+    <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
     <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -14,13 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms.ComponentModel\CommunityToolkit.WinForms.ComponentModel.csproj" />
-    <ProjectReference Include="..\..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms.ConsoleControl\CommunityToolkit.WinForms.Controls.ConsoleControl.csproj" />
-    <ProjectReference Include="..\..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms.FileAndFolderSupport\CommunityToolkit.WinForms.Controls.FileAndFolderSupport.csproj" />
-    <ProjectReference Include="..\..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms.FormAndControlExtensions\CommunityToolkit.WinForms.Extensions.FormAndControlExtensions.csproj" />
-    <ProjectReference Include="..\..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms\ConsoleControl\CommunityToolkit.WinForms.Controls.ConsoleControl.csproj" />
-    <ProjectReference Include="..\..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms\FileAndFolderSupport\CommunityToolkit.WinForms.Controls.FileAndFolderSupport.csproj" />
-    <ProjectReference Include="..\..\..\CommunityToolkit.WinForms\src\CommunityToolkit.WinForms\FormAndControlExtensions\CommunityToolkit.WinForms.Extensions.FormAndControlExtensions.csproj" />
   </ItemGroup>
 
 </Project>
