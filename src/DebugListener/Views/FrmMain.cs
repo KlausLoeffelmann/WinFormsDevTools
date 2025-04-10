@@ -1,7 +1,8 @@
-using CommunityToolkit.WinForms.ComponentModel;
-using CommunityToolkit.WinForms.Extensions;
+using CommunityToolkit.ComponentModel;
+using CommunityToolkit.WinForms.AppServices;
+using CommunityToolkit.WinForms.Extensions.UIExtensions;
 using DebugListener.ViewModels;
-
+using Microsoft.Extensions.DependencyInjection;
 using Timer = System.Threading.Timer;
 
 namespace DebugListener;
@@ -15,7 +16,12 @@ public partial class FrmMain : Form
     public FrmMain()
     {
         InitializeComponent();
-        _settingsService = WinFormsUserSettingsService.CreateAndLoad();
+    }
+
+    public FrmMain(IServiceProvider serviceProvider)
+    {
+        InitializeComponent();
+        _settingsService = serviceProvider.GetRequiredService<IUserSettingsService>(); ;
 
         _vmMain = _settingsService.GetInstance<VmMain>(
             nameof(VmMain),

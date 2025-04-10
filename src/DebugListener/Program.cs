@@ -1,3 +1,9 @@
+using CommunityToolkit.WinForms.AppServices.ServiceExtensions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.WinForms;
+using System.Diagnostics;
+
 namespace DebugListener;
 
 internal static class Program
@@ -8,10 +14,25 @@ internal static class Program
     [STAThread]
     static void Main()
     {
-        // To customize application configuration such as set high DPI settings or default font,
-        // see https://aka.ms/applicationconfiguration.
-        ApplicationConfiguration.Initialize();
-        Application.SetColorMode(SystemColorMode.System);
-        Application.Run(new FrmMain());
+        WinFormsApplicationBuilder builder = WinFormsApplicationHost.CreateBuilder();
+
+        builder.Services.AddWinFormsUserSettingsService();
+        builder.Services.AddWinFormsExceptionService();
+
+        Debug.Assert(Thread.CurrentThread.GetApartmentState() == ApartmentState.STA);
+
+        // Configure logging
+        builder.Logging.AddConsole();
+        builder.Services.AddScoped<FrmMain>();
+
+        // Configure WinForms-specific options
+        builder.UseStartupForm<FrmMain>()
+            .UseHighDpiMode(HighDpiMode.SystemAware)
+            .UseColorMode(SystemColorMode.System);
+
+        // Build and run the application
+        WinFormsApplication app = builder.Build();
+
+        app.Run();
     }
 }

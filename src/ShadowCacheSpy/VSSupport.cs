@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.WinForms.Controls;
+﻿using CommunityToolkit.WinForms.Controls.Tooling.Console;
 using Microsoft.VisualStudio.Setup.Configuration;
 
 namespace ShadowCacheSpy;
