@@ -12,6 +12,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CToolkit.WinForms.FluentUI" Version="0.3.26-preview.1.g55292a5b10" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\WinFormsToolLib\DevTools.Libs.csproj" />
   </ItemGroup>
 

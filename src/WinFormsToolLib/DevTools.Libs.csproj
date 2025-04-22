@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AsyncSupport\CommunityToolkit.WinForms.AsyncSupport.csproj" />
+    <PackageReference Include="CToolkit.WinForms.AsyncSupport" Version="0.3.26-preview.1.g55292a5b10" />
   </ItemGroup>
 
   <ItemGroup>

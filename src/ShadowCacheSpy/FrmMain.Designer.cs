@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.WinForms.Controls;
+﻿using CommunityToolkit.WinForms.Controls.Tooling.Console;
 
 namespace ShadowCacheSpy
 {
@@ -40,7 +40,7 @@ namespace ShadowCacheSpy
             _statusStrip = new StatusStrip();
             _tslWatchPath = new ToolStripStatusLabel();
             _tslClock = new ToolStripStatusLabel();
-            _console = new CommunityToolkit.WinForms.Controls.ConsoleControl();
+            _console = new ConsoleControl();
             _fileSystemWatcher = new FileSystemWatcher();
             _tslTickDuration = new ToolStripStatusLabel();
             _menuStrip.SuspendLayout();

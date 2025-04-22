@@ -14,7 +14,7 @@ internal static class Program
     [STAThread]
     static void Main()
     {
-        WinFormsApplicationBuilder builder = WinFormsApplicationHost.CreateBuilder();
+        var builder = WinFormsApplication.CreateBuilder();
 
         builder.Services.AddWinFormsUserSettingsService();
         builder.Services.AddWinFormsExceptionService();

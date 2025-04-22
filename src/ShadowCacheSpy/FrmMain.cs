@@ -1,6 +1,7 @@
-using CommunityToolkit.WinForms.ComponentModel;
-using CommunityToolkit.WinForms.Controls;
-using CommunityToolkit.WinForms.Extensions;
+using CommunityToolkit.ComponentModel;
+using CommunityToolkit.DesktopUI.AppServices;
+using CommunityToolkit.WinForms.AppServices;
+using CommunityToolkit.WinForms.Extensions.UIExtensions;
 using System.Diagnostics;
 
 namespace ShadowCacheSpy;
@@ -20,7 +21,7 @@ public partial class FrmMain : Form
         _timerLoopCancellation = new AwaitableCancellationTokenSource();
 
         _settingsService = WinFormsUserSettingsService.CreateAndLoad();
-        _appSettings = _settingsService.GetInstance("appSettings", new AppSettings());
+        _appSettings = _settingsService.GetSetting("appSettings", new AppSettings());
 
         _fileSystemWatcher.EnableRaisingEvents = true;
 
@@ -36,7 +37,7 @@ public partial class FrmMain : Form
 
         _tslWatchPath.Text = _appSettings.WatchFolder ?? "No folder has been setup to being watched.";
 
-        var bounds = _settingsService.GetInstance(
+        var bounds = _settingsService.GetSetting(
             "bounds",
             this.CenterOnScreen(
                 horizontalFillGrade: 80,
@@ -105,17 +106,17 @@ public partial class FrmMain : Form
     protected override void OnFormClosed(FormClosedEventArgs e)
     {
         base.OnFormClosed(e);
-        _settingsService.SetInstance("appSettings", _appSettings);
-        _settingsService.SetInstance("bounds", this.GetRestorableBounds());
+        _settingsService.SaveSetting("appSettings", _appSettings);
+        _settingsService.SaveSetting("bounds", this.GetRestorableBounds());
         _settingsService.Save();
     }
 
     private async void Options_Click(object sender, EventArgs e)
     {
         var optionsDialog = new FrmOptions();
-        var result = await optionsDialog.ShowDialogAsync(_appSettings!);
+        IModalDialogResult<AppSettings> result = await optionsDialog.ShowDialogAsync(_appSettings!);
 
-        if (result.DialogResult == CommunityToolkit.DesktopGeneric.Mvvm.DialogResult.First)
+        if (result.DialogCloseReason == DialogCloseReason.OK)
         {
             _appSettings = result.ReturnValue!;
             _settingsService.Save();

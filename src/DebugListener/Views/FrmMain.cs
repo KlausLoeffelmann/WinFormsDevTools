@@ -1,5 +1,4 @@
 using CommunityToolkit.ComponentModel;
-using CommunityToolkit.WinForms.AppServices;
 using CommunityToolkit.WinForms.Extensions.UIExtensions;
 using DebugListener.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
@@ -23,13 +22,13 @@ public partial class FrmMain : Form
         InitializeComponent();
         _settingsService = serviceProvider.GetRequiredService<IUserSettingsService>(); ;
 
-        _vmMain = _settingsService.GetInstance<VmMain>(
+        _vmMain = _settingsService.GetSetting<VmMain>(
             nameof(VmMain),
             new VmMain());
     }
 
     private async void UpdateClock(object? state)
-        => await InvokeAsync(() => _tslDateTime.Text = DateTime.Now.ToString("ddd, yyyy-mm-dd HH:mm:ss-f"));
+        => await InvokeAsync(() => _tslDateTime.Text = DateTime.Now.ToString("ddd, yyyy-MM-dd HH:mm:ss-f"));
 
     protected async override void OnLoad(EventArgs e)
     {
@@ -46,7 +45,7 @@ public partial class FrmMain : Form
         _logView.TimeSpanFormatString = _vmMain.Options.TimeSpanFormatString;
         _logView.DateTimeFormatString = _vmMain.Options.DateTimeFormatString;
 
-        var bounds = _settingsService.GetInstance(
+        var bounds = _settingsService.GetSetting(
             "bounds",
             this.CenterOnScreen(
                 horizontalFillGrade: 80,
@@ -72,8 +71,8 @@ public partial class FrmMain : Form
     protected override void OnFormClosed(FormClosedEventArgs e)
     {
         base.OnFormClosed(e);
-        _settingsService.SetInstance("bounds", Bounds);
-        _settingsService.SetInstance(nameof(VmMain), _vmMain);
+        _settingsService.SaveSetting("bounds", Bounds);
+        _settingsService.SaveSetting(nameof(VmMain), _vmMain);
         _settingsService.Save();
     }
 

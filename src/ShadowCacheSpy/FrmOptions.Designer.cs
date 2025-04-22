@@ -76,7 +76,7 @@ namespace ShadowCacheSpy
             // _watchFolderPicker
             // 
             _watchFolderPicker.FilePath = "";
-            _watchFolderPicker.FilePathType = CommunityToolkit.WinForms.Controls.FilePathType.Folder;
+            _watchFolderPicker.FilePathType = FilePathType.Folder;
             _watchFolderPicker.Location = new Point(21, 59);
             _watchFolderPicker.Margin = new Padding(4);
             _watchFolderPicker.Name = "_watchFolderPicker";
