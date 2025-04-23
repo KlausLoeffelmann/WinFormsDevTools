@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.WinForms.Controls;
+using CToolkit.WinForms.FluentUI.Controls;
 
 namespace ShadowCacheSpy
 {
@@ -33,7 +34,7 @@ namespace ShadowCacheSpy
             _btnOK = new Button();
             _btnCancel = new Button();
             groupBox1 = new GroupBox();
-            _watchFolderPicker = new CommunityToolkit.WinForms.Controls.FilePathPicker();
+            _watchFolderPicker = new FilePathPicker();
             groupBox1.SuspendLayout();
             SuspendLayout();
             // 
@@ -75,8 +76,8 @@ namespace ShadowCacheSpy
             // 
             // _watchFolderPicker
             // 
-            _watchFolderPicker.FilePath = "";
-            _watchFolderPicker.FilePathType = FilePathType.Folder;
+            _watchFolderPicker.FileOrFolderPath = "";
+            _watchFolderPicker.PickerMode = FilePathPickerMode.FolderBrowser;
             _watchFolderPicker.Location = new Point(21, 59);
             _watchFolderPicker.Margin = new Padding(4);
             _watchFolderPicker.Name = "_watchFolderPicker";

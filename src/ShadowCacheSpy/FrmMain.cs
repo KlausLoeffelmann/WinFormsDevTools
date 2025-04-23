@@ -1,6 +1,7 @@
 using CommunityToolkit.ComponentModel;
 using CommunityToolkit.DesktopUI.AppServices;
 using CommunityToolkit.WinForms.AppServices;
+using CommunityToolkit.WinForms.Controls.Tooling.Console;
 using CommunityToolkit.WinForms.Extensions.UIExtensions;
 using System.Diagnostics;
 

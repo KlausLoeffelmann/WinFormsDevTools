@@ -2,14 +2,15 @@ using CommunityToolkit.ComponentModel;
 using CommunityToolkit.WinForms.Extensions.UIExtensions;
 using DebugListener.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
+using System.Diagnostics;
 using Timer = System.Threading.Timer;
 
 namespace DebugListener;
 
 public partial class FrmMain : Form
 {
-    private readonly IUserSettingsService _settingsService;
-    private readonly VmMain _vmMain;
+    private readonly IUserSettingsService _settingsService = null!;
+    private readonly VmMain _vmMain = null!;
     private Timer? _clockTimer;
 
     public FrmMain()
@@ -34,6 +35,8 @@ public partial class FrmMain : Form
     {
         base.OnLoad(e);
 
+        Debug.Assert(_vmMain is not null, "VmMain is null");
+
         DataContext = _vmMain;
 
         _clockTimer = new Timer(UpdateClock, null, 0, 100);
@@ -44,6 +47,8 @@ public partial class FrmMain : Form
 
         _logView.TimeSpanFormatString = _vmMain.Options.TimeSpanFormatString;
         _logView.DateTimeFormatString = _vmMain.Options.DateTimeFormatString;
+
+        Debug.Assert(_settingsService is not null, "IUserSettingsService is null");
 
         var bounds = _settingsService.GetSetting(
             "bounds",

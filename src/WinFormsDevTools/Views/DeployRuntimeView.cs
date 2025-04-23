@@ -245,8 +245,6 @@ public partial class DeployRuntimeView : UserControl
 
             bool foundCheckedItems = false;
 
-            string currentFileType = "Managed";
-
             DirectoryInfo targetDir;
 
             // Create a HashSet to store the processed files.
@@ -280,13 +278,10 @@ public partial class DeployRuntimeView : UserControl
                     // if it ends with "CSharp.dll", we need to copy it in the SubFolder "\\cs".
                     if (!fileItem.Name.StartsWith("System.Windows.Forms.Analyzers"))
                     {
-                        currentFileType = "Managed";
                         targetDir = targetSharedAssemblyBasePath;
                     }
                     else
                     {
-                        currentFileType = "Analyzer";
-
                         if (fileItem.Name.EndsWith("VisualBasic.dll"))
                         {
                             if (!vbFirst)

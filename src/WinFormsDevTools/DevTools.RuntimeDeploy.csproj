@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CToolkit.WinForms.FluentUI" Version="0.3.26-preview.1.g55292a5b10" />
+    <PackageReference Include="CToolkit.WinForms.FluentUI" Version="0.3.33-preview.1.g6602242f9f" />
   </ItemGroup>
 
   <ItemGroup>

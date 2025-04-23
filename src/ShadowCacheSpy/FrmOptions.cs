@@ -38,7 +38,7 @@ namespace ShadowCacheSpy
             if (DialogResult == DialogResult.OK)
             {
                 _appSettings ??= new();
-                _appSettings.WatchFolder = _watchFolderPicker.FilePath;
+                _appSettings.WatchFolder = _watchFolderPicker.FileOrFolderPath;
                 DataContext = _appSettings;
             }
         }
