@@ -6,7 +6,7 @@ namespace DevTools.RuntimeDeploy;
 ///  Provides functionality to extract the available generated assemblies 
 ///  from the Artifacts folder of the WinForms GitHub repository.
 /// </summary>
-internal partial class WinFormsGitHubRepoManager
+internal partial class WinFormsBuildArtefactsManager
 {
     public const string BinSystemWindowsFormsPath = "\\bin\\System.Windows.Forms";
     public const string BinPath = "\\bin";
@@ -20,7 +20,7 @@ internal partial class WinFormsGitHubRepoManager
         "\\netstandard2.1"
     ];
 
-    public WinFormsGitHubRepoManager(string pathToGitHubRepo) 
+    public WinFormsBuildArtefactsManager(string pathToGitHubRepo) 
         => PathToGitHubRepo = pathToGitHubRepo;
 
     public TargetFrameworkSourceItem[] GetAvailableTargets()
@@ -78,7 +78,7 @@ internal partial class WinFormsGitHubRepoManager
     {
         DirectoryInfo binWinForms = new(PathToGitHubRepo + BinPath);
 
-        return binWinForms.GetFiles(
+        return [.. binWinForms.GetFiles(
                 searchPattern: "*.dll",
                 enumerationOptions: new EnumerationOptions() { RecurseSubdirectories = true })
 
@@ -107,8 +107,7 @@ internal partial class WinFormsGitHubRepoManager
                         ? FindRefAssemblySourceFiles(group.Key, target.TfmPaths)
                         : []
                 };
-            })
-            .ToArray();
+            })];
 
         FileInfo[] FindRefAssemblySourceFiles(DirectoryInfo directory, string tfmPath)
         {
@@ -133,5 +132,7 @@ internal partial class WinFormsGitHubRepoManager
     }
 
     public string PathToGitHubRepo { get; }
-    public string PathToBinSystemWindowsForms => PathToGitHubRepo + BinSystemWindowsFormsPath;
+
+    public string PathToBinSystemWindowsForms 
+        => PathToGitHubRepo + BinSystemWindowsFormsPath;
 }

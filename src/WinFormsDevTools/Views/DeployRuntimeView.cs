@@ -3,15 +3,17 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Xml.Linq;
 using WinFormsDevToolsLib;
-using static DevTools.RuntimeDeploy.WinFormsGitHubRepoManager;
+using static DevTools.RuntimeDeploy.WinFormsBuildArtefactsManager;
 using static WfRuntimeDeployDevTools.RuntimeDeploy.WinFormsGitHubRepoManager;
+using DevTools.RuntimeDeploy.Utilities;
+using System.IO;
 
 namespace DevTools.RuntimeDeploy.Views;
 
 public partial class DeployRuntimeView : UserControl
 {
     private readonly Control[] _controlsForEnablingHandling;
-    private WinFormsGitHubRepoManager? _gitHubRepoManager;
+    private WinFormsBuildArtefactsManager? _gitHubRepoManager;
 
     private const string ACCESSIBILITY = "Accessibility";
     private const string MICROSOFT_VISUALBASIC = "Microsoft.VisualBasic";
@@ -215,7 +217,7 @@ public partial class DeployRuntimeView : UserControl
             showCommandBatchWindow: true,
             dryRun: _dryRunCheckBox.Checked);
 
-        var processTask=Task.Run(async () =>
+        var processTask = Task.Run(async () =>
         {
             // We're only reading.
             Control.CheckForIllegalCrossThreadCalls = false;
@@ -273,6 +275,10 @@ public partial class DeployRuntimeView : UserControl
                     // Add the file to the processed files HashSet
                     processedFiles.Add(fileItem);
 
+                    // Determine the file type based on the file name without extension
+                    string fileName = Path.GetFileNameWithoutExtension(fileItem.Name);
+                    string currentFileType = GetFileTypeForAssembly(fileName);
+
                     // If the file starts with "System.Windows.Forms.Analyzers", copy it to the analyzers directory.
                     // But. If the file ends with "VisualBasic.dll", we need to copy it in the SubFolder "\\vb", and
                     // if it ends with "CSharp.dll", we need to copy it in the SubFolder "\\cs".
@@ -318,19 +324,19 @@ public partial class DeployRuntimeView : UserControl
                             targetDir = analyzersDir;
                         }
 
-                        //// Update the AssemblyInfo.xml file with the assembly information.
-                        //AssemblyManifestProcessResult result = UpdateAssemblyInfo(
-                        //    xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
-                        //    destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetDir}\\{fileItem.Name}")),
-                        //    fileType: currentFileType,
-                        //    targetFrameworkVersion: targetFrameworkTarget.Name,
-                        //    updatePublicKey: false,
-                        //    isRefAssembly: false);
+                        // Update the AssemblyInfo.xml file with the assembly information.
+                        AssemblyManifestProcessResult result = UpdateAssemblyInfo(
+                            xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
+                            destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetDir}\\{fileItem.Name}")),
+                            fileType: currentFileType,
+                            targetFrameworkVersion: targetFrameworkTarget.Name,
+                            updatePublicKey: false,
+                            isRefAssembly: false);
 
-                        //if (await ProcessManifestResult(commandBatch, fileItem, result))
-                        //{
-                        //    continue;
-                        //}
+                        if (await ProcessManifestResult(commandBatch, fileItem, result))
+                        {
+                            continue;
+                        }
                     }
 
                     await commandBatch.CopyFileCommandAsync(
@@ -352,19 +358,23 @@ public partial class DeployRuntimeView : UserControl
                         continue;
                     }
 
-                    // // Update the AssemblyInfo.xml file with the assembly information.
-                    // AssemblyManifestProcessResult result = UpdateAssemblyInfo(
-                    // xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
-                    // destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetRefAssemblyPath}\\{fileItem.Name}")),
-                    // fileType: currentFileType,
-                    // targetFrameworkVersion: targetFrameworkTarget.Name,
-                    // updatePublicKey: false,
-                    // isRefAssembly: true);
+                    // Determine the file type for ref assembly
+                    string fileName = Path.GetFileNameWithoutExtension(fileItem.Name);
+                    string currentFileType = GetFileTypeForAssembly(fileName);
 
-                    // if (await ProcessManifestResult(commandBatch, fileItem, result))
-                    // {
-                    //     continue;
-                    // }
+                    // Update the AssemblyInfo.xml file with the assembly information.
+                    AssemblyManifestProcessResult result = UpdateAssemblyInfo(
+                        xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
+                        destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetRefAssemblyPath}\\{fileItem.Name}")),
+                        fileType: currentFileType,
+                        targetFrameworkVersion: targetFrameworkTarget.Name,
+                        updatePublicKey: false,
+                        isRefAssembly: true);
+
+                    if (await ProcessManifestResult(commandBatch, fileItem, result))
+                    {
+                        continue;
+                    }
 
                     // Add the file to the processed files HashSet
                     processedFiles.Add(fileItem);
@@ -402,7 +412,10 @@ public partial class DeployRuntimeView : UserControl
 
         await Task.WhenAll(batchTask, processTask);
 
-        static async Task<bool> ProcessManifestResult(CommandBatch commandBatch, FileInfo fileItem, AssemblyManifestProcessResult result)
+        static async Task<bool> ProcessManifestResult(
+            CommandBatch commandBatch, 
+            FileInfo fileItem, 
+            AssemblyManifestProcessResult result)
         {
             var (resultLogString, skipOperation) = result switch
             {
@@ -441,8 +454,11 @@ public partial class DeployRuntimeView : UserControl
         }
 
         Assembly assembly = null!;
-        AssemblyName? assemblyName;
+        AssemblyName? assemblyName = null;
         AssemblyMetadata? assemblyMetadata;
+
+        // Create a temporary assembly manager that will be disposed when done
+        using var tempManager = new AssemblyTempManager();
 
         if (isRefAssembly)
         {
@@ -451,15 +467,17 @@ public partial class DeployRuntimeView : UserControl
         }
         else
         {
-
             try
             {
-                assembly = Assembly.LoadFile(destinationAssemblyFileInfo.targetFile.FullName);
+                // Use temporary manager to load assembly from a copy instead of the original file
+                assembly = tempManager.LoadAssemblyFromCopy(destinationAssemblyFileInfo.targetFile.FullName);
 
                 if (assembly is null)
                 {
                     return AssemblyManifestProcessResult.InvalidAssembly;
                 }
+
+                assemblyName = assembly.GetName();
             }
             catch (Exception ex)
             {
@@ -468,11 +486,23 @@ public partial class DeployRuntimeView : UserControl
             }
         }
 
-        assemblyName = assembly?.GetName();
-
+        // If we still don't have an assembly name, try to get it directly from the file
         if (assemblyName is null)
         {
-            return AssemblyManifestProcessResult.InvalidAssembly;
+            try
+            {
+                assemblyName = tempManager.GetAssemblyName(destinationAssemblyFileInfo.targetFile.FullName);
+                
+                if (assemblyName is null)
+                {
+                    return AssemblyManifestProcessResult.InvalidAssembly;
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Couldn't get assembly name: {ex.Message}");
+                return AssemblyManifestProcessResult.InvalidAssembly;
+            }
         }
 
         var publicTokenBytes = assemblyName.GetPublicKeyToken();
@@ -499,7 +529,9 @@ public partial class DeployRuntimeView : UserControl
             return AssemblyManifestProcessResult.InvalidXmlFile;
         }
 
-        XElement? fileList = xmlDoc.Element("FileList") ?? throw new Exception("Invalid XML format.");
+        XElement? fileList = xmlDoc.Element("FileList") 
+            ?? throw new Exception("Invalid XML format.");
+
         XElement existingFile = null!;
 
         // Get the delta-string between the targetBasePath and the targetFile:
@@ -651,13 +683,17 @@ public partial class DeployRuntimeView : UserControl
 
             try
             {
-                var assembly = Assembly.LoadFile(assemblyFilePath);
-                var assemblyName = assembly.GetName();
-
-                version = assemblyName.Version?.ToString() ?? version;
+                // Use the temp manager to load from a copy instead
+                var tempAssembly = tempManager.LoadAssemblyFromCopy(assemblyFilePath);
+                if (tempAssembly != null)
+                {
+                    var tempAssemblyName = tempAssembly.GetName();
+                    version = tempAssemblyName.Version?.ToString() ?? version;
+                }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
+                Debug.WriteLine($"Error getting assembly version: {ex.Message}");
                 return version;
             }
 
@@ -698,5 +734,58 @@ public partial class DeployRuntimeView : UserControl
         }
 
         return $"{parts[0]}.0.0.0";
+    }
+
+    /// <summary>
+    /// Determines the file type based on the assembly name.
+    /// </summary>
+    /// <param name="assemblyName">The name of the assembly.</param>
+    /// <returns>The file type as a string.</returns>
+    private string GetFileTypeForAssembly(string assemblyName)
+    {
+        // Determine file type based on assembly name
+        if (assemblyName.StartsWith("System.Windows.Forms"))
+        {
+            if (assemblyName.Contains("Analyzers"))
+            {
+                return "Analyzer";
+            }
+            else if (assemblyName.Contains("Primitives"))
+            {
+                return "Primitive";
+            }
+            else if (assemblyName.Contains("Design"))
+            {
+                return "Design";
+            }
+            return "WinForms";
+        }
+        else if (assemblyName.StartsWith("System.Drawing"))
+        {
+            if (assemblyName.Contains("Design"))
+            {
+                return "DrawingDesign";
+            }
+            return "Drawing";
+        }
+        else if (assemblyName.StartsWith("Microsoft.VisualBasic"))
+        {
+            return "VisualBasic";
+        }
+        else if (assemblyName.StartsWith("Accessibility"))
+        {
+            return "Accessibility";
+        }
+        else if (assemblyName.StartsWith("System.Design"))
+        {
+            return "Design";
+        }
+        else if (assemblyName.StartsWith("System.Private.Windows.Core"))
+        {
+            return "WindowsCore";
+        }
+
+        // Default type if we can't determine
+        return "Unknown";
     }
 }

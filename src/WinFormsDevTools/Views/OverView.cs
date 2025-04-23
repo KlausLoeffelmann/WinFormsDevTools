@@ -1,5 +1,5 @@
 ﻿using WinFormsDevToolsLib;
-using static DevTools.RuntimeDeploy.WinFormsGitHubRepoManager;
+using static DevTools.RuntimeDeploy.WinFormsBuildArtefactsManager;
 
 namespace DevTools.RuntimeDeploy.Views;
 

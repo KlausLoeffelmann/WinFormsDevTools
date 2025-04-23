@@ -1,7 +1,7 @@
 using DevTools.RuntimeDeploy.Views;
 using System.ComponentModel;
 using WinFormsDevToolsLib;
-using static DevTools.RuntimeDeploy.WinFormsGitHubRepoManager;
+using static DevTools.RuntimeDeploy.WinFormsBuildArtefactsManager;
 
 namespace DevTools.RuntimeDeploy;
 
@@ -28,15 +28,14 @@ public partial class MainForm : Form
             return;
         }
 
-        SdkTargets = SdkFolders
+        SdkTargets = [.. SdkFolders
             .Values
             .Select(item => new TargetFrameworkTargetItem()
             {
                 Name = item.Name,
                 PathFullName = item.FullName,
                 Directory = item
-            })
-            .ToArray();
+            })];
     }
 
     private void TabControl_TabChanged(object? sender, EventArgs e)

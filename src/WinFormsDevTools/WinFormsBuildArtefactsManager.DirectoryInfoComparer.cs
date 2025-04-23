@@ -2,7 +2,7 @@
 
 namespace DevTools.RuntimeDeploy;
 
-internal partial class WinFormsGitHubRepoManager
+internal partial class WinFormsBuildArtefactsManager
 {
     private static DirectoryInfoComparer? s_instance;
 
