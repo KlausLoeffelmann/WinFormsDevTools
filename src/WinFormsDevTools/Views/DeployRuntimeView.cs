@@ -5,8 +5,6 @@ using System.Xml.Linq;
 using WinFormsDevToolsLib;
 using static DevTools.RuntimeDeploy.WinFormsBuildArtefactsManager;
 using static WfRuntimeDeployDevTools.RuntimeDeploy.WinFormsGitHubRepoManager;
-using DevTools.RuntimeDeploy.Utilities;
-using System.IO;
 
 namespace DevTools.RuntimeDeploy.Views;
 

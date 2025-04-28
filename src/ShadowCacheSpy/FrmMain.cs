@@ -40,7 +40,7 @@ public partial class FrmMain : Form
 
         var bounds = _settingsService.GetSetting(
             "bounds",
-            this.CenterOnScreen(
+            this.CenterToScreen(
                 horizontalFillGrade: 80,
                 verticalFillGrade: 80));
 
