@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.3.32605.63
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.RuntimeDeploy", "WinFormsDevTools\DevTools.RuntimeDeploy.csproj", "{8309985A-2A90-4401-BCEA-E07322C296D9}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.Libs", "WinFormsToolLib\DevTools.Libs.csproj", "{5AB54FA3-18FD-4753-9DA8-AF8817B9CE51}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.ShadowCacheSpy", "ShadowCacheSpy\DevTools.ShadowCacheSpy.csproj", "{7E3068E0-C548-48E3-8B80-C675A94878CB}"
@@ -26,16 +24,18 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.TestsX", "DevTools
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.FakeDesignToolsServer", "DevTools.FakeDesignToolsServer\DevTools.FakeDesignToolsServer.csproj", "{B687AA0A-DEE9-4738-BAFD-559BDF340875}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.RuntimeDeploy", "DevTools.RuntimeDeploy\DevTools.RuntimeDeploy.csproj", "{19D85205-D369-FA3F-59FF-59A23762724B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IconConverter", "DevTools.IconBuddy\IconConverter.csproj", "{8170BC52-2569-B5A9-0AB2-C681BD033F50}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8309985A-2A90-4401-BCEA-E07322C296D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8309985A-2A90-4401-BCEA-E07322C296D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8309985A-2A90-4401-BCEA-E07322C296D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8309985A-2A90-4401-BCEA-E07322C296D9}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5AB54FA3-18FD-4753-9DA8-AF8817B9CE51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5AB54FA3-18FD-4753-9DA8-AF8817B9CE51}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AB54FA3-18FD-4753-9DA8-AF8817B9CE51}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -60,18 +60,27 @@ Global
 		{B687AA0A-DEE9-4738-BAFD-559BDF340875}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B687AA0A-DEE9-4738-BAFD-559BDF340875}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B687AA0A-DEE9-4738-BAFD-559BDF340875}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19D85205-D369-FA3F-59FF-59A23762724B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19D85205-D369-FA3F-59FF-59A23762724B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19D85205-D369-FA3F-59FF-59A23762724B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19D85205-D369-FA3F-59FF-59A23762724B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8170BC52-2569-B5A9-0AB2-C681BD033F50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8170BC52-2569-B5A9-0AB2-C681BD033F50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8170BC52-2569-B5A9-0AB2-C681BD033F50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8170BC52-2569-B5A9-0AB2-C681BD033F50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{8309985A-2A90-4401-BCEA-E07322C296D9} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
-		{5AB54FA3-18FD-4753-9DA8-AF8817B9CE51} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
+		{5AB54FA3-18FD-4753-9DA8-AF8817B9CE51} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{7E3068E0-C548-48E3-8B80-C675A94878CB} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
 		{B0FAD5E9-FE3E-4F9D-80F2-765036393F2D} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
 		{540A2792-082E-4A45-BBA2-2093C72C4874} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
 		{F7BEDA40-1B70-41C6-B8A5-B5135555EA35} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
 		{B687AA0A-DEE9-4738-BAFD-559BDF340875} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
+		{19D85205-D369-FA3F-59FF-59A23762724B} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
+		{8170BC52-2569-B5A9-0AB2-C681BD033F50} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02BB4031-A5D7-45D0-8234-A9AC91240B69}

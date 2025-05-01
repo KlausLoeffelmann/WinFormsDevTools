@@ -10,8 +10,8 @@
 
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="CToolkit.WinForms.AppServices" Version="0.4.1-preview.1.g2f4aa2c8a7" />
-    <PackageReference Include="CToolkit.WinForms.Controls.Tooling" Version="0.4.1-preview.1.g2f4aa2c8a7" />
+    <PackageReference Include="CToolkit.WinForms.AppServices" Version="0.4.2-preview.1.g89559962f5" />
+    <PackageReference Include="CToolkit.WinForms.Controls.Tooling" Version="0.4.2-preview.1.g89559962f5" />
     <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.13.2069" />
   </ItemGroup>
 
