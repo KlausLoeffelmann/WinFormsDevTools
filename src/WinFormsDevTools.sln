@@ -28,7 +28,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.RuntimeDeploy", "D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IconConverter", "DevTools.IconBuddy\IconConverter.csproj", "{8170BC52-2569-B5A9-0AB2-C681BD033F50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IconLibrary", "DevTools.IconBuddy\IconLibrary.csproj", "{8170BC52-2569-B5A9-0AB2-C681BD033F50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

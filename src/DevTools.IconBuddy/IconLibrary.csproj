@@ -7,5 +7,11 @@
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
+		 
+  <ItemGroup>
+    <Reference Include="CToolkit.WinForms.FluentUI">
+      <HintPath>..\..\..\..\Users\klaus\.nuget\packages\ctoolkit.winforms.fluentui\0.4.2-preview.1.g89559962f5\lib\net9.0-windows10.0.22000\CToolkit.WinForms.FluentUI.dll</HintPath>
+    </Reference>
+  </ItemGroup>
 
 </Project>
