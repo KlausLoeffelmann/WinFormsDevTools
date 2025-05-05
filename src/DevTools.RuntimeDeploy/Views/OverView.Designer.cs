@@ -30,13 +30,13 @@ partial class OverView
     {
         groupBox2 = new GroupBox();
         label8 = new Label();
-        pathShortCutControl4 = new PathShortCutControl();
+        _pscTemplateCache = new PathShortCutControl();
         label7 = new Label();
-        pathShortCutControl3 = new PathShortCutControl();
+        _pscNewSdkRefAssemblies = new PathShortCutControl();
         label6 = new Label();
-        pathShortCutControl2 = new PathShortCutControl();
+        _pscNetSdkAssemblies = new PathShortCutControl();
         label5 = new Label();
-        pathShortCutControl1 = new PathShortCutControl();
+        _pscWinFormsGitHubRepo = new PathShortCutControl();
         groupBox1 = new GroupBox();
         _netDesktopSdksListView = new ListView();
         _netSdkVersionColumn = new ColumnHeader();
@@ -49,18 +49,18 @@ partial class OverView
         // 
         groupBox2.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
         groupBox2.Controls.Add(label8);
-        groupBox2.Controls.Add(pathShortCutControl4);
+        groupBox2.Controls.Add(_pscTemplateCache);
         groupBox2.Controls.Add(label7);
-        groupBox2.Controls.Add(pathShortCutControl3);
+        groupBox2.Controls.Add(_pscNewSdkRefAssemblies);
         groupBox2.Controls.Add(label6);
-        groupBox2.Controls.Add(pathShortCutControl2);
+        groupBox2.Controls.Add(_pscNetSdkAssemblies);
         groupBox2.Controls.Add(label5);
-        groupBox2.Controls.Add(pathShortCutControl1);
-        groupBox2.Location = new Point(15, 408);
+        groupBox2.Controls.Add(_pscWinFormsGitHubRepo);
+        groupBox2.Location = new Point(15, 427);
         groupBox2.Margin = new Padding(3, 4, 3, 4);
         groupBox2.Name = "groupBox2";
         groupBox2.Padding = new Padding(3, 4, 3, 4);
-        groupBox2.Size = new Size(1302, 286);
+        groupBox2.Size = new Size(1325, 286);
         groupBox2.TabIndex = 5;
         groupBox2.TabStop = false;
         groupBox2.Text = "Path shortcuts";
@@ -74,14 +74,14 @@ partial class OverView
         label8.TabIndex = 7;
         label8.Text = "Template cache";
         // 
-        // pathShortCutControl4
+        // _pscTemplateCache
         // 
-        pathShortCutControl4.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-        pathShortCutControl4.Location = new Point(347, 213);
-        pathShortCutControl4.Margin = new Padding(2);
-        pathShortCutControl4.Name = "pathShortCutControl4";
-        pathShortCutControl4.Size = new Size(933, 50);
-        pathShortCutControl4.TabIndex = 6;
+        _pscTemplateCache.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        _pscTemplateCache.Location = new Point(347, 213);
+        _pscTemplateCache.Margin = new Padding(2);
+        _pscTemplateCache.Name = "_pscTemplateCache";
+        _pscTemplateCache.Size = new Size(956, 50);
+        _pscTemplateCache.TabIndex = 6;
         // 
         // label7
         // 
@@ -92,14 +92,14 @@ partial class OverView
         label7.TabIndex = 5;
         label7.Text = ".NET SDK Ref Assemblies";
         // 
-        // pathShortCutControl3
+        // _pscNewSdkRefAssemblies
         // 
-        pathShortCutControl3.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-        pathShortCutControl3.Location = new Point(347, 159);
-        pathShortCutControl3.Margin = new Padding(2);
-        pathShortCutControl3.Name = "pathShortCutControl3";
-        pathShortCutControl3.Size = new Size(933, 50);
-        pathShortCutControl3.TabIndex = 4;
+        _pscNewSdkRefAssemblies.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        _pscNewSdkRefAssemblies.Location = new Point(347, 159);
+        _pscNewSdkRefAssemblies.Margin = new Padding(2);
+        _pscNewSdkRefAssemblies.Name = "_pscNewSdkRefAssemblies";
+        _pscNewSdkRefAssemblies.Size = new Size(956, 50);
+        _pscNewSdkRefAssemblies.TabIndex = 4;
         // 
         // label6
         // 
@@ -110,14 +110,14 @@ partial class OverView
         label6.TabIndex = 3;
         label6.Text = ".NET SDK Assemblies";
         // 
-        // pathShortCutControl2
+        // _pscNetSdkAssemblies
         // 
-        pathShortCutControl2.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-        pathShortCutControl2.Location = new Point(347, 105);
-        pathShortCutControl2.Margin = new Padding(2);
-        pathShortCutControl2.Name = "pathShortCutControl2";
-        pathShortCutControl2.Size = new Size(933, 50);
-        pathShortCutControl2.TabIndex = 2;
+        _pscNetSdkAssemblies.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        _pscNetSdkAssemblies.Location = new Point(347, 105);
+        _pscNetSdkAssemblies.Margin = new Padding(2);
+        _pscNetSdkAssemblies.Name = "_pscNetSdkAssemblies";
+        _pscNetSdkAssemblies.Size = new Size(956, 50);
+        _pscNetSdkAssemblies.TabIndex = 2;
         // 
         // label5
         // 
@@ -128,14 +128,14 @@ partial class OverView
         label5.TabIndex = 1;
         label5.Text = "WinForms Github Repo:";
         // 
-        // pathShortCutControl1
+        // _winFormsGithubRepo
         // 
-        pathShortCutControl1.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-        pathShortCutControl1.Location = new Point(347, 51);
-        pathShortCutControl1.Margin = new Padding(2);
-        pathShortCutControl1.Name = "pathShortCutControl1";
-        pathShortCutControl1.Size = new Size(933, 50);
-        pathShortCutControl1.TabIndex = 0;
+        _pscWinFormsGitHubRepo.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        _pscWinFormsGitHubRepo.Location = new Point(347, 51);
+        _pscWinFormsGitHubRepo.Margin = new Padding(2);
+        _pscWinFormsGitHubRepo.Name = "_winFormsGithubRepo";
+        _pscWinFormsGitHubRepo.Size = new Size(956, 50);
+        _pscWinFormsGitHubRepo.TabIndex = 0;
         // 
         // groupBox1
         // 
@@ -145,7 +145,7 @@ partial class OverView
         groupBox1.Margin = new Padding(3, 4, 3, 4);
         groupBox1.Name = "groupBox1";
         groupBox1.Padding = new Padding(3, 4, 3, 4);
-        groupBox1.Size = new Size(1302, 387);
+        groupBox1.Size = new Size(1325, 406);
         groupBox1.TabIndex = 4;
         groupBox1.TabStop = false;
         groupBox1.Text = ".NET Desktop SDKs:";
@@ -159,7 +159,7 @@ partial class OverView
         _netDesktopSdksListView.Location = new Point(16, 38);
         _netDesktopSdksListView.Margin = new Padding(3, 4, 3, 4);
         _netDesktopSdksListView.Name = "_netDesktopSdksListView";
-        _netDesktopSdksListView.Size = new Size(1264, 325);
+        _netDesktopSdksListView.Size = new Size(1287, 344);
         _netDesktopSdksListView.TabIndex = 2;
         _netDesktopSdksListView.UseCompatibleStateImageBehavior = false;
         _netDesktopSdksListView.View = View.Details;
@@ -182,7 +182,7 @@ partial class OverView
         Controls.Add(groupBox1);
         Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
         Name = "OverView";
-        Size = new Size(1332, 719);
+        Size = new Size(1355, 738);
         groupBox2.ResumeLayout(false);
         groupBox2.PerformLayout();
         groupBox1.ResumeLayout(false);
@@ -193,13 +193,13 @@ partial class OverView
 
     private GroupBox groupBox2;
     private Label label8;
-    private PathShortCutControl pathShortCutControl4;
+    private PathShortCutControl _pscTemplateCache;
     private Label label7;
-    private PathShortCutControl pathShortCutControl3;
+    private PathShortCutControl _pscNewSdkRefAssemblies;
     private Label label6;
-    private PathShortCutControl pathShortCutControl2;
+    private PathShortCutControl _pscNetSdkAssemblies;
     private Label label5;
-    private PathShortCutControl pathShortCutControl1;
+    private PathShortCutControl _pscWinFormsGitHubRepo;
     private GroupBox groupBox1;
     private ListView _netDesktopSdksListView;
     private ColumnHeader _netSdkVersionColumn;

@@ -1,6 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace ShadowCacheSpy;
+namespace DevTools.ShadowCacheSpy;
 
 public partial class AppSettings : ObservableObject
 {

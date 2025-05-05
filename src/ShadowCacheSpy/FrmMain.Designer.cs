@@ -1,6 +1,6 @@
-﻿using CommunityToolkit.WinForms.Controls.Tooling.Console;
+﻿using CommunityToolkit.WinForms.Tooling;
 
-namespace ShadowCacheSpy
+namespace DevTools.ShadowCacheSpy
 {
     partial class FrmMain
     {

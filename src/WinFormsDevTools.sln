@@ -28,7 +28,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.RuntimeDeploy", "D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IconLibrary", "DevTools.IconBuddy\IconLibrary.csproj", "{8170BC52-2569-B5A9-0AB2-C681BD033F50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.IconLibrary", "DevTools.IconBuddy\DevTools.IconLibrary.csproj", "{8170BC52-2569-B5A9-0AB2-C681BD033F50}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.GitHubBuddy", "DevTools.GithubBuddy\DevTools.GitHubBuddy.csproj", "{9760B47E-2C8E-412F-BE24-EBF960DBBF20}"
 EndProject

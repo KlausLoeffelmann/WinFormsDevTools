@@ -9,7 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CToolkit.WinForms.AsyncSupport" Version="0.4.2-preview.1.g89559962f5" />
+    <PackageReference Include="CToolkit.Desktop.Async" />
+    <PackageReference Include="CToolkit.WinForms.Tooling" />
+    <PackageReference Include="NuGet.Versioning" />
   </ItemGroup>
 
   <ItemGroup>

@@ -9,13 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="CToolkit.WinForms.AppServices" Version="0.4.2-preview.1.g89559962f5" />
-    <PackageReference Include="CToolkit.WinForms.Controls.Tooling" Version="0.4.2-preview.1.g89559962f5" />
-    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.13.2069" />
-  </ItemGroup>
-
-  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm"/>
+    <PackageReference Include="CToolkit.WinForms" />
+    <PackageReference Include="CToolkit.WinForms.AppServices" />
+    <PackageReference Include="CToolkit.WinForms.Tooling" />
+    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" />
   </ItemGroup>
 
 </Project>

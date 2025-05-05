@@ -1,8 +1,8 @@
-﻿using System.Data;
+﻿using DevTools.Libs;
+using System.Data;
 using System.Diagnostics;
 using System.Reflection;
 using System.Xml.Linq;
-using WinFormsDevToolsLib;
 using static DevTools.RuntimeDeploy.WinFormsBuildArtefactsManager;
 using static WfRuntimeDeployDevTools.RuntimeDeploy.WinFormsGitHubRepoManager;
 
@@ -17,11 +17,13 @@ public partial class DeployRuntimeView : UserControl
     private const string MICROSOFT_VISUALBASIC = "Microsoft.VisualBasic";
     private const string MICROSOFT_VISUALBASIC_FACADE = "Microsoft.VisualBasic.Facade";
     private const string MICROSOFT_VISUALBASIC_FORMS = "Microsoft.VisualBasic.Forms";
+    private const string MICROSOFT_PRIVATE_WINFORMS = "Microsoft.Private.Winforms";
     private const string SYSTEM_DESIGN_FACADE = "System.Design.Facade";
     private const string SYSTEM_DRAWING_COMMON = "System.Drawing.Common";
     private const string SYSTEM_DRAWING_DESIGN_FACADE = "System.Drawing.Design.Facade";
     private const string SYSTEM_DRAWING_FACADE = "System.Drawing.Facade";
     private const string SYSTEM_PRIVATE_WINDOWS_CORE = "System.Private.Windows.Core";
+    private const string SYSTEM_PRIVATE_WINDOWS_GDIPLUS = "System.Private.Windows.GdiPlus";
     private const string SYSTEM_WINDOWS_FORMS = "System.Windows.Forms";
     private const string SYSTEM_WINDOWS_FORMS_ANALYZERS = "System.Windows.Forms.Analyzers";
     private const string SYSTEM_WINDOWS_FORMS_ANALYZERS_CSHARP = "System.Windows.Forms.Analyzers.CSharp";
@@ -41,11 +43,13 @@ public partial class DeployRuntimeView : UserControl
         MICROSOFT_VISUALBASIC,
         MICROSOFT_VISUALBASIC_FACADE,
         MICROSOFT_VISUALBASIC_FORMS,
+        MICROSOFT_PRIVATE_WINFORMS,
         SYSTEM_DESIGN_FACADE,
         SYSTEM_DRAWING_COMMON,
         SYSTEM_DRAWING_DESIGN_FACADE,
         SYSTEM_DRAWING_FACADE,
         SYSTEM_PRIVATE_WINDOWS_CORE,
+        SYSTEM_PRIVATE_WINDOWS_GDIPLUS,
         SYSTEM_WINDOWS_FORMS,
         SYSTEM_WINDOWS_FORMS_ANALYZERS,
         SYSTEM_WINDOWS_FORMS_ANALYZERS_CSHARP,
@@ -234,14 +238,14 @@ public partial class DeployRuntimeView : UserControl
             DirectoryInfo cSharpAnalyzersDir = new($"{analyzersDir.FullName}\\{CSharpSubfolderPath}");
             DirectoryInfo visualBasicAnalyzersDir = new($"{analyzersDir.FullName}\\{VisualBasicSubfolderPath}");
 
-            await commandBatch.InfoPrintLineAsync($"Destination Assembly directory:{targetSharedAssemblyBasePath}");
-            await commandBatch.InfoPrintLineAsync($"Destination REF-Assembly directory:{targetRefAssemblyPath.FullName}");
-            await commandBatch.InfoPrintLineAsync($"Destination Analyzers directory:{analyzersDir.FullName}");
-            await commandBatch.InfoPrintLineAsync($"");
+            await commandBatch.WriteLineInfoAsync($"Destination Assembly directory:{targetSharedAssemblyBasePath}");
+            await commandBatch.WriteLineInfoAsync($"Destination REF-Assembly directory:{targetRefAssemblyPath.FullName}");
+            await commandBatch.WriteLineInfoAsync($"Destination Analyzers directory:{analyzersDir.FullName}");
+            await commandBatch.WriteLineInfoAsync($"");
 
-            await commandBatch.InfoPrintLineAsync($"Source Assembly directory:{sourceAssemblyBasePath}");
-            await commandBatch.InfoPrintLineAsync($"Source RefAssembly directory:{sourceRefAssemblyBasePath}\\ref");
-            await commandBatch.InfoPrintLineAsync($"");
+            await commandBatch.WriteLineInfoAsync($"Source Assembly directory:{sourceAssemblyBasePath}");
+            await commandBatch.WriteLineInfoAsync($"Source RefAssembly directory:{sourceRefAssemblyBasePath}\\ref");
+            await commandBatch.WriteLineInfoAsync($"");
 
             bool foundCheckedItems = false;
 
@@ -387,10 +391,10 @@ public partial class DeployRuntimeView : UserControl
 
             if (!foundCheckedItems)
             {
-                await commandBatch.InfoPrintLineAsync("No items were selected, found nothing to copy.");
+                await commandBatch.WriteLineWarningAsync("No items were selected, found nothing to copy.");
             }
 
-            commandBatch.EndBatch("End of Command Batch.");
+            await commandBatch.EndBatchAsync("End of Command Batch.");
 
             _copyCommandButton.Enabled = true;
 
@@ -430,7 +434,7 @@ public partial class DeployRuntimeView : UserControl
 
             if (skipOperation)
             {
-                await commandBatch.InfoPrintLineAsync(
+                await commandBatch.WriteLineWarningAsync(
                     $"Skipping {fileItem.Name} - {resultLogString}");
             }
 

@@ -2,7 +2,7 @@
 // Copyright (c) Microsoft Corporation. All Rights Reserved.
 // -------------------------------------------------------------------
 
-using CommunityToolkit.WinForms.AsyncSupport;
+using CToolkit.Desktop.Async.Collections;
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
 

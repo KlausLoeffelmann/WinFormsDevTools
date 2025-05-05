@@ -1,4 +1,4 @@
-namespace ShadowCacheSpy;
+namespace DevTools.ShadowCacheSpy;
 
 internal static class Program
 {

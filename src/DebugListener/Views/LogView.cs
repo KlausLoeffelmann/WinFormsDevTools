@@ -1,4 +1,4 @@
-﻿using CommunityToolkit.WinForms.AsyncSupport;
+﻿using CToolkit.Desktop.Async.Collections;
 using DevTools.Libs.DebugListener;
 using System.ComponentModel;
 using System.Text;
@@ -264,7 +264,7 @@ public partial class LogView : DataGridView
 
         if (SelectedRows.Count == 0)
         {
-            eArgs = new(-1,DateTime.Now, TimeSpan.Zero, Array.Empty<DebugMessage>(), TimeSpan.Zero, TimeSpan.Zero, TimeSpan.Zero);
+            eArgs = new(-1,DateTime.Now, TimeSpan.Zero, [], TimeSpan.Zero, TimeSpan.Zero, TimeSpan.Zero);
             LogViewSelectionChanged?.Invoke(this, eArgs);
 
             return;
