@@ -14,10 +14,10 @@
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.0" />
 
     <!-- Define your package versions here -->
-    <PackageVersion Include="CToolkit.Desktop.Async" Version="0.5.5-preview.1.g65b4513df7" />
-    <PackageVersion Include="CToolkit.WinForms" Version="0.5.5-preview.1.g65b4513df7" />
-    <PackageVersion Include="CToolkit.WinForms.AppServices" Version="0.5.5-preview.1.g65b4513df7" />
-    <PackageVersion Include="CToolkit.WinForms.Tooling" Version="0.5.5-preview.1.g65b4513df7" />
+    <PackageVersion Include="CToolkit.Desktop.Async" Version="0.5.6-preview.1.g3989b3b390" />
+    <PackageVersion Include="CToolkit.WinForms" Version="0.5.6-preview.1.g3989b3b390" />
+    <PackageVersion Include="CToolkit.WinForms.AppServices" Version="0.5.6-preview.1.g3989b3b390" />
+    <PackageVersion Include="CToolkit.WinForms.Tooling" Version="0.5.6-preview.1.g3989b3b390" />
     <PackageVersion Include="NuGet.Versioning" Version="6.13.2" />
   </ItemGroup>
 </Project>

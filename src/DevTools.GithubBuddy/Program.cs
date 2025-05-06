@@ -1,3 +1,9 @@
+using CommunityToolkit.WinForms;
+using CommunityToolkit.WinForms.AppServices.ServiceExtensions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.WinForms;
+
 namespace DevTools.GitHubBuddy
 {
     internal static class Program
@@ -8,11 +14,25 @@ namespace DevTools.GitHubBuddy
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
-            ApplicationConfiguration.Initialize();
-            Application.SetColorMode(SystemColorMode.System);
-            Application.Run(new FrmGitHubExplorer());
+            // Create the builder
+            var builder = WinFormsApplication.CreateBuilder();
+
+            // Add services
+            builder.Services.AddWinFormsUserSettingsService();
+            builder.Services.AddScoped<FrmGitHubExplorer>();
+            
+            // Configure logging
+            builder.Logging.AddConsole();
+            
+            // Configure WinForms-specific options
+            builder.UseStartupForm<FrmGitHubExplorer>()
+                .UseHighDpiMode(HighDpiMode.SystemAware)
+                .UseColorMode(SystemColorMode.System)
+                .UseVisualStyles();
+                
+            // Build and run the application
+            var app = builder.Build();
+            app.Run();
         }
     }
 }

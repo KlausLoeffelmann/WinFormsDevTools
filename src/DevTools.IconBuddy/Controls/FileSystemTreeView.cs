@@ -363,7 +363,7 @@ public class FileSystemTreeView : TreeView
         {
             // Find and expand the node with this path
             var parts = path.Split('\\');
-            TreeNode currentNode = null!
+            TreeNode currentNode = null!;
             
             // Find the root node
             foreach (TreeNode rootNode in Nodes)

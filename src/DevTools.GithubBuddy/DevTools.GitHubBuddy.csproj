@@ -9,10 +9,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Octokit" />
+      <PackageReference Include="CToolkit.WinForms" />
+	  <PackageReference Include="CToolkit.WinForms.AppServices" />
+	  <PackageReference Include="Octokit" />
   </ItemGroup>
 
-  <ItemGroup>
+    <ItemGroup>
     <Compile Update="Properties\Resources.Designer.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
