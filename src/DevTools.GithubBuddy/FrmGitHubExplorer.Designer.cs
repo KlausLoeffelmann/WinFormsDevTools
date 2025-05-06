@@ -30,7 +30,13 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmGitHubExplorer));
             _statusStrip = new StatusStrip();
-            toolStripStatusLabel1 = new ToolStripStatusLabel();
+            _tslUserCaption = new ToolStripStatusLabel();
+            _tslUser = new ToolStripStatusLabel();
+            _tslOrgCaption = new ToolStripStatusLabel();
+            _tsdCurrentOrg = new ToolStripDropDownButton();
+            _tslStatusCaption = new ToolStripStatusLabel();
+            _tslInfo = new ToolStripStatusLabel();
+            _tslTime = new ToolStripStatusLabel();
             _menuStrip = new MenuStrip();
             fileToolStripMenuItem = new ToolStripMenuItem();
             _tsmLoginToGithub = new ToolStripMenuItem();
@@ -44,10 +50,12 @@
             addQueryToolStripMenuItem = new ToolStripMenuItem();
             agentsToolStripMenuItem = new ToolStripMenuItem();
             _toolStrip = new ToolStrip();
-            toolStripButton1 = new ToolStripButton();
+            toolStripSeparator1 = new ToolStripSeparator();
             splitContainer1 = new SplitContainer();
-            gitHubExplorerTreeView1 = new DevTools.GitHubBuddy.Controls.GitHubExplorerTreeView();
-            gitHubIssuesListView1 = new DevTools.GitHubBuddy.Controls.GitHubIssuesListView();
+            decoratorPanel1 = new CommunityToolkit.WinForms.Containers.DecoratorPanel();
+            _tvwExplorerTree = new DevTools.GitHubBuddy.Controls.GitHubExplorerTreeView();
+            decoratorPanel2 = new CommunityToolkit.WinForms.Containers.DecoratorPanel();
+            _lvwIssues = new DevTools.GitHubBuddy.Controls.GitHubIssuesListView();
             _statusStrip.SuspendLayout();
             _menuStrip.SuspendLayout();
             _toolStrip.SuspendLayout();
@@ -55,13 +63,15 @@
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
             splitContainer1.SuspendLayout();
+            decoratorPanel1.SuspendLayout();
+            decoratorPanel2.SuspendLayout();
             SuspendLayout();
             // 
             // _statusStrip
             // 
             _statusStrip.Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
             _statusStrip.ImageScalingSize = new Size(24, 24);
-            _statusStrip.Items.AddRange(new ToolStripItem[] { toolStripStatusLabel1 });
+            _statusStrip.Items.AddRange(new ToolStripItem[] { _tslUserCaption, _tslUser, _tslOrgCaption, _tsdCurrentOrg, _tslStatusCaption, _tslInfo, _tslTime });
             _statusStrip.Location = new Point(0, 558);
             _statusStrip.Name = "_statusStrip";
             _statusStrip.Padding = new Padding(1, 0, 17, 0);
@@ -69,11 +79,56 @@
             _statusStrip.TabIndex = 3;
             _statusStrip.Text = "statusStrip1";
             // 
-            // toolStripStatusLabel1
+            // _tslUserCaption
             // 
-            toolStripStatusLabel1.Name = "toolStripStatusLabel1";
-            toolStripStatusLabel1.Size = new Size(63, 30);
-            toolStripStatusLabel1.Text = "#info";
+            _tslUserCaption.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            _tslUserCaption.Name = "_tslUserCaption";
+            _tslUserCaption.Size = new Size(67, 30);
+            _tslUserCaption.Text = "User:";
+            // 
+            // _tslUser
+            // 
+            _tslUser.Name = "_tslUser";
+            _tslUser.Size = new Size(70, 30);
+            _tslUser.Text = "#User";
+            // 
+            // _tslOrgCaption
+            // 
+            _tslOrgCaption.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            _tslOrgCaption.Name = "_tslOrgCaption";
+            _tslOrgCaption.Size = new Size(139, 30);
+            _tslOrgCaption.Text = "Github-Org:";
+            // 
+            // _tsdCurrentOrg
+            // 
+            _tsdCurrentOrg.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            _tsdCurrentOrg.Image = (Image)resources.GetObject("_tsdCurrentOrg.Image");
+            _tsdCurrentOrg.ImageTransparentColor = Color.Magenta;
+            _tsdCurrentOrg.Name = "_tsdCurrentOrg";
+            _tsdCurrentOrg.Size = new Size(173, 34);
+            _tsdCurrentOrg.Text = "#Current Repo";
+            _tsdCurrentOrg.ToolTipText = "#Current Org";
+            // 
+            // _tslStatusCaption
+            // 
+            _tslStatusCaption.Font = new Font("Segoe UI", 11F, FontStyle.Bold);
+            _tslStatusCaption.Name = "_tslStatusCaption";
+            _tslStatusCaption.Size = new Size(83, 30);
+            _tslStatusCaption.Text = "Status:";
+            // 
+            // _tslInfo
+            // 
+            _tslInfo.Name = "_tslInfo";
+            _tslInfo.Size = new Size(437, 30);
+            _tslInfo.Spring = true;
+            _tslInfo.Text = "#Info";
+            _tslInfo.TextAlign = ContentAlignment.MiddleLeft;
+            // 
+            // _tslTime
+            // 
+            _tslTime.Name = "_tslTime";
+            _tslTime.Size = new Size(74, 30);
+            _tslTime.Text = "#Time";
             // 
             // _menuStrip
             // 
@@ -159,53 +214,81 @@
             // _toolStrip
             // 
             _toolStrip.ImageScalingSize = new Size(32, 32);
-            _toolStrip.Items.AddRange(new ToolStripItem[] { toolStripButton1 });
+            _toolStrip.Items.AddRange(new ToolStripItem[] { toolStripSeparator1 });
             _toolStrip.Location = new Point(0, 38);
             _toolStrip.Name = "_toolStrip";
-            _toolStrip.Size = new Size(1061, 41);
+            _toolStrip.Size = new Size(1061, 28);
             _toolStrip.TabIndex = 4;
             _toolStrip.Text = "toolStrip1";
             // 
-            // toolStripButton1
+            // toolStripSeparator1
             // 
-            toolStripButton1.DisplayStyle = ToolStripItemDisplayStyle.Image;
-            toolStripButton1.Image = (Image)resources.GetObject("toolStripButton1.Image");
-            toolStripButton1.ImageTransparentColor = Color.Magenta;
-            toolStripButton1.Name = "toolStripButton1";
-            toolStripButton1.Size = new Size(36, 36);
-            toolStripButton1.Text = "toolStripButton1";
+            toolStripSeparator1.Name = "toolStripSeparator1";
+            toolStripSeparator1.Size = new Size(6, 28);
             // 
             // splitContainer1
             // 
             splitContainer1.Dock = DockStyle.Fill;
-            splitContainer1.Location = new Point(0, 79);
+            splitContainer1.Location = new Point(0, 66);
             splitContainer1.Name = "splitContainer1";
             // 
             // splitContainer1.Panel1
             // 
-            splitContainer1.Panel1.Controls.Add(gitHubExplorerTreeView1);
+            splitContainer1.Panel1.Controls.Add(decoratorPanel1);
+            splitContainer1.Panel1.Padding = new Padding(5);
             // 
             // splitContainer1.Panel2
             // 
-            splitContainer1.Panel2.Controls.Add(gitHubIssuesListView1);
-            splitContainer1.Size = new Size(1061, 479);
+            splitContainer1.Panel2.Controls.Add(decoratorPanel2);
+            splitContainer1.Panel2.Padding = new Padding(5);
+            splitContainer1.Size = new Size(1061, 492);
             splitContainer1.SplitterDistance = 353;
             splitContainer1.TabIndex = 5;
             // 
-            // gitHubExplorerTreeView1
+            // decoratorPanel1
             // 
-            gitHubExplorerTreeView1.Location = new Point(17, 19);
-            gitHubExplorerTreeView1.Name = "gitHubExplorerTreeView1";
-            gitHubExplorerTreeView1.Size = new Size(296, 399);
-            gitHubExplorerTreeView1.TabIndex = 0;
+            decoratorPanel1.BorderThickness = 1;
+            decoratorPanel1.Controls.Add(_tvwExplorerTree);
+            decoratorPanel1.Dock = DockStyle.Fill;
+            decoratorPanel1.Location = new Point(5, 5);
+            decoratorPanel1.MinimumSize = new Size(28, 28);
+            decoratorPanel1.Name = "decoratorPanel1";
+            decoratorPanel1.Padding = new Padding(5);
+            decoratorPanel1.Size = new Size(343, 482);
+            decoratorPanel1.TabIndex = 1;
             // 
-            // gitHubIssuesListView1
+            // _tvwExplorerTree
             // 
-            gitHubIssuesListView1.Location = new Point(28, 28);
-            gitHubIssuesListView1.Name = "gitHubIssuesListView1";
-            gitHubIssuesListView1.Size = new Size(636, 408);
-            gitHubIssuesListView1.TabIndex = 0;
-            gitHubIssuesListView1.UseCompatibleStateImageBehavior = false;
+            _tvwExplorerTree.Location = new Point(6, 6);
+            _tvwExplorerTree.Name = "_tvwExplorerTree";
+            _tvwExplorerTree.Size = new Size(331, 470);
+            _tvwExplorerTree.TabIndex = 0;
+            _tvwExplorerTree.AfterSelect += ExplorerTree_AfterSelect;
+            // 
+            // decoratorPanel2
+            // 
+            decoratorPanel2.BorderThickness = 1;
+            decoratorPanel2.Controls.Add(_lvwIssues);
+            decoratorPanel2.Dock = DockStyle.Fill;
+            decoratorPanel2.Location = new Point(5, 5);
+            decoratorPanel2.MinimumSize = new Size(28, 28);
+            decoratorPanel2.Name = "decoratorPanel2";
+            decoratorPanel2.Padding = new Padding(5);
+            decoratorPanel2.Size = new Size(694, 482);
+            decoratorPanel2.TabIndex = 1;
+            // 
+            // _lvwIssues
+            // 
+            _lvwIssues.AllowColumnReorder = true;
+            _lvwIssues.FullRowSelect = true;
+            _lvwIssues.Location = new Point(6, 6);
+            _lvwIssues.MultiSelect = false;
+            _lvwIssues.Name = "_lvwIssues";
+            _lvwIssues.Size = new Size(682, 470);
+            _lvwIssues.Sorting = SortOrder.Ascending;
+            _lvwIssues.TabIndex = 0;
+            _lvwIssues.UseCompatibleStateImageBehavior = false;
+            _lvwIssues.View = View.Details;
             // 
             // FrmGitHubExplorer
             // 
@@ -232,6 +315,8 @@
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
             splitContainer1.ResumeLayout(false);
+            decoratorPanel1.ResumeLayout(false);
+            decoratorPanel2.ResumeLayout(false);
             ResumeLayout(false);
             PerformLayout();
         }
@@ -244,18 +329,26 @@
         private ToolStripMenuItem _tsmLoginToGithub;
         private ToolStripMenuItem editToolStripMenuItem;
         private ToolStripMenuItem _tsmAddRepo;
-        private ToolStripStatusLabel toolStripStatusLabel1;
+        private ToolStripStatusLabel _tslTime;
         private ToolStrip _toolStrip;
-        private ToolStripButton toolStripButton1;
         private ToolStripSeparator toolStripMenuItem1;
         private ToolStripMenuItem quitToolStripMenuItem;
         private SplitContainer splitContainer1;
-        private Controls.GitHubExplorerTreeView gitHubExplorerTreeView1;
-        private Controls.GitHubIssuesListView gitHubIssuesListView1;
+        private Controls.GitHubExplorerTreeView _tvwExplorerTree;
+        private Controls.GitHubIssuesListView _lvwIssues;
         private ToolStripMenuItem addQueryToolStripMenuItem;
         private ToolStripMenuItem agentsToolStripMenuItem;
         private ToolStripMenuItem toolStripMenuItem2;
         private ToolStripMenuItem hideContentFromCaptureToolStripMenuItem;
         private ToolStripMenuItem hideWindowFromCaptureToolStripMenuItem;
+        private ToolStripStatusLabel _tslUser;
+        private ToolStripDropDownButton _tsdCurrentOrg;
+        private ToolStripStatusLabel _tslInfo;
+        private CommunityToolkit.WinForms.Containers.DecoratorPanel decoratorPanel1;
+        private CommunityToolkit.WinForms.Containers.DecoratorPanel decoratorPanel2;
+        private ToolStripStatusLabel _tslUserCaption;
+        private ToolStripStatusLabel _tslStatusCaption;
+        private ToolStripStatusLabel _tslOrgCaption;
+        private ToolStripSeparator toolStripSeparator1;
     }
 }

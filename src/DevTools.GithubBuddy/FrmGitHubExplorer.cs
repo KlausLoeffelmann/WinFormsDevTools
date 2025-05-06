@@ -1,5 +1,6 @@
 using CommunityToolkit.ComponentModel;
 using CommunityToolkit.WinForms.Extensions.UIExtensions;
+using CommunityToolkit.WinForms.Symbols;
 using DevTools.GitHubBuddy.GitHub;
 using Microsoft.Extensions.DependencyInjection;
 using Octokit;
@@ -10,6 +11,9 @@ namespace DevTools.GitHubBuddy;
 
 public partial class FrmGitHubExplorer : Form
 {
+    private const string Key_WindowBounds = "MainWindow_Bounds";
+    private const string PersonalAccountText = "Personal Account";
+
     private GitHubClient? _client;
     private IReadOnlyList<Organization>? _orgs;
     private IReadOnlyList<Repository>? _repos;
@@ -17,8 +21,8 @@ public partial class FrmGitHubExplorer : Form
 
     // Settings service and keys
     private readonly IUserSettingsService? _settingsService;
-    private const string Key_WindowBounds = "MainWindow_Bounds";
-    private const string Key_LastUser = "GitHub_LastUser";
+
+    private readonly CancellationTokenSource _shutDownCancellation = new();
 
     /// <summary>
     ///  Default constructor required for designer
@@ -26,7 +30,7 @@ public partial class FrmGitHubExplorer : Form
     public FrmGitHubExplorer()
     {
         InitializeComponent();
-        this.FormCornerPreference = FormCornerPreference.Round;
+        InitializeStatusBar();
     }
 
     /// <summary>
@@ -62,6 +66,32 @@ public partial class FrmGitHubExplorer : Form
             {
                 App.OnThreadException(ex);
             }
+
+            if (_repos is not null && _user is not null)
+            {
+                await _tvwExplorerTree.PopulateReposAsync(_user.Name, _repos);
+            }
+            else
+            {
+                await UpdateInfoAsync("No repositories found.");
+            }
+
+            // !!! Needs to be the last call, since its callback will only
+            // return when the form is closed !!!
+            await ShowTimeAsync(_shutDownCancellation.Token);
+
+            // The loop which is showing the time is running in the background.
+            async Task ShowTimeAsync(CancellationToken token)
+            {
+                while (!token.IsCancellationRequested)
+                {
+                    await Task.Delay(500, token).ConfigureAwait(false);
+                    await InvokeAsync(() =>
+                    {
+                        _tslTime.Text = $"{DateTime.Now:dddd, MMM dd yyyy - HH:mm:ss}";
+                    }, token);
+                }
+            }
         }
     }
 
@@ -83,17 +113,63 @@ public partial class FrmGitHubExplorer : Form
             Credentials = new Credentials(token)
         };
 
+        var request = new RepositoryRequest
+        {
+            Visibility = RepositoryRequestVisibility.All,
+            Affiliation = RepositoryAffiliation.Owner
+        };
+
         // Load repositories and organizations from GitHub API
         if (_client != null)
         {
-            _user = await _client.User.Current();
+            await UpdateInfoAsync("Retrieving user info...").ConfigureAwait(false);
+            _user = await _client.User.Current().ConfigureAwait(false);
             Debug.Print($"User: {_user?.Login}");
+            await UpdateUserAsync().ConfigureAwait(false);
 
-            _orgs = await _client.Organization.GetAllForCurrent();
+            await UpdateInfoAsync("Retrieving organizations...").ConfigureAwait(false);
+            _orgs = await _client.Organization.GetAllForCurrent().ConfigureAwait(false);
             Debug.Print($"Organizations: {_orgs?.Count}");
+            await UpdateOrgsAsync().ConfigureAwait(false);
 
-            _repos = await _client.Repository.GetAllForCurrent();
+            await UpdateInfoAsync("Retrieving list of personal Repos...").ConfigureAwait(false);
+            _repos = await _client.Repository.GetAllForCurrent(request);
             Debug.Print($"Repositories: {_repos?.Count}");
+
+            await UpdateInfoAsync($"Found {_repos?.Count} repos.").ConfigureAwait(false);
+        }
+
+        async Task UpdateUserAsync()
+        {
+            await InvokeAsync(() =>
+            {
+                _tslUser.Text = _user?.Login ?? "- User not found -";
+            });
+        }
+
+        async Task UpdateOrgsAsync()
+        {
+            if (_orgs is null)
+                return;
+
+            await InvokeAsync(() =>
+            {
+                _tsdCurrentOrg.DropDownItems.Add(PersonalAccountText);
+                _tsdCurrentOrg.DropDownItems.Add(new ToolStripSeparator());
+
+                // Add the organizations to the list of the item:
+                foreach (var org in _orgs)
+                {
+                    var item = new ToolStripMenuItem(org.Name)
+                    {
+                        Tag = org
+                    };
+
+                    _tsdCurrentOrg.DropDownItems.Add(item.Name);
+                }
+
+                _tsdCurrentOrg.Text = PersonalAccountText;
+            });
         }
     }
 
@@ -105,13 +181,6 @@ public partial class FrmGitHubExplorer : Form
         if (_settingsService != null)
         {
             _settingsService.SaveSetting(Key_WindowBounds, this.GetRestorableBounds());
-
-            // Save user info if available
-            if (_user != null)
-            {
-                _settingsService.SaveSetting(Key_LastUser, _user.Login);
-            }
-
             _settingsService.Save();
         }
     }
@@ -121,12 +190,12 @@ public partial class FrmGitHubExplorer : Form
         // Toggle the checked state
         var menuItem = (ToolStripMenuItem)sender;
         menuItem.Checked = !menuItem.Checked;
-        
+
         if (menuItem.Checked)
         {
             // If this item is now checked, ensure the other option is unchecked
             FormScreenCaptureMode = ScreenCaptureMode.HideContent;
-            
+
             // Find and uncheck the HideWindow option if it's checked
             if (hideWindowFromCaptureToolStripMenuItem.Checked)
                 hideWindowFromCaptureToolStripMenuItem.Checked = false;
@@ -144,12 +213,12 @@ public partial class FrmGitHubExplorer : Form
         // Toggle the checked state
         var menuItem = (ToolStripMenuItem)sender;
         menuItem.Checked = !menuItem.Checked;
-        
+
         if (menuItem.Checked)
         {
             // If this item is now checked, ensure the other option is unchecked
             FormScreenCaptureMode = ScreenCaptureMode.HideWindow;
-            
+
             // Find and uncheck the HideContent option if it's checked
             if (hideContentFromCaptureToolStripMenuItem.Checked)
                 hideContentFromCaptureToolStripMenuItem.Checked = false;
@@ -162,4 +231,50 @@ public partial class FrmGitHubExplorer : Form
         }
     }
 
+    private async Task UpdateInfoAsync(string info)
+    {
+        await InvokeAsync(() =>
+        {
+            _tslInfo.Text = $"Status: {info}";
+        });
+    }
+
+    private void InitializeStatusBar()
+    {
+        // Initialize the status bar with the current time
+        _tslTime.Text = $"{DateTime.Now:dddd, MMM dd yyyy - HH:mm:ss}";
+        _tslTime.AutoSize = true;
+        _tslUser.Text = "- Retrieving user info... -";
+        _tsdCurrentOrg.Text = "- Retrieving organizations... -";
+        _tslInfo.Text = "Initializing App.";
+    }
+
+    private void SetupCommands()
+    {
+        _tsmAddRepo.ConfigureItem(
+            symbol: FluentSymbols.AllSymbols.DictionaryAdd,
+            eventHandler: (clickHandler: AddNewRepoCommand, removeBeforeAdd: true),
+            tooltipText: "Begin new chat");
+    }
+
+    private void AddNewRepoCommand(object? sender, EventArgs e)
+    {
+    }
+
+    private async void ExplorerTree_AfterSelect(object sender, TreeViewEventArgs e)
+    {
+        // Handle the selection of a node in the tree view
+        if (_client is not null 
+            && _user is not null 
+            && e.Node?.Tag is Repository repo)
+        {
+            try
+            {
+                await _lvwIssues.PopulateIssuesForUsersAsync(_client, _user, repo).ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+            }
+        }
+    }
 }
