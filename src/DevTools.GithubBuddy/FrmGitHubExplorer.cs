@@ -13,6 +13,7 @@ public partial class FrmGitHubExplorer : Form
     public FrmGitHubExplorer()
     {
         InitializeComponent();
+        this.FormCornerPreference = FormCornerPreference.Round;
     }
 
     private async void LoginToGitHubCommand(object sender, EventArgs e)
