@@ -1,6 +1,6 @@
 ﻿namespace DevTools.GitHubBuddy
 {
-    partial class FrmAddRepo
+    partial class FrmManageRepos
     {
         /// <summary>
         /// Required designer variable.
