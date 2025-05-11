@@ -16,7 +16,9 @@
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Mvvm" />
     <PackageReference Include="CToolkit.Desktop.Async" />
+	<PackageReference Include="CToolkit.WinForms" />
     <PackageReference Include="CToolkit.WinForms.AppServices" />
+    <PackageReference Include="CToolkit.WinForms.Extensions" />
   </ItemGroup>
 
   <ItemGroup>

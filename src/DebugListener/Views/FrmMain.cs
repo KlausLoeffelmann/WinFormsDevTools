@@ -1,5 +1,5 @@
-using CommunityToolkit.ComponentModel;
-using CommunityToolkit.WinForms.Extensions.UIExtensions;
+using CToolkit.ComponentModel;
+using CToolkit.WinForms.Extensions.UIExtensions;
 using DebugListener.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
@@ -50,7 +50,7 @@ public partial class FrmMain : Form
 
         Debug.Assert(_settingsService is not null, "IUserSettingsService is null");
 
-        var bounds = _settingsService.GetSetting(
+        Rectangle bounds = _settingsService.GetSetting(
             "bounds",
             this.CenterToScreen(
                 horizontalFillGrade: 80,

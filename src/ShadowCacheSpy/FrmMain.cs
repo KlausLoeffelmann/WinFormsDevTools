@@ -1,8 +1,8 @@
-using CommunityToolkit.ComponentModel;
-using CommunityToolkit.DesktopUI.AppServices;
-using CommunityToolkit.WinForms.AppServices;
-using CommunityToolkit.WinForms.Extensions.UIExtensions;
-using CommunityToolkit.WinForms.Tooling;
+using CToolkit.ComponentModel;
+using CToolkit.DesktopUI.AppServices;
+using CToolkit.WinForms.AppServices;
+using CToolkit.WinForms.Extensions.UIExtensions;
+using CToolkit.WinForms.Tooling;
 using System.Diagnostics;
 
 namespace DevTools.ShadowCacheSpy;

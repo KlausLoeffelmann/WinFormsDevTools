@@ -1,4 +1,7 @@
-﻿namespace DevTools.Libs;
+﻿using CToolkit.WinForms.Containers;
+using CToolkit.WinForms.Tooling;
+
+namespace DevTools.Libs;
 
 partial class CommandBatchForm
 {
@@ -29,8 +32,8 @@ partial class CommandBatchForm
     private void InitializeComponent()
     {
         _okButton = new Button();
-        _console = new CommunityToolkit.WinForms.Tooling.ConsoleControl();
-        _dpnConsole = new CommunityToolkit.WinForms.Containers.DecoratorPanel();
+        _console = new ConsoleControl();
+        _dpnConsole = new DecoratorPanel();
         _dpnConsole.SuspendLayout();
         SuspendLayout();
         // 

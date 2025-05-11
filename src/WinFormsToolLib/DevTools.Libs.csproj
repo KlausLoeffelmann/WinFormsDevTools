@@ -10,7 +10,8 @@
 
   <ItemGroup>
     <PackageReference Include="CToolkit.Desktop.Async" />
-    <PackageReference Include="NuGet.Versioning" />
+    <PackageReference Include="CToolkit.WinForms.Tooling" />
+	<PackageReference Include="NuGet.Versioning" />
   </ItemGroup>
 
   <ItemGroup>
