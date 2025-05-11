@@ -84,6 +84,6 @@ partial class CommandBatchForm
     #endregion
 
     private Button _okButton;
-    private CommunityToolkit.WinForms.Tooling.ConsoleControl _console;
-    private CommunityToolkit.WinForms.Containers.DecoratorPanel _dpnConsole;
+    private ConsoleControl _console;
+    private DecoratorPanel _dpnConsole;
 }
