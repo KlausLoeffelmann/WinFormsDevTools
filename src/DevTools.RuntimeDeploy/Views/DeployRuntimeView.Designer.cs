@@ -62,7 +62,7 @@ partial class DeployRuntimeView
         _dryRunCheckBox.AutoSize = true;
         _dryRunCheckBox.Checked = true;
         _dryRunCheckBox.CheckState = CheckState.Checked;
-        _dryRunCheckBox.Location = new Point(964, 708);
+        _dryRunCheckBox.Location = new Point(955, 717);
         _dryRunCheckBox.Margin = new Padding(3, 4, 3, 4);
         _dryRunCheckBox.Name = "_dryRunCheckBox";
         _dryRunCheckBox.Size = new Size(111, 34);
@@ -74,7 +74,7 @@ partial class DeployRuntimeView
         // 
         _replaceTargetSDKVersionComboBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         _replaceTargetSDKVersionComboBox.FormattingEnabled = true;
-        _replaceTargetSDKVersionComboBox.Location = new Point(423, 705);
+        _replaceTargetSDKVersionComboBox.Location = new Point(423, 714);
         _replaceTargetSDKVersionComboBox.Margin = new Padding(3, 4, 3, 4);
         _replaceTargetSDKVersionComboBox.Name = "_replaceTargetSDKVersionComboBox";
         _replaceTargetSDKVersionComboBox.Size = new Size(403, 38);
@@ -84,7 +84,7 @@ partial class DeployRuntimeView
         // 
         label4.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
         label4.AutoSize = true;
-        label4.Location = new Point(19, 710);
+        label4.Location = new Point(19, 719);
         label4.Name = "label4";
         label4.Size = new Size(284, 30);
         label4.TabIndex = 20;
@@ -93,7 +93,7 @@ partial class DeployRuntimeView
         // _copyCommandButton
         // 
         _copyCommandButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-        _copyCommandButton.Location = new Point(1092, 699);
+        _copyCommandButton.Location = new Point(1083, 708);
         _copyCommandButton.Margin = new Padding(3, 4, 3, 4);
         _copyCommandButton.Name = "_copyCommandButton";
         _copyCommandButton.Size = new Size(202, 50);
@@ -121,7 +121,7 @@ partial class DeployRuntimeView
         _availableAssembliesListView.Location = new Point(18, 199);
         _availableAssembliesListView.Margin = new Padding(3, 4, 3, 4);
         _availableAssembliesListView.Name = "_availableAssembliesListView";
-        _availableAssembliesListView.Size = new Size(1276, 473);
+        _availableAssembliesListView.Size = new Size(1267, 482);
         _availableAssembliesListView.TabIndex = 19;
         _availableAssembliesListView.UseCompatibleStateImageBehavior = false;
         _availableAssembliesListView.View = View.Details;
@@ -160,7 +160,7 @@ partial class DeployRuntimeView
         _pathToArtefactsRepoTextBox.Margin = new Padding(3, 4, 3, 4);
         _pathToArtefactsRepoTextBox.Name = "_pathToArtefactsRepoTextBox";
         _pathToArtefactsRepoTextBox.ReadOnly = true;
-        _pathToArtefactsRepoTextBox.Size = new Size(765, 37);
+        _pathToArtefactsRepoTextBox.Size = new Size(756, 37);
         _pathToArtefactsRepoTextBox.TabIndex = 14;
         // 
         // label1
@@ -175,7 +175,7 @@ partial class DeployRuntimeView
         // _pickPathToArtefactsButton
         // 
         _pickPathToArtefactsButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-        _pickPathToArtefactsButton.Location = new Point(1243, 11);
+        _pickPathToArtefactsButton.Location = new Point(1234, 11);
         _pickPathToArtefactsButton.Margin = new Padding(3, 4, 3, 4);
         _pickPathToArtefactsButton.Name = "_pickPathToArtefactsButton";
         _pickPathToArtefactsButton.Size = new Size(51, 40);
@@ -202,7 +202,7 @@ partial class DeployRuntimeView
         Controls.Add(_pathToArtefactsRepoTextBox);
         Controls.Add(label1);
         Name = "DeployRuntimeView";
-        Size = new Size(1311, 772);
+        Size = new Size(1302, 781);
         ResumeLayout(false);
         PerformLayout();
     }

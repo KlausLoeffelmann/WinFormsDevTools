@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
 
 namespace DevTools.RuntimeDeploy;
 
@@ -18,6 +19,17 @@ public partial class PathShortCutControl : UserControl
             {
                 Process.Start("explorer.exe", $"/select,{file.FullName}");
             }
+        }
+    }
+
+    [DefaultValue(null)]
+    public string PathFullName
+    {
+        get => _pathTextBox.Text;
+        set
+        {
+            _pathTextBox.Text = value;
+            _pathTextBox.Text = value;
         }
     }
 }

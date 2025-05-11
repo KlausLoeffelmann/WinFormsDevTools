@@ -10,6 +10,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "_solutionItems", "_solutionItems", "{73E229BA-EB52-425B-92BD-A1ECDA114010}"
 	ProjectSection(SolutionItems) = preProject
 		.editorconfig = .editorconfig
+		Directory.Packages.props = Directory.Packages.props
 		NuGet.config = NuGet.config
 		..\README.md = ..\README.md
 	EndProjectSection
@@ -28,7 +29,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.RuntimeDeploy", "D
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Libs", "Libs", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IconConverter", "DevTools.IconBuddy\IconConverter.csproj", "{8170BC52-2569-B5A9-0AB2-C681BD033F50}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.IconLibrary", "DevTools.IconBuddy\DevTools.IconLibrary.csproj", "{8170BC52-2569-B5A9-0AB2-C681BD033F50}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.GitHubBuddy", "DevTools.GithubBuddy\DevTools.GitHubBuddy.csproj", "{9760B47E-2C8E-412F-BE24-EBF960DBBF20}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -68,6 +71,10 @@ Global
 		{8170BC52-2569-B5A9-0AB2-C681BD033F50}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8170BC52-2569-B5A9-0AB2-C681BD033F50}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8170BC52-2569-B5A9-0AB2-C681BD033F50}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9760B47E-2C8E-412F-BE24-EBF960DBBF20}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9760B47E-2C8E-412F-BE24-EBF960DBBF20}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9760B47E-2C8E-412F-BE24-EBF960DBBF20}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9760B47E-2C8E-412F-BE24-EBF960DBBF20}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,6 +88,7 @@ Global
 		{B687AA0A-DEE9-4738-BAFD-559BDF340875} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
 		{19D85205-D369-FA3F-59FF-59A23762724B} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
 		{8170BC52-2569-B5A9-0AB2-C681BD033F50} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
+		{9760B47E-2C8E-412F-BE24-EBF960DBBF20} = {7E5D289F-FCB0-4117-862B-C30B0C367D1A}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {02BB4031-A5D7-45D0-8234-A9AC91240B69}

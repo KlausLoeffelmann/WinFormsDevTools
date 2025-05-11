@@ -1,45 +1,49 @@
-﻿using System.Diagnostics;
+﻿using NuGet.Versioning;
 
-namespace WinFormsDevToolsLib
+namespace DevTools.Libs;
+
+public class FrameworkInfo
 {
-    public class FrameworkInfo
+    private const string PathToNetDesktopLibs = "\\dotnet\\shared\\Microsoft.WindowsDesktop.App";
+    private const string PathToNetDesktopRefs = "\\dotnet\\packs\\Microsoft.WindowsDesktop.App.Ref";
+
+    private static DirectoryInfo? s_netDesktopLibsDirectory;
+    private static DirectoryInfo? s_netDesktopRefsDirectory;
+
+    public static Dictionary<string, DirectoryInfo>? GetDotNetDesktopSdk(bool getRefPath = false)
     {
-        private const string PathToNetDesktopLibs = "\\dotnet\\shared\\Microsoft.WindowsDesktop.App";
-        private const string PathToNetDesktopRefs = "\\dotnet\\packs\\Microsoft.WindowsDesktop.App.Ref";
+        string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
 
-        private static DirectoryInfo? s_netDesktopLibsDirectory;
-        private static DirectoryInfo? s_netDesktopRefsDirectory;
+        DirectoryInfo netDesktopVersionsDirectory =
+          new(programFiles +
+            (getRefPath
+              ? PathToNetDesktopRefs
+              : PathToNetDesktopLibs));
 
-        public static Dictionary<string, DirectoryInfo>? GetDotNetDesktopSdk(bool getRefPath = false)
-        {
-            string programFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+        if (!netDesktopVersionsDirectory.Exists)
+            return null;
 
-            DirectoryInfo netDesktopVersionsDirectory =
-                new(programFiles +
-                    (getRefPath
-                        ? PathToNetDesktopRefs
-                        : PathToNetDesktopLibs));
+        var sorted = netDesktopVersionsDirectory
+          .GetDirectories()
+          .Select(dir => new
+          {
+              Directory = dir,
+              dir.Name,
+              ParsedVersion = NuGetVersion.TryParse(dir.Name, out var ver) ? ver : new NuGetVersion("0.0.0")
+          })
+          .OrderBy(x => x.ParsedVersion)
+          .ToDictionary(x => x.Name, x => x.Directory);
 
-            Dictionary<string, DirectoryInfo>? result = null;
-
-            if (netDesktopVersionsDirectory.Exists)
-            {
-                result = netDesktopVersionsDirectory
-                    .GetDirectories()
-                    .ToDictionary(item => item.Name);
-            }
-
-            return result;
-        }
-
-        public static DirectoryInfo NetDesktopLibsDirectory
-            => s_netDesktopLibsDirectory ??=
-                new($"{Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)}" +
-                    $"{PathToNetDesktopLibs}");
-
-        public static DirectoryInfo NetDesktopRefsDirectory
-            => s_netDesktopRefsDirectory ??=
-                new($"{Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)}" +
-                    $"{PathToNetDesktopRefs}");
+        return sorted;
     }
+
+    public static DirectoryInfo NetDesktopLibsDirectory
+        => s_netDesktopLibsDirectory ??=
+            new($"{Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)}" +
+                $"{PathToNetDesktopLibs}");
+
+    public static DirectoryInfo NetDesktopRefsDirectory
+        => s_netDesktopRefsDirectory ??=
+            new($"{Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)}" +
+                $"{PathToNetDesktopRefs}");
 }

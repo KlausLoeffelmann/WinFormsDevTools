@@ -1,11 +1,11 @@
 using CommunityToolkit.ComponentModel;
 using CommunityToolkit.DesktopUI.AppServices;
 using CommunityToolkit.WinForms.AppServices;
-using CommunityToolkit.WinForms.Controls.Tooling.Console;
 using CommunityToolkit.WinForms.Extensions.UIExtensions;
+using CommunityToolkit.WinForms.Tooling;
 using System.Diagnostics;
 
-namespace ShadowCacheSpy;
+namespace DevTools.ShadowCacheSpy;
 
 public partial class FrmMain : Form
 {

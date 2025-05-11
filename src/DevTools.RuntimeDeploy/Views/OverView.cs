@@ -1,4 +1,4 @@
-﻿using WinFormsDevToolsLib;
+﻿using DevTools.Libs;
 using static DevTools.RuntimeDeploy.WinFormsBuildArtefactsManager;
 
 namespace DevTools.RuntimeDeploy.Views;
@@ -22,5 +22,9 @@ public partial class OverView : UserControl
             addSourceDataToTag: true,
             (nameof(TargetFrameworkTargetItem.Name), ".NET SDK Version"),
             (nameof(TargetFrameworkTargetItem.PathFullName), "Path"));
+
+        _pscWinFormsGitHubRepo.PathFullName = Properties.Settings.Default.PathToWinFormsGitHubRepo ?? "- Not defined yet. -";
+        _pscNetSdkAssemblies.PathFullName = FrameworkInfo.NetDesktopLibsDirectory.FullName;
+        _pscNewSdkRefAssemblies.PathFullName = FrameworkInfo.NetDesktopRefsDirectory.FullName;
     }
 }

@@ -1,6 +1,6 @@
 ﻿using System.Text;
 
-namespace WinFormsDevToolsLib;
+namespace DevTools.Libs;
 
 public class CommandBatch
 {
@@ -39,15 +39,15 @@ public class CommandBatch
         return batchTask;
     }
 
-    public string EndBatch(string? endOfBatchComment)
+    public async Task<string> EndBatchAsync(string? endOfBatchComment)
     {
         if (!string.IsNullOrEmpty(endOfBatchComment))
         {
-            InfoPrintLineAsync(endOfBatchComment);
+            await WriteLineInfoAsync(endOfBatchComment);
         }
 
         _batchStarted = false;
-        _commandBatchWindow?.EndBatch();
+        await (_commandBatchWindow?.EndBatchAsync() ?? Task.CompletedTask);
         return _protocolStorage!.ToString();
     }
 
@@ -77,55 +77,55 @@ public class CommandBatch
         CheckBatchStarted();
 
         // We print the comment first, then we check if the source file exists.
-        await InfoPrintAsync(comment);
+        await WriteInfoAsync(comment);
 
         if (!sourceFile.Exists)
         {
-            await InfoPrintLineAsync($"Source file [{sourceFile.Name}] does NOT exists. --> SKIPPING.");
+            await WriteLineWarningAsync($"Source file [{sourceFile.Name}] does NOT exists. --> SKIPPING.");
             return;
         }
 
         if (!destinationFile.Exists)
         {
-            await InfoPrintAsync($"Copying [{sourceFile.Name}] to [{destinationFile.Name}] ... ");
+            await WriteInfoAsync($"Copying [{sourceFile.Name}] to [{destinationFile.Name}] ... ");
 
             if (!_dryRun)
             {
-                await InfoPrintLineAsync($"{await sourceFile.CopyToAsync(destinationFile.FullName)}");
+                await WriteLineInfoAsync($"{await sourceFile.CopyToAsync(destinationFile.FullName)}");
             }
             else
             {
-                await InfoPrintLineAsync($"OK.");
+                await WriteLineInfoAsync($"OK.");
             }
 
             return;
         }
 
-        await InfoPrintAsync($"Copying [{sourceFile.Name}] - destination file [{destinationFile.Name}] exists! ");
+        await WriteInfoAsync($"Copying [{sourceFile.Name}] - destination file [{destinationFile.Name}] exists! ");
 
         if (overrideIfExist)
         {
-            await InfoPrintAsync($"--> Overwriting... ");
+            await WriteInfoAsync($"--> Overwriting... ");
 
             if (!_dryRun)
             {
-                await InfoPrintLineAsync($"{await sourceFile.CopyToAsync(destinationFile.FullName)}");
+                await WriteLineInfoAsync($"{await sourceFile.CopyToAsync(destinationFile.FullName)}");
             }
             else
             {
-                await InfoPrintLineAsync($"OK.");
+                await WriteLineInfoAsync($"OK.");
             }
         }
         else
         {
-            await InfoPrintLineAsync($"--> SKIPPING.");
+            await WriteLineWarningAsync($"--> SKIPPING.");
         }
 
     }
 
     private string MessageHeader(string? message)
     {
-        message ??= String.Empty;
+        message ??= string.Empty;
 
         if (_newline)
         {
@@ -136,26 +136,48 @@ public class CommandBatch
         return message;
     }
 
-    public Task InfoPrintAsync(string? message)
+    public async Task WriteInfoAsync(string? message)
     {
         message = MessageHeader(message);
-
-        var task = _commandBatchWindow?.PrintAsync(message);
-
+        await (_commandBatchWindow?.WriteAsync(message) ?? Task.CompletedTask);
         _protocolStorage!.Append(message);
-
-        return task ?? Task.CompletedTask;
     }
 
-    public Task InfoPrintLineAsync(string? message)
+    public async Task WriteWarningAsync(string? message)
     {
         message = MessageHeader(message);
+        _protocolStorage!.Append(message);
+        await (_commandBatchWindow?.WriteWarningAsync(message) ?? Task.CompletedTask);
+    }
 
-        var task = _commandBatchWindow?.PrintLineAsync(message);
+    public async Task WriteErrorAsync(string? message)
+    {
+        message = MessageHeader(message);
+        _protocolStorage!.Append(message);
+        await (_commandBatchWindow?.WriteErrorAsync(message) ?? Task.CompletedTask);
+    }
 
+    public async Task WriteLineInfoAsync(string? message)
+    {
+        message = MessageHeader(message);
         _protocolStorage!.Append(message + "\r\n");
+        await (_commandBatchWindow?.WriteLineAsync(message) ?? Task.CompletedTask);
         _newline = true;
+    }
 
-        return task ?? Task.CompletedTask;
+    public async Task WriteLineWarningAsync(string? message)
+    {
+        message = MessageHeader(message);
+        _protocolStorage!.Append(message + "\r\n");
+        await (_commandBatchWindow?.WriteLineWarningAsync(message) ?? Task.CompletedTask);
+        _newline = true;
+    }
+
+    public async Task WriteLineErrorAsync(string? message)
+    {
+        message = MessageHeader(message);
+        _protocolStorage!.Append(message + "\r\n");
+        await (_commandBatchWindow?.WriteLineErrorAsync(message) ?? Task.CompletedTask);
+        _newline = true;
     }
 }

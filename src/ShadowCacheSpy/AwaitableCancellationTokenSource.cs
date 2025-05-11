@@ -1,4 +1,4 @@
-﻿namespace ShadowCacheSpy;
+﻿namespace DevTools.ShadowCacheSpy;
 
 public class AwaitableCancellationTokenSource
 {

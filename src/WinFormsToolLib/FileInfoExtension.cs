@@ -1,4 +1,4 @@
-﻿namespace WinFormsDevToolsLib;
+﻿namespace DevTools.Libs;
 
 internal static class FileInfoExtension
 {

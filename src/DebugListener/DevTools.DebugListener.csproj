@@ -2,8 +2,8 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows10.0.26100.0</TargetFramework>
-    <Nullable>enable</Nullable>
+	  <TargetFramework>net9.0-windows10.0.22000.0</TargetFramework>
+	  <Nullable>enable</Nullable>
     <UseWindowsForms>true</UseWindowsForms>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
@@ -14,8 +14,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageReference Include="CToolkit.WinForms.AppServices" Version="0.4.2-preview.1.g89559962f5" />
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="CToolkit.Desktop.Async" />
+    <PackageReference Include="CToolkit.WinForms.AppServices" />
   </ItemGroup>
 
   <ItemGroup>
