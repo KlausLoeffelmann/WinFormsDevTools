@@ -16,6 +16,10 @@ public static class DebugControlRenderer
         Font smallFont)
     {
         graphics.Clear(backColor);
+        
+        // Enable anti-aliasing for text and graphics
+        graphics.TextRenderingHint = System.Drawing.Text.TextRenderingHint.AntiAlias;
+        graphics.SmoothingMode = System.Drawing.Drawing2D.SmoothingMode.AntiAlias;
 
         TextFormatFlags textFormatFlags = TextFormatFlags.HorizontalCenter
             | TextFormatFlags.VerticalCenter
