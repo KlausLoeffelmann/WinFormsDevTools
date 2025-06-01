@@ -28,82 +28,99 @@
         /// </summary>
         private void InitializeComponent()
         {
-            layoutDebugButton1 = new LayoutDebugButton();
-            layoutDebugButton2 = new LayoutDebugButton();
-            layoutDebugButton3 = new LayoutDebugButton();
-            layoutDebugButton4 = new LayoutDebugButton();
-            formInfoStatusStrip1 = new FormInfoStatusStrip();
-            SuspendLayout();
+            this.layoutDebugButton1 = new LayoutScalingIssues.LayoutDebugButton();
+            this.layoutDebugButton2 = new LayoutScalingIssues.LayoutDebugButton();
+            this.layoutDebugButton3 = new LayoutScalingIssues.LayoutDebugButton();
+            this.layoutDebugButton4 = new LayoutScalingIssues.LayoutDebugButton();
+            this.formInfoStatusStrip1 = new LayoutScalingIssues.FormInfoStatusStrip();
+            this.debugPanel1 = new LayoutScalingIssues.DebugPanel();
+            this.debugPanel1.SuspendLayout();
+            this.SuspendLayout();
             // 
             // layoutDebugButton1
             // 
-            layoutDebugButton1.Location = new Point(20, 20);
-            layoutDebugButton1.Margin = new Padding(4);
-            layoutDebugButton1.Name = "layoutDebugButton1";
-            layoutDebugButton1.Size = new Size(200, 100);
-            layoutDebugButton1.TabIndex = 0;
-            layoutDebugButton1.Text = "left-top";
-            layoutDebugButton1.UseVisualStyleBackColor = true;
+            this.layoutDebugButton1.Location = new System.Drawing.Point(100, 100);
+            this.layoutDebugButton1.Margin = new System.Windows.Forms.Padding(100);
+            this.layoutDebugButton1.Name = "layoutDebugButton1";
+            this.layoutDebugButton1.Size = new System.Drawing.Size(200, 100);
+            this.layoutDebugButton1.TabIndex = 0;
+            this.layoutDebugButton1.Text = "left-top";
+            this.layoutDebugButton1.UseVisualStyleBackColor = true;
             // 
             // layoutDebugButton2
             // 
-            layoutDebugButton2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            layoutDebugButton2.Location = new Point(780, 20);
-            layoutDebugButton2.Margin = new Padding(4);
-            layoutDebugButton2.Name = "layoutDebugButton2";
-            layoutDebugButton2.Size = new Size(200, 100);
-            layoutDebugButton2.TabIndex = 1;
-            layoutDebugButton2.Text = "right-top";
-            layoutDebugButton2.UseVisualStyleBackColor = true;
+            this.layoutDebugButton2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.layoutDebugButton2.Location = new System.Drawing.Point(642, 100);
+            this.layoutDebugButton2.Margin = new System.Windows.Forms.Padding(100);
+            this.layoutDebugButton2.Name = "layoutDebugButton2";
+            this.layoutDebugButton2.Size = new System.Drawing.Size(200, 100);
+            this.layoutDebugButton2.TabIndex = 1;
+            this.layoutDebugButton2.Text = "right-top";
+            this.layoutDebugButton2.UseVisualStyleBackColor = true;
             // 
             // layoutDebugButton3
             // 
-            layoutDebugButton3.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
-            layoutDebugButton3.Location = new Point(20, 360);
-            layoutDebugButton3.Margin = new Padding(4);
-            layoutDebugButton3.Name = "layoutDebugButton3";
-            layoutDebugButton3.Size = new Size(200, 100);
-            layoutDebugButton3.TabIndex = 2;
-            layoutDebugButton3.Text = "left-bottom";
-            layoutDebugButton3.UseVisualStyleBackColor = true;
+            this.layoutDebugButton3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.layoutDebugButton3.Location = new System.Drawing.Point(100, 228);
+            this.layoutDebugButton3.Margin = new System.Windows.Forms.Padding(100);
+            this.layoutDebugButton3.Name = "layoutDebugButton3";
+            this.layoutDebugButton3.Size = new System.Drawing.Size(200, 100);
+            this.layoutDebugButton3.TabIndex = 2;
+            this.layoutDebugButton3.Text = "left-bottom";
+            this.layoutDebugButton3.UseVisualStyleBackColor = true;
             // 
             // layoutDebugButton4
             // 
-            layoutDebugButton4.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-            layoutDebugButton4.Location = new Point(780, 360);
-            layoutDebugButton4.Margin = new Padding(4);
-            layoutDebugButton4.Name = "layoutDebugButton4";
-            layoutDebugButton4.Size = new Size(200, 100);
-            layoutDebugButton4.TabIndex = 3;
-            layoutDebugButton4.Text = "right-bottom";
-            layoutDebugButton4.UseVisualStyleBackColor = true;
+            this.layoutDebugButton4.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.layoutDebugButton4.Location = new System.Drawing.Point(642, 228);
+            this.layoutDebugButton4.Margin = new System.Windows.Forms.Padding(100);
+            this.layoutDebugButton4.Name = "layoutDebugButton4";
+            this.layoutDebugButton4.Size = new System.Drawing.Size(200, 100);
+            this.layoutDebugButton4.TabIndex = 3;
+            this.layoutDebugButton4.Text = "right-bottom";
+            this.layoutDebugButton4.UseVisualStyleBackColor = true;
             // 
             // formInfoStatusStrip1
             // 
-            formInfoStatusStrip1.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            formInfoStatusStrip1.ImageScalingSize = new Size(28, 28);
-            formInfoStatusStrip1.Location = new Point(0, 458);
-            formInfoStatusStrip1.Name = "formInfoStatusStrip1";
-            formInfoStatusStrip1.Size = new Size(1000, 42);
-            formInfoStatusStrip1.TabIndex = 4;
-            formInfoStatusStrip1.Text = "formInfoStatusStrip1";
+            this.formInfoStatusStrip1.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.formInfoStatusStrip1.ImageScalingSize = new System.Drawing.Size(28, 28);
+            this.formInfoStatusStrip1.Location = new System.Drawing.Point(0, 477);
+            this.formInfoStatusStrip1.Name = "formInfoStatusStrip1";
+            this.formInfoStatusStrip1.Size = new System.Drawing.Size(1000, 23);
+            this.formInfoStatusStrip1.TabIndex = 4;
+            this.formInfoStatusStrip1.Text = "formInfoStatusStrip1";
+            // 
+            // debugPanel1
+            // 
+            this.debugPanel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.debugPanel1.Controls.Add(this.layoutDebugButton1);
+            this.debugPanel1.Controls.Add(this.layoutDebugButton3);
+            this.debugPanel1.Controls.Add(this.layoutDebugButton4);
+            this.debugPanel1.Controls.Add(this.layoutDebugButton2);
+            this.debugPanel1.Location = new System.Drawing.Point(29, 29);
+            this.debugPanel1.Margin = new System.Windows.Forms.Padding(20);
+            this.debugPanel1.Name = "debugPanel1";
+            this.debugPanel1.Size = new System.Drawing.Size(942, 428);
+            this.debugPanel1.TabIndex = 5;
             // 
             // Form1
             // 
-            AutoScaleDimensions = new SizeF(15F, 38F);
-            AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(1000, 500);
-            Controls.Add(formInfoStatusStrip1);
-            Controls.Add(layoutDebugButton4);
-            Controls.Add(layoutDebugButton3);
-            Controls.Add(layoutDebugButton2);
-            Controls.Add(layoutDebugButton1);
-            Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point, 0);
-            Margin = new Padding(4);
-            Name = "Form1";
-            Text = "Form1";
-            ResumeLayout(false);
-            PerformLayout();
+            this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 21F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(1000, 500);
+            this.Controls.Add(this.debugPanel1);
+            this.Controls.Add(this.formInfoStatusStrip1);
+            this.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Margin = new System.Windows.Forms.Padding(4);
+            this.Name = "Form1";
+            this.Text = "Form1";
+            this.Load += new System.EventHandler(this.Form1_Load);
+            this.debugPanel1.ResumeLayout(false);
+            this.ResumeLayout(false);
+            this.PerformLayout();
+
         }
 
         #endregion
@@ -113,5 +130,6 @@
         private LayoutDebugButton layoutDebugButton3;
         private LayoutDebugButton layoutDebugButton4;
         private FormInfoStatusStrip formInfoStatusStrip1;
+        private DebugPanel debugPanel1;
     }
 }

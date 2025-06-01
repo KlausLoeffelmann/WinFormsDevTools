@@ -2,7 +2,7 @@ using System.Drawing.Drawing2D;
 
 namespace LayoutScalingIssues;
 
-public class LayoutDebugButton : Button
+public class DebugPanel : Panel
 {
     private static readonly DebugPadding DefaultDebugPadding = new(10);
 
@@ -10,7 +10,7 @@ public class LayoutDebugButton : Button
     private Font? SmallFont { get; set; }
     private Brush? DebugBrush { get; set; }
 
-    public LayoutDebugButton()
+    public DebugPanel()
     {
     }
 
@@ -62,11 +62,11 @@ public class LayoutDebugButton : Button
     public Color DebugColor { get; set; } = Color.Red;
     private bool ShouldSerializeDebugColor() => DebugColor != Color.Red;
     private void ResetDebugColor() => DebugColor = Color.Red;
-    
+
     public Color BorderColor { get; set; } = Color.Blue;
     private bool ShouldSerializeBorderColor() => BorderColor != Color.Blue;
     private void ResetBorderColor() => BorderColor = Color.Blue;
-    
+
     public int BorderWidth { get; set; } = 2;
     private bool ShouldSerializeBorderWidth() => BorderWidth != 2;
     private void ResetBorderWidth() => BorderWidth = 2;
