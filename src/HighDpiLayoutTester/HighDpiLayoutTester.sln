@@ -1,0 +1,53 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36127.28
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsNetCoreHighDpiLayoutTester", "CS\NetCore\CsNetCoreHighDpiLayoutTester.csproj", "{B21E4EF8-D572-D087-D1C8-7B2BD0214232}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CsNetFxHighDpiLayoutTester", "CS\NetFx\CsNetFxHighDpiLayoutTester.csproj", "{56C4B247-88AC-890D-2F39-894B52A8D38B}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "NetVbLayoutTester", "VB\Net\NetVbLayoutTester.vbproj", "{E2B55340-BB70-D188-A28F-23B462E10F6B}"
+EndProject
+Project("{F184B08F-C81C-45F6-A57F-5ABD9991F28F}") = "NetFxLayoutTester", "VB\NetFx\NetFxLayoutTester.vbproj", "{3114C528-66ED-45BA-9F0B-59C1C56814FF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CS", "CS", "{02EA681E-C7D8-13C7-8484-4AC65E1B71E8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VB", "VB", "{0597BD8B-5098-4FAD-92CD-4F17F7432971}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B21E4EF8-D572-D087-D1C8-7B2BD0214232}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B21E4EF8-D572-D087-D1C8-7B2BD0214232}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B21E4EF8-D572-D087-D1C8-7B2BD0214232}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B21E4EF8-D572-D087-D1C8-7B2BD0214232}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56C4B247-88AC-890D-2F39-894B52A8D38B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56C4B247-88AC-890D-2F39-894B52A8D38B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56C4B247-88AC-890D-2F39-894B52A8D38B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56C4B247-88AC-890D-2F39-894B52A8D38B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E2B55340-BB70-D188-A28F-23B462E10F6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E2B55340-BB70-D188-A28F-23B462E10F6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E2B55340-BB70-D188-A28F-23B462E10F6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E2B55340-BB70-D188-A28F-23B462E10F6B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3114C528-66ED-45BA-9F0B-59C1C56814FF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3114C528-66ED-45BA-9F0B-59C1C56814FF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3114C528-66ED-45BA-9F0B-59C1C56814FF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3114C528-66ED-45BA-9F0B-59C1C56814FF}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{B21E4EF8-D572-D087-D1C8-7B2BD0214232} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{56C4B247-88AC-890D-2F39-894B52A8D38B} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{E2B55340-BB70-D188-A28F-23B462E10F6B} = {0597BD8B-5098-4FAD-92CD-4F17F7432971}
+		{3114C528-66ED-45BA-9F0B-59C1C56814FF} = {0597BD8B-5098-4FAD-92CD-4F17F7432971}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {A5AA4A87-9390-4AED-BCE0-DA3FDB2D27E2}
+	EndGlobalSection
+EndGlobal
