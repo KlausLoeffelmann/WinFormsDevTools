@@ -82,12 +82,12 @@
             // 
             // formInfoStatusStrip1
             // 
-            this.formInfoStatusStrip1.Font = new System.Drawing.Font("Segoe UI", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.formInfoStatusStrip1.Font = new System.Drawing.Font("Segoe UI", 13.875F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.formInfoStatusStrip1.ImageScalingSize = new System.Drawing.Size(28, 28);
-            this.formInfoStatusStrip1.Location = new System.Drawing.Point(0, 467);
+            this.formInfoStatusStrip1.Location = new System.Drawing.Point(0, 446);
             this.formInfoStatusStrip1.Name = "formInfoStatusStrip1";
             this.formInfoStatusStrip1.Padding = new System.Windows.Forms.Padding(1, 0, 13, 0);
-            this.formInfoStatusStrip1.Size = new System.Drawing.Size(1000, 33);
+            this.formInfoStatusStrip1.Size = new System.Drawing.Size(1000, 54);
             this.formInfoStatusStrip1.TabIndex = 4;
             this.formInfoStatusStrip1.Text = "formInfoStatusStrip1";
             // 
@@ -108,7 +108,7 @@
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(12F, 30F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(16F, 40F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1000, 500);
             this.Controls.Add(this.debugPanel1);
