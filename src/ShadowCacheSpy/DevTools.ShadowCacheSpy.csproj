@@ -9,11 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm"/>
-    <PackageReference Include="CToolkit.WinForms" />
-    <PackageReference Include="CToolkit.WinForms.AppServices" />
-    <PackageReference Include="CToolkit.WinForms.Tooling" />
-    <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" />
-  </ItemGroup>
+    <PackageReference Include="CommunitToolkit.Mvvm" />
+    <PackageReference Include="WarpToolkit.WinForms" />
+    <PackageReference Include="WarpToolkit.WinForms.AppServices" />
+    <PackageReference Include="WarpToolkit.WinForms.Tooling" />
+	<PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" />
+	  </  </ItemGroup>
 
 </Project>
