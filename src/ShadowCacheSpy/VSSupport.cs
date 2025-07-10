@@ -1,4 +1,7 @@
-﻿namespace DevTools.ShadowCacheSpy;
+﻿using Microsoft.VisualStudio.Setup.Configuration;
+using WarpToolkit.WinForms.Tooling;
+
+namespace DevTools.ShadowCacheSpy;
 
 internal class VSSupport
 {
