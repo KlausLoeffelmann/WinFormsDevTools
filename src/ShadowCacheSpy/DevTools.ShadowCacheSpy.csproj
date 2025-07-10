@@ -1,19 +1,18 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <OutputType>WinExe</OutputType>
-    <TargetFramework>net9.0-windows10.0.22000.0</TargetFramework>
-    <Nullable>enable</Nullable>
-    <UseWindowsForms>true</UseWindowsForms>
-    <ImplicitUsings>enable</ImplicitUsings>
-  </PropertyGroup>
+	<PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net9.0-windows10.0.22000.0</TargetFramework>
+		<Nullable>enable</Nullable>
+		<UseWindowsForms>true</UseWindowsForms>
+		<ImplicitUsings>enable</ImplicitUsings>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="CommunitToolkit.Mvvm" />
-    <PackageReference Include="WarpToolkit.WinForms" />
-    <PackageReference Include="WarpToolkit.WinForms.AppServices" />
-    <PackageReference Include="WarpToolkit.WinForms.Tooling" />
-	<PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" />
-	  </  </ItemGroup>
-
+	<ItemGroup>
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="WarpToolkit.WinForms" />
+		<PackageReference Include="WarpToolkit.WinForms.AppServices" />
+		<PackageReference Include="WarpToolkit.WinForms.Tooling" />
+		<PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" />
+	</ItemGroup>
 </Project>
