@@ -8,11 +8,13 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<PackageReference Include="CommunityToolkit.Mvvm" />
-		<PackageReference Include="WarpToolkit.WinForms" />
-		<PackageReference Include="WarpToolkit.WinForms.AppServices" />
-		<PackageReference Include="WarpToolkit.WinForms.Tooling" />
-		<PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" />
-	</ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="CommunityToolkit.Mvvm" />
+        <PackageReference Include="WarpToolkit.WinForms" />
+        <PackageReference Include="WarpToolkit.WinForms.AppServices" />
+        <PackageReference Include="WarpToolkit.WinForms.Tooling" />
+        <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" />
+    </ItemGroup>
+
 </Project>
+

@@ -28,13 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
-            decoratorPanel1 = new CToolkit.WinForms.Containers.DecoratorPanel();
-            splitContainer1 = new SplitContainer();
+           adornmentPanel1 = new  WarpToolkit.WinForms.Containers.AdornmentPanel();
+           splitContainer1 = new SplitContainer();
             _tlpSourceFiles = new TableLayoutPanel();
             _btnAddFolders = new Button();
             _lvwSourceFolders = new ListView();
             _lvwPurgeTargets = new ListView();
-            decoratorPanel1.SuspendLayout();
+            adornmentPanel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
             splitContainer1.Panel1.SuspendLayout();
             splitContainer1.Panel2.SuspendLayout();
@@ -44,14 +44,14 @@
             // 
             // decoratorPanel1
             // 
-            decoratorPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-            decoratorPanel1.BorderThickness = 1;
-            decoratorPanel1.Controls.Add(splitContainer1);
-            decoratorPanel1.Location = new Point(3, 3);
-            decoratorPanel1.MinimumSize = new Size(28, 28);
-            decoratorPanel1.Name = "decoratorPanel1";
-            decoratorPanel1.Size = new Size(985, 565);
-            decoratorPanel1.TabIndex = 0;
+            adornmentPanel1.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+            adornmentPanel1.BorderThickness = 1;
+            adornmentPanel1.Controls.Add(splitContainer1);
+            adornmentPanel1.Location = new Point(3, 3);
+            adornmentPanel1.MinimumSize = new Size(28, 28);
+            adornmentPanel1.Name = "decoratorPanel1";
+            adornmentPanel1.Size = new Size(985, 565);
+            adornmentPanel1.TabIndex = 0;
             // 
             // splitContainer1
             // 
@@ -120,10 +120,10 @@
             // 
             AutoScaleDimensions = new SizeF(12F, 30F);
             AutoScaleMode = AutoScaleMode.Font;
-            Controls.Add(decoratorPanel1);
+            Controls.Add(adornmentPanel1);
             Name = "DeleteBinariesView";
             Size = new Size(991, 571);
-            decoratorPanel1.ResumeLayout(false);
+            adornmentPanel1.ResumeLayout(false);
             splitContainer1.Panel1.ResumeLayout(false);
             splitContainer1.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
@@ -134,7 +134,7 @@
 
         #endregion
 
-        private CToolkit.WinForms.Containers.DecoratorPanel decoratorPanel1;
+        private WarpToolkit.WinForms.Containers.AdornmentPanel adornmentPanel1;
         private SplitContainer splitContainer1;
         private ListView _lvwPurgeTargets;
         private TableLayoutPanel _tlpSourceFiles;
