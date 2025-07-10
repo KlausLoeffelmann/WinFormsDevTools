@@ -1,7 +1,4 @@
-﻿using CToolkit.WinForms.Tooling;
-using Microsoft.VisualStudio.Setup.Configuration;
-
-namespace DevTools.ShadowCacheSpy;
+﻿namespace DevTools.ShadowCacheSpy;
 
 internal class VSSupport
 {

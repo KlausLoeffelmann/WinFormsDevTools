@@ -1,5 +1,5 @@
-﻿using CToolkit.WinForms.Containers;
-using CToolkit.WinForms.Tooling;
+﻿using WarpToolkit.WinForms.Containers;
+using WarpToolkit.WinForms.Tooling;
 
 namespace DevTools.Libs;
 
@@ -33,8 +33,8 @@ partial class CommandBatchForm
     {
         _okButton = new Button();
         _console = new ConsoleControl();
-        _dpnConsole = new DecoratorPanel();
-        _dpnConsole.SuspendLayout();
+        _consoleAdorner = new AdornmentPanel();
+        _consoleAdorner.SuspendLayout();
         SuspendLayout();
         // 
         // _okButton
@@ -59,15 +59,15 @@ partial class CommandBatchForm
         // 
         // _dpnConsole
         // 
-        _dpnConsole.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-        _dpnConsole.BorderThickness = 1;
-        _dpnConsole.Controls.Add(_console);
-        _dpnConsole.Location = new Point(12, 12);
-        _dpnConsole.MinimumSize = new Size(28, 28);
-        _dpnConsole.Name = "_dpnConsole";
-        _dpnConsole.Padding = new Padding(8);
-        _dpnConsole.Size = new Size(1173, 622);
-        _dpnConsole.TabIndex = 3;
+        _consoleAdorner.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        _consoleAdorner.BorderThickness = 1;
+        _consoleAdorner.Controls.Add(_console);
+        _consoleAdorner.Location = new Point(12, 12);
+        _consoleAdorner.MinimumSize = new Size(28, 28);
+        _consoleAdorner.Name = "_dpnConsole";
+        _consoleAdorner.Padding = new Padding(8);
+        _consoleAdorner.Size = new Size(1173, 622);
+        _consoleAdorner.TabIndex = 3;
         // 
         // CommandBatchForm
         // 
@@ -75,12 +75,12 @@ partial class CommandBatchForm
         AutoScaleDimensions = new SizeF(10F, 25F);
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(1197, 707);
-        Controls.Add(_dpnConsole);
+        Controls.Add(_consoleAdorner);
         Controls.Add(_okButton);
         Name = "CommandBatchForm";
         StartPosition = FormStartPosition.CenterParent;
         Text = "ExecuteCommandForm";
-        _dpnConsole.ResumeLayout(false);
+        _consoleAdorner.ResumeLayout(false);
         ResumeLayout(false);
     }
 
@@ -88,5 +88,5 @@ partial class CommandBatchForm
 
     private Button _okButton;
     private ConsoleControl _console;
-    private DecoratorPanel _dpnConsole;
+    private AdornmentPanel _consoleAdorner;
 }

@@ -455,7 +455,7 @@ public partial class DeployRuntimeView : UserControl
             return AssemblyManifestProcessResult.MissingAssembly;
         }
 
-        Assembly assembly = null!;
+        Assembly assembly;
         AssemblyName? assemblyName = null;
         AssemblyMetadata? assemblyMetadata;
 
@@ -472,7 +472,7 @@ public partial class DeployRuntimeView : UserControl
             try
             {
                 // Use temporary manager to load assembly from a copy instead of the original file
-                assembly = tempManager.LoadAssemblyFromCopy(destinationAssemblyFileInfo.targetFile.FullName);
+                assembly = tempManager.LoadAssemblyFromCopy(destinationAssemblyFileInfo.targetFile.FullName)!;
 
                 if (assembly is null)
                 {

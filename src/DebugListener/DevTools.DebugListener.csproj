@@ -14,11 +14,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="CommunityToolkit.Mvvm" />
-    <PackageReference Include="CToolkit.Desktop.Async" />
-	<PackageReference Include="CToolkit.WinForms" />
-    <PackageReference Include="CToolkit.WinForms.AppServices" />
-    <PackageReference Include="CToolkit.WinForms.Extensions" />
+	  <PackageReference Include="Microsoft.VisualStudio.Setup.Configuration.Interop" />
+	  <PackageReference Include="CommunityToolkit.Mvvm" />
+	  <PackageReference Include="WarpToolkit.Desktop.Async" />
+    <PackageReference Include="WarpToolkit.WinForms.AppServices" />
   </ItemGroup>
 
   <ItemGroup>

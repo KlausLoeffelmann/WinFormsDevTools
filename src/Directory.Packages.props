@@ -1,24 +1,26 @@
 <Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+
+	<!-- Define the version as a property -->
+	<CToolkitVersion>0.7.7-preview.gc92b1dc8d1</CToolkitVersion>
   </PropertyGroup>
   
   <ItemGroup>
     <PackageVersion Include="BenchmarkDotNet" Version="0.14.0" />
-    <PackageVersion Include="Octokit" Version="14.0.0" />
     <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-    <PackageVersion Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.13.2069" />
     <PackageVersion Include="coverlet.collector" Version="6.0.4" />
     <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.14.0-preview-25107-01" />
+    <PackageVersion Include="Microsoft.VisualStudio.Setup.Configuration.Interop" Version="3.13.2069" />
+    <PackageVersion Include="NuGet.Versioning" Version="6.13.2" />
+    <PackageVersion Include="Octokit" Version="14.0.0" />
     <PackageVersion Include="xunit" Version="2.9.3" />
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.0" />
 
-    <!-- Define your package versions here -->
-    <PackageVersion Include="CToolkit.Desktop.Async" Version="0.6.12-preview.g3814ee24b2" />
-    <PackageVersion Include="CToolkit.WinForms" Version="0.6.12-preview.g3814ee24b2" />
-    <PackageVersion Include="CToolkit.WinForms.AppServices" Version="0.6.12-preview.g3814ee24b2" />
-    <PackageVersion Include="CToolkit.WinForms.Tooling" Version="0.6.12-preview.g3814ee24b2" />
-    <PackageVersion Include="CToolkit.WinForms.Extensions" Version="0.6.12-preview.g3814ee24b2" />
-    <PackageVersion Include="NuGet.Versioning" Version="6.13.2" />
+	  <!-- Define your package versions here -->
+    <PackageVersion Include="WarpToolkit.Desktop.Async" Version="$(CToolkitVersion)" />
+    <PackageVersion Include="WarpToolkit.WinForms" Version="$(CToolkitVersion)" />
+    <PackageVersion Include="WarpToolkit.WinForms.AppServices" Version="$(CToolkitVersion)" />
+    <PackageVersion Include="WarpToolkit.WinForms.Tooling" Version="$(CToolkitVersion)" />
   </ItemGroup>
 </Project>

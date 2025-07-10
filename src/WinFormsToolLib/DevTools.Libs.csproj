@@ -9,9 +9,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="CToolkit.Desktop.Async" />
-    <PackageReference Include="CToolkit.WinForms.Tooling" />
-	<PackageReference Include="NuGet.Versioning" />
+	<PackageReference Include="WarpToolkit.WinForms" />
+	<PackageReference Include="WarpToolkit.WinForms.Tooling" />
+    <PackageReference Include="NuGet.Versioning" />
   </ItemGroup>
 
   <ItemGroup>
