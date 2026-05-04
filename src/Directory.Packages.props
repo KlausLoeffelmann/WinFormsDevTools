@@ -3,7 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 
 	<!-- Define the version as a property -->
-	<CToolkitVersion>0.7.7-preview.gc92b1dc8d1</CToolkitVersion>
+	<WarpToolkitVersion>0.7.25-preview.gb43a5f8ece</WarpToolkitVersion>
   </PropertyGroup>
   
   <ItemGroup>
@@ -18,9 +18,9 @@
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.0" />
 
 	  <!-- Define your package versions here -->
-    <PackageVersion Include="WarpToolkit.Desktop.Async" Version="$(CToolkitVersion)" />
-    <PackageVersion Include="WarpToolkit.WinForms" Version="$(CToolkitVersion)" />
-    <PackageVersion Include="WarpToolkit.WinForms.AppServices" Version="$(CToolkitVersion)" />
-    <PackageVersion Include="WarpToolkit.WinForms.Tooling" Version="$(CToolkitVersion)" />
+    <PackageVersion Include="WarpToolkit.Desktop.Async" Version="$(WarpToolkitVersion)" />
+    <PackageVersion Include="WarpToolkit.WinForms" Version="$(WarpToolkitVersion)" />
+    <PackageVersion Include="WarpToolkit.WinForms.AppServices" Version="$(WarpToolkitVersion)" />
+    <PackageVersion Include="WarpToolkit.WinForms.Tooling" Version="$(WarpToolkitVersion)" />
   </ItemGroup>
 </Project>
