@@ -229,7 +229,7 @@ public partial class DeployRuntimeView : UserControl
 
             DirectoryInfo targetSharedAssemblyBasePath = new($"{FrameworkInfo.NetDesktopLibsDirectory}\\{targetFrameworkTarget.Name}");
             DirectoryInfo targetRefAssemblyBasePath = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\" + $"{targetFrameworkTarget.Name}");
-            DirectoryInfo targetRefAssemblyPath = new($"{targetRefAssemblyBasePath}\\ref\\net{MajorMinorVersionString(targetFrameworkTarget.Name)}");
+            DirectoryInfo targetRefAssemblyPath = new($"{targetRefAssemblyBasePath}\\ref\\net{FrameworkVersionFormatter.ToMajorMinor(targetFrameworkTarget.Name)}");
             DirectoryInfo packageAssembliesManifestPath = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\{targetFrameworkTarget.Name}\\data");
 
             // Create a new DirectoryInfo for the analyzers directory, which is the same as the ref directory
@@ -397,19 +397,6 @@ public partial class DeployRuntimeView : UserControl
             await commandBatch.EndBatchAsync("End of Command Batch.");
 
             _copyCommandButton.Enabled = true;
-
-            static string MajorMinorVersionString(string versionString)
-            {
-                string[] items = versionString.Split('.');
-
-                return items.Length switch
-                {
-                    1 => $"{items[0]}.0",
-                    > 1 => $"{items[0]}.{items[1]}",
-                    _ => throw new ArgumentException(
-                        "Could not figure out .NET Major/Minor Version for Ref Assemblies.")
-                };
-            }
         });
 
         await Task.WhenAll(batchTask, processTask);
@@ -612,10 +599,10 @@ public partial class DeployRuntimeView : UserControl
                 new XAttribute("PublicKeyToken", publicKeyToken),
                 new XAttribute(
                     "AssemblyVersion",
-                    CreateMainFrameworkVersion(targetFrameworkVersion, GetAssemblyVersion(destinationAssemblyFilePath))),
+                    FrameworkVersionFormatter.ToMajorOnly(targetFrameworkVersion, GetAssemblyVersion(destinationAssemblyFilePath))),
                 new XAttribute(
                     "FileVersion",
-                    CreateMainFrameworkVersion(targetFrameworkVersion, GetFileVersion(destinationAssemblyFilePath))),
+                    FrameworkVersionFormatter.ToMajorOnly(targetFrameworkVersion, GetFileVersion(destinationAssemblyFilePath))),
                 new XAttribute("Profile", "WindowsForms"));
 
             // Insert the new entry behind the respective last type entry:
@@ -658,7 +645,7 @@ public partial class DeployRuntimeView : UserControl
 
         string GetFileVersion(string assemblyFilePath)
         {
-            string version = "42.42.42.42424";
+            string version = FrameworkVersionFormatter.FailedReadSentinel;
 
             try
             {
@@ -681,7 +668,7 @@ public partial class DeployRuntimeView : UserControl
 
         string GetAssemblyVersion(string assemblyFilePath)
         {
-            string version = "42.42.42.42424";
+            string version = FrameworkVersionFormatter.FailedReadSentinel;
 
             try
             {
@@ -707,34 +694,5 @@ public partial class DeployRuntimeView : UserControl
 
             return version;
         }
-    }
-
-    /// <summary>
-    /// Returns the "rounded" version of an assembly, meaning: 9.6.4-dev -> 9.0.0.0.
-    /// If assembly version starts with "42", the rounded Framework version is returned.
-    /// </summary>
-    /// <param name="actualFrameworkVersion"></param>
-    /// <param name="assemblyVersion"></param>
-    /// <returns></returns>
-    private string CreateMainFrameworkVersion(string actualFrameworkVersion, string assemblyVersion)
-    {
-        string version;
-
-        if (assemblyVersion.StartsWith("42"))
-        {
-            version = actualFrameworkVersion;
-        }
-        else
-        {
-            version = assemblyVersion;
-        }
-
-        string[] parts = version.Split('.');
-        if (parts.Length < 4)
-        {
-            return version;
-        }
-
-        return $"{parts[0]}.0.0.0";
     }
 }
