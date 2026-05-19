@@ -1,10 +1,9 @@
-﻿using DevTools.Libs;
+using DevTools.Libs;
 using System.Data;
 using System.Diagnostics;
 using System.Reflection;
 using System.Xml.Linq;
 using static DevTools.RuntimeDeploy.WinFormsBuildArtefactsManager;
-using static WfRuntimeDeployDevTools.RuntimeDeploy.WinFormsGitHubRepoManager;
 
 namespace DevTools.RuntimeDeploy.Views;
 

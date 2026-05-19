@@ -1,8 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 
-namespace WfRuntimeDeployDevTools.RuntimeDeploy;
+namespace DevTools.RuntimeDeploy;
 
-internal partial class WinFormsGitHubRepoManager
+internal partial class WinFormsBuildArtefactsManager
 {
     internal class TargetFrameworkSourceItem(string name, string tfmPaths, DirectoryInfo directory)
     {
@@ -13,6 +13,6 @@ internal partial class WinFormsGitHubRepoManager
         public DirectoryInfo Directory { get; init; } = directory;
 
         public override string ToString()
-            => $"{Name} ({Directory.Name}";
+            => $"{Name} ({Directory.Name})";
     }
 }

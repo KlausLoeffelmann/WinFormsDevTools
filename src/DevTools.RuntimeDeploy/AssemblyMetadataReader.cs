@@ -31,7 +31,7 @@ internal static class AssemblyMetadataReader
 
             var assemblyName = metadataReader.GetString(assemblyDefinition.Name);
             var version = assemblyDefinition.Version.ToString();
-            var publicKeyToken = BitConverter.ToString(ComputePublicKeyToken(metadataReader.GetBlobBytes(assemblyDefinition.PublicKey))).Replace("-", "").ToLowerInvariant();
+            var publicKeyToken = Convert.ToHexStringLower(ComputePublicKeyToken(metadataReader.GetBlobBytes(assemblyDefinition.PublicKey)));
             var fileVersion = GetFileVersion(metadataReader);
 
             return new AssemblyMetadata

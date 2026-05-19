@@ -1,6 +1,4 @@
-﻿using static WfRuntimeDeployDevTools.RuntimeDeploy.WinFormsGitHubRepoManager;
-
-namespace DevTools.RuntimeDeploy;
+﻿namespace DevTools.RuntimeDeploy;
 
 /// <summary>
 ///  Provides functionality to extract the available generated assemblies 

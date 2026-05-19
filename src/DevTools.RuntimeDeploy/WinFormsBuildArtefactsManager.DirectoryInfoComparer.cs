@@ -9,14 +9,10 @@ internal partial class WinFormsBuildArtefactsManager
     internal class DirectoryInfoComparer : IEqualityComparer<DirectoryInfo>
     {
         public bool Equals(DirectoryInfo? x, DirectoryInfo? y)
-        {
-            return Equals(x?.Name, y?.Name);
-        }
+            => string.Equals(x?.Name, y?.Name, StringComparison.OrdinalIgnoreCase);
 
         public int GetHashCode([DisallowNull] DirectoryInfo obj)
-        {
-            return obj.Name.GetHashCode();
-        }
+            => StringComparer.OrdinalIgnoreCase.GetHashCode(obj.Name);
 
         public static DirectoryInfoComparer Instance
             => s_instance ??= new DirectoryInfoComparer();

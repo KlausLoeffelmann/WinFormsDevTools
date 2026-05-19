@@ -26,10 +26,6 @@ public partial class PathShortCutControl : UserControl
     public string PathFullName
     {
         get => _pathTextBox.Text;
-        set
-        {
-            _pathTextBox.Text = value;
-            _pathTextBox.Text = value;
-        }
+        set => _pathTextBox.Text = value;
     }
 }
