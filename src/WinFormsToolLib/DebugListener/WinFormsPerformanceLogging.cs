@@ -117,7 +117,7 @@ public partial class WinFormsPerformanceLogging() : IDisposable
         [CallerFilePath] string? filePath = default,
         [CallerLineNumber] int lineNumber = -1)
     {
-        int processId = Process.GetCurrentProcess().Id;
+        int processId = Environment.ProcessId;
         ExtendedDebugInfo debugInfo;
 
         debugInfo = new(
