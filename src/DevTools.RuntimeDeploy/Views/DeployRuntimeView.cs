@@ -1,8 +1,6 @@
 using DevTools.Libs;
 using DevTools.RuntimeDeploy.Domain;
 using System.Data;
-using System.Diagnostics;
-using System.Reflection;
 using System.Xml.Linq;
 using static DevTools.RuntimeDeploy.WinFormsBuildArtefactsManager;
 
@@ -442,65 +440,18 @@ public partial class DeployRuntimeView : UserControl
             return AssemblyManifestProcessResult.MissingAssembly;
         }
 
-        Assembly assembly;
-        AssemblyName? assemblyName = null;
-        AssemblyMetadata? assemblyMetadata;
-
-        // Create a temporary assembly manager that will be disposed when done
-        using var tempManager = new AssemblyTempManager();
-
-        if (isRefAssembly)
+        AssemblyProbeResult? probe = AssemblyProbe.TryRead(destinationAssemblyFileInfo.targetFile.FullName);
+        if (probe is null)
         {
-            assemblyMetadata = AssemblyMetadataReader.GetAssemblyMetadata(
-                destinationAssemblyFileInfo.targetFile.FullName);
-        }
-        else
-        {
-            try
-            {
-                // Use temporary manager to load assembly from a copy instead of the original file
-                assembly = tempManager.LoadAssemblyFromCopy(destinationAssemblyFileInfo.targetFile.FullName)!;
-
-                if (assembly is null)
-                {
-                    return AssemblyManifestProcessResult.InvalidAssembly;
-                }
-
-                assemblyName = assembly.GetName();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Couldn't load image of assembly: {ex.Message}");
-                return AssemblyManifestProcessResult.InvalidAssembly;
-            }
+            return AssemblyManifestProcessResult.InvalidAssembly;
         }
 
-        // If we still don't have an assembly name, try to get it directly from the file
-        if (assemblyName is null)
-        {
-            try
-            {
-                assemblyName = tempManager.GetAssemblyName(destinationAssemblyFileInfo.targetFile.FullName);
-                
-                if (assemblyName is null)
-                {
-                    return AssemblyManifestProcessResult.InvalidAssembly;
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Couldn't get assembly name: {ex.Message}");
-                return AssemblyManifestProcessResult.InvalidAssembly;
-            }
-        }
-
-        var publicTokenBytes = assemblyName.GetPublicKeyToken();
-        if (publicTokenBytes is null || publicTokenBytes.Length == 0)
+        if (string.IsNullOrEmpty(probe.PublicKeyTokenHex))
         {
             return AssemblyManifestProcessResult.MissingPublicKey;
         }
 
-        string publicKeyToken = Convert.ToHexStringLower(publicTokenBytes);
+        string publicKeyToken = probe.PublicKeyTokenHex;
 
         XDocument xmlDoc;
 
@@ -589,20 +540,18 @@ public partial class DeployRuntimeView : UserControl
 
         if (existingFile is null)
         {
-            string destinationAssemblyFilePath = destinationAssemblyFileInfo.targetFile.FullName;
-
             // Create a new entry
             XElement newFile = new("File",
                 new XAttribute("Type", fileType),
                 new XAttribute("Path", deltaPath.Replace('\\', '/')),
-                new XAttribute("AssemblyName", assemblyName.Name!),
+                new XAttribute("AssemblyName", probe.Name),
                 new XAttribute("PublicKeyToken", publicKeyToken),
                 new XAttribute(
                     "AssemblyVersion",
-                    FrameworkVersionFormatter.ToMajorOnly(targetFrameworkVersion, GetAssemblyVersion(destinationAssemblyFilePath))),
+                    FrameworkVersionFormatter.ToMajorOnly(targetFrameworkVersion, probe.Version)),
                 new XAttribute(
                     "FileVersion",
-                    FrameworkVersionFormatter.ToMajorOnly(targetFrameworkVersion, GetFileVersion(destinationAssemblyFilePath))),
+                    FrameworkVersionFormatter.ToMajorOnly(targetFrameworkVersion, NormalizeFileVersion(probe.FileVersion))),
                 new XAttribute("Profile", "WindowsForms"));
 
             // Insert the new entry behind the respective last type entry:
@@ -643,49 +592,13 @@ public partial class DeployRuntimeView : UserControl
         // Default return value (although not all cases are covered).
         return AssemblyManifestProcessResult.OK;
 
-        string GetFileVersion(string assemblyFilePath)
+        static string NormalizeFileVersion(string? fileVersion)
         {
-            string version = FrameworkVersionFormatter.FailedReadSentinel;
+            string version = fileVersion ?? FrameworkVersionFormatter.FailedReadSentinel;
 
-            try
-            {
-                var fileVersionInfo = FileVersionInfo.GetVersionInfo(assemblyFilePath);
-                version = fileVersionInfo.FileVersion ?? version;
-            }
-            catch (Exception)
-            {
-                return version;
-            }
-
-            string[] parts = version.Split('.');
-            if (parts.Length >= 4)
-            {
-                version = $"{parts[0]}.{parts[1]}.{parts[2]}.{parts[3]}";
-            }
-
-            return version;
-        }
-
-        string GetAssemblyVersion(string assemblyFilePath)
-        {
-            string version = FrameworkVersionFormatter.FailedReadSentinel;
-
-            try
-            {
-                // Use the temp manager to load from a copy instead
-                var tempAssembly = tempManager.LoadAssemblyFromCopy(assemblyFilePath);
-                if (tempAssembly != null)
-                {
-                    var tempAssemblyName = tempAssembly.GetName();
-                    version = tempAssemblyName.Version?.ToString() ?? version;
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error getting assembly version: {ex.Message}");
-                return version;
-            }
-
+            // Defensive: clamp to a clean dotted-numeric "a.b.c.d" form. FileVersion may carry
+            // a build-suffix like "9.6.4-dev"; ToMajorOnly handles both shapes, but capping here
+            // preserves the historical behaviour of the deleted GetFileVersion helper.
             string[] parts = version.Split('.');
             if (parts.Length >= 4)
             {
