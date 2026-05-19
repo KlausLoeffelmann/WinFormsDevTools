@@ -1,4 +1,5 @@
 using WarpToolkit.ComponentModel;
+using WarpToolkit.DesktopUI.AppServices;
 using WarpToolkit.WinForms.AppServices;
 using WarpToolkit.WinForms.Specialized;
 using System.Diagnostics;
