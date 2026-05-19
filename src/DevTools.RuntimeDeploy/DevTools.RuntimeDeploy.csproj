@@ -11,6 +11,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="NuGet.Versioning" />
+    <PackageReference Include="WarpToolkit.ComponentModel" />
+    <PackageReference Include="WarpToolkit.Desktop.AppServices" />
     <PackageReference Include="WarpToolkit.WinForms" />
   </ItemGroup>
 

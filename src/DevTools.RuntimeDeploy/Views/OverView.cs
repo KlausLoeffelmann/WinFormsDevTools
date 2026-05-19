@@ -1,4 +1,5 @@
 ﻿using DevTools.Libs;
+using DevTools.RuntimeDeploy.Domain;
 using static DevTools.RuntimeDeploy.WinFormsBuildArtefactsManager;
 
 namespace DevTools.RuntimeDeploy.Views;
