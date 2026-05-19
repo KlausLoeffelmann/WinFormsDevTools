@@ -279,7 +279,7 @@ public partial class DeployRuntimeView : UserControl
 
                     // Determine the file type based on the file name without extension
                     string fileName = Path.GetFileNameWithoutExtension(fileItem.Name);
-                    string currentFileType = GetFileTypeForAssembly(fileName);
+                    string currentFileType = AssemblyFileTypeClassifier.Classify(fileName);
 
                     // If the file starts with "System.Windows.Forms.Analyzers", copy it to the analyzers directory.
                     // But. If the file ends with "VisualBasic.dll", we need to copy it in the SubFolder "\\vb", and
@@ -362,7 +362,7 @@ public partial class DeployRuntimeView : UserControl
 
                     // Determine the file type for ref assembly
                     string fileName = Path.GetFileNameWithoutExtension(fileItem.Name);
-                    string currentFileType = GetFileTypeForAssembly(fileName);
+                    string currentFileType = AssemblyFileTypeClassifier.Classify(fileName);
 
                     // Update the AssemblyInfo.xml file with the assembly information.
                     AssemblyManifestProcessResult result = UpdateAssemblyInfo(
@@ -736,58 +736,5 @@ public partial class DeployRuntimeView : UserControl
         }
 
         return $"{parts[0]}.0.0.0";
-    }
-
-    /// <summary>
-    /// Determines the file type based on the assembly name.
-    /// </summary>
-    /// <param name="assemblyName">The name of the assembly.</param>
-    /// <returns>The file type as a string.</returns>
-    private string GetFileTypeForAssembly(string assemblyName)
-    {
-        // Determine file type based on assembly name
-        if (assemblyName.StartsWith("System.Windows.Forms"))
-        {
-            if (assemblyName.Contains("Analyzers"))
-            {
-                return "Analyzer";
-            }
-            else if (assemblyName.Contains("Primitives"))
-            {
-                return "Primitive";
-            }
-            else if (assemblyName.Contains("Design"))
-            {
-                return "Design";
-            }
-            return "WinForms";
-        }
-        else if (assemblyName.StartsWith("System.Drawing"))
-        {
-            if (assemblyName.Contains("Design"))
-            {
-                return "DrawingDesign";
-            }
-            return "Drawing";
-        }
-        else if (assemblyName.StartsWith("Microsoft.VisualBasic"))
-        {
-            return "VisualBasic";
-        }
-        else if (assemblyName.StartsWith("Accessibility"))
-        {
-            return "Accessibility";
-        }
-        else if (assemblyName.StartsWith("System.Design"))
-        {
-            return "Design";
-        }
-        else if (assemblyName.StartsWith("System.Private.Windows.Core"))
-        {
-            return "WindowsCore";
-        }
-
-        // Default type if we can't determine
-        return "Unknown";
     }
 }
