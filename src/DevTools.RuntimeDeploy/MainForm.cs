@@ -19,6 +19,7 @@ public partial class MainForm : Form
 
         _tabControl.AddTab("Overview", _overView);
         _tabControl.AddTab("Deploy Runtime", _deployRuntimeView);
+        _tabControl.AddTab("Delete Binaries", new DeleteBinariesView());
         _tabControl.TabChanged += TabControl_TabChanged;
 
         SdkFolders = FrameworkInfo.GetDotNetDesktopSdk(false);
