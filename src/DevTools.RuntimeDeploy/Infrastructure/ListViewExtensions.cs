@@ -1,6 +1,19 @@
-﻿namespace DevTools.Libs;
+// TODO(warp#<NNN>): Migrate to a WARP-provided source generator for
+// type-safe ListView column/row binding. The reflection-based helpers
+// below were carried over from the original DevTools.Libs project as a
+// temporary stop-gap so that DevTools.RuntimeDeploy can drop its
+// project reference on DevTools.Libs.
+//
+// Once the WARP-side generator ships (tracking issue:
+// https://github.com/KlausLoeffelmannOrg/WARP/issues/<NNN>), the three
+// helpers in this file should be deleted and the call sites in
+// DeployRuntimeView / OverView re-pointed at the generator-produced
+// strongly-typed equivalents (no PropertyInfo.GetValue, no boxing,
+// no nameof strings).
 
-public static class ControlExtension
+namespace DevTools.RuntimeDeploy.Infrastructure;
+
+internal static class ListViewExtensions
 {
     public static void ConfigureDetailsView(
         this ListView listView,
@@ -35,8 +48,8 @@ public static class ControlExtension
 
         var columnProperties = typePropertyColumnHeaderNames
             .Join(properties,
-                outerItem => outerItem.PropertyName,   
-                innerItem => innerItem.Name,           
+                outerItem => outerItem.PropertyName,
+                innerItem => innerItem.Name,
                 (outer, inner) => new
                 {
                     PropertyInfo = inner,
