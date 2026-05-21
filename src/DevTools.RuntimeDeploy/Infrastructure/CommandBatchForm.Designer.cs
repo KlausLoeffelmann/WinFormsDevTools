@@ -1,9 +1,9 @@
-﻿using System.Windows.Forms.Design.Behavior;
+using System.Windows.Forms.Design.Behavior;
 using WarpToolkit.WinForms.Containers;
 using WarpToolkit.WinForms.Containers.Adorners;
 using WarpToolkit.WinForms.Specialized;
 
-namespace DevTools.Libs;
+namespace DevTools.RuntimeDeploy.Infrastructure;
 
 partial class CommandBatchForm
 {

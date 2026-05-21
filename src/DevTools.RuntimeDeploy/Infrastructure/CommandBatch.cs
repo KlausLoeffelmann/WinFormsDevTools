@@ -1,6 +1,6 @@
-﻿using System.Text;
+using System.Text;
 
-namespace DevTools.Libs;
+namespace DevTools.RuntimeDeploy.Infrastructure;
 
 public class CommandBatch
 {
@@ -91,12 +91,10 @@ public class CommandBatch
 
             if (!_dryRun)
             {
-                await WriteLineInfoAsync($"{await sourceFile.CopyToAsync(destinationFile.FullName)}");
+                File.Copy(sourceFile.FullName, destinationFile.FullName, overwrite: true);
             }
-            else
-            {
-                await WriteLineInfoAsync($"OK.");
-            }
+
+            await WriteLineInfoAsync($"OK.");
 
             return;
         }
@@ -109,12 +107,10 @@ public class CommandBatch
 
             if (!_dryRun)
             {
-                await WriteLineInfoAsync($"{await sourceFile.CopyToAsync(destinationFile.FullName)}");
+                File.Copy(sourceFile.FullName, destinationFile.FullName, overwrite: true);
             }
-            else
-            {
-                await WriteLineInfoAsync($"OK.");
-            }
+
+            await WriteLineInfoAsync($"OK.");
         }
         else
         {

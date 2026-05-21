@@ -1,4 +1,4 @@
-﻿namespace DevTools.Libs;
+namespace DevTools.RuntimeDeploy.Infrastructure;
 
 public partial class CommandBatchForm : Form
 {

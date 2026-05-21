@@ -12,10 +12,10 @@
 	<PackageReference Include="WarpToolkit.WinForms" />
 	<PackageReference Include="WarpToolkit.WinForms.Specialized" />
     <PackageReference Include="NuGet.Versioning" />
+    <PackageReference Include="WarpToolkit.Desktop.Async" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="CommandBatchForm.cs" />
     <Compile Update="DebugListener\DebugMessageListener.cs">
       <SubType>Component</SubType>
     </Compile>
