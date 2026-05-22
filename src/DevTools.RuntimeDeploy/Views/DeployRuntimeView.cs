@@ -1,7 +1,6 @@
 using DevTools.RuntimeDeploy.Domain;
 using DevTools.RuntimeDeploy.Infrastructure;
 using System.Data;
-using System.Xml.Linq;
 using WarpToolkit.ComponentModel;
 using static DevTools.RuntimeDeploy.Domain.BuildArtefactsScanner;
 
@@ -247,6 +246,23 @@ public partial class DeployRuntimeView : UserControl
             DirectoryInfo cSharpAnalyzersDir = new($"{analyzersDir.FullName}\\{CSharpSubfolderPath}");
             DirectoryInfo visualBasicAnalyzersDir = new($"{analyzersDir.FullName}\\{VisualBasicSubfolderPath}");
 
+            // Load the manifest once for the whole batch and save once at the
+            // end (the old code re-loaded and re-saved per assembly).
+            string manifestPath = $"{packageAssembliesManifestPath.FullName}\\FrameworkList.xml";
+            FrameworkListManifestEditor? manifestEditor;
+            try
+            {
+                manifestEditor = new FrameworkListManifestEditor(manifestPath);
+            }
+            catch (Exception ex)
+            {
+                await commandBatch.WriteLineErrorAsync(
+                    $"Could not load FrameworkList manifest '{manifestPath}': {ex.Message}");
+                await commandBatch.EndBatchAsync("End of Command Batch.");
+                await InvokeAsync(() => _copyCommandButton.Enabled = true);
+                return;
+            }
+
             await commandBatch.WriteLineInfoAsync($"Destination Assembly directory:{targetSharedAssemblyBasePath}");
             await commandBatch.WriteLineInfoAsync($"Destination REF-Assembly directory:{targetRefAssemblyPath.FullName}");
             await commandBatch.WriteLineInfoAsync($"Destination Analyzers directory:{analyzersDir.FullName}");
@@ -327,12 +343,11 @@ public partial class DeployRuntimeView : UserControl
 
                         // Update the AssemblyInfo.xml file with the assembly information.
                         AssemblyManifestProcessResult result = UpdateAssemblyInfo(
-                            xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
+                            manifestEditor: manifestEditor,
                             destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetDir}\\{fileItem.Name}")),
                             fileType: currentFileType,
                             targetFrameworkVersion: targetFrameworkTarget.Name,
-                            updatePublicKey: false,
-                            isRefAssembly: false);
+                            updatePublicKey: false);
 
                         if (await ProcessManifestResult(commandBatch, fileItem, result))
                         {
@@ -371,12 +386,11 @@ public partial class DeployRuntimeView : UserControl
 
                     // Update the AssemblyInfo.xml file with the assembly information.
                     AssemblyManifestProcessResult result = UpdateAssemblyInfo(
-                        xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
+                        manifestEditor: manifestEditor,
                         destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetRefAssemblyPath}\\{fileItem.Name}")),
                         fileType: currentFileType,
                         targetFrameworkVersion: targetFrameworkTarget.Name,
-                        updatePublicKey: false,
-                        isRefAssembly: true);
+                        updatePublicKey: false);
 
                     if (await ProcessManifestResult(commandBatch, fileItem, result))
                     {
@@ -394,6 +408,17 @@ public partial class DeployRuntimeView : UserControl
             if (checkedAssemblies.Length == 0)
             {
                 await commandBatch.WriteLineWarningAsync("No items were selected, found nothing to copy.");
+            }
+
+            // Persist all manifest mutations performed during the batch.
+            try
+            {
+                manifestEditor.Save();
+            }
+            catch (Exception ex)
+            {
+                await commandBatch.WriteLineErrorAsync(
+                    $"Failed to write FrameworkList manifest '{manifestPath}': {ex.Message}");
             }
 
             await commandBatch.EndBatchAsync("End of Command Batch.");
@@ -431,13 +456,12 @@ public partial class DeployRuntimeView : UserControl
         }
     }
 
-    private AssemblyManifestProcessResult UpdateAssemblyInfo(
-        string xmlFilePath,
+    private static AssemblyManifestProcessResult UpdateAssemblyInfo(
+        FrameworkListManifestEditor manifestEditor,
         (DirectoryInfo targetBasePath, FileInfo targetFile) destinationAssemblyFileInfo,
         string fileType,
         string targetFrameworkVersion,
-        bool updatePublicKey,
-        bool isRefAssembly)
+        bool updatePublicKey)
     {
         if (!destinationAssemblyFileInfo.targetFile.Exists)
         {
@@ -455,146 +479,22 @@ public partial class DeployRuntimeView : UserControl
             return AssemblyManifestProcessResult.MissingPublicKey;
         }
 
-        string publicKeyToken = probe.PublicKeyTokenHex;
-
-        XDocument xmlDoc;
-
-        try
-        {
-            xmlDoc = XDocument.Load(xmlFilePath);
-
-            if (xmlDoc is null)
-            {
-                return AssemblyManifestProcessResult.InvalidXmlFile;
-            }
-        }
-        catch (Exception)
-        {
-            return AssemblyManifestProcessResult.InvalidXmlFile;
-        }
-
-        XElement? fileList = xmlDoc.Element("FileList") 
-            ?? throw new Exception("Invalid XML format.");
-
-        XElement existingFile = null!;
-
-        // Get the delta-string between the targetBasePath and the targetFile:
+        // Path of the destination file relative to the ref-pack base, in Windows
+        // backslash form. The editor converts to forward-slash for the manifest.
         string deltaPath = destinationAssemblyFileInfo.targetFile.FullName
             .Replace(destinationAssemblyFileInfo.targetBasePath.FullName, string.Empty)
             .TrimStart('\\');
 
-        // Create a HashSet which holds the end element of a new type, so we know where to insert a new entry.
-        Dictionary<string, XElement> assemblyTypes = [];
-        string? currentAssemblyType = null;
-        bool multipleTypes = false;
-        XElement lastEntry = null!;
+        FrameworkListEntry entry = new(
+            FileType: fileType,
+            RelativePath: deltaPath,
+            AssemblyName: probe.Name,
+            PublicKeyToken: probe.PublicKeyTokenHex,
+            AssemblyVersion: FrameworkVersionFormatter.ToMajorOnly(targetFrameworkVersion, probe.Version),
+            FileVersion: FrameworkVersionFormatter.ToMajorOnly(targetFrameworkVersion, NormalizeFileVersion(probe.FileVersion)),
+            Profile: "WindowsForms");
 
-        // Not the same as in that Silicon Valley episode, just saying! ;-)
-        foreach (var file in fileList.Elements("File"))
-        {
-            // We need to build a list of assembly types, so we know where to insert a new entry.
-            // That list then contains the respective last entry with that specific type.
-            if (currentAssemblyType is null)
-            {
-                currentAssemblyType = file.Attribute("Type")?.Value;
-            }
-            else if (currentAssemblyType != file.Attribute("Type")?.Value)
-            {
-                multipleTypes = true;
-                assemblyTypes.Add(currentAssemblyType, lastEntry);
-                currentAssemblyType = file.Attribute("Type")?.Value;
-            }
-
-            var pathAttr = file.Attribute("Path")?.Value;
-
-            lastEntry = file;
-
-            if (pathAttr is not null && IsPathMatch(pathAttr.AsSpan(), deltaPath))
-            {
-                existingFile = file;
-                break;
-            }
-        }
-
-        if (existingFile is null && multipleTypes && lastEntry is not null)
-        {
-            // List only remains important, when we need to extend the list
-            // and need to know where to insert the entry.
-            assemblyTypes.Add(currentAssemblyType!, lastEntry);
-        }
-
-        // Extra non-allocation mile gone for Paul Morgado (and probably half of DevDiv.)
-        static bool IsPathMatch(ReadOnlySpan<char> path, string deltaPath)
-        {
-            if (path.Length != deltaPath.Length)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < path.Length; i++)
-            {
-                if (path[i] != deltaPath[i] && !(path[i] == '/' && deltaPath[i] == '\\'))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        if (existingFile is null)
-        {
-            // Create a new entry
-            XElement newFile = new("File",
-                new XAttribute("Type", fileType),
-                new XAttribute("Path", deltaPath.Replace('\\', '/')),
-                new XAttribute("AssemblyName", probe.Name),
-                new XAttribute("PublicKeyToken", publicKeyToken),
-                new XAttribute(
-                    "AssemblyVersion",
-                    FrameworkVersionFormatter.ToMajorOnly(targetFrameworkVersion, probe.Version)),
-                new XAttribute(
-                    "FileVersion",
-                    FrameworkVersionFormatter.ToMajorOnly(targetFrameworkVersion, NormalizeFileVersion(probe.FileVersion))),
-                new XAttribute("Profile", "WindowsForms"));
-
-            // Insert the new entry behind the respective last type entry:
-            if (assemblyTypes.TryGetValue(fileType, out XElement? lastTypeEntry))
-            {
-                lastTypeEntry.AddAfterSelf(newFile);
-            }
-            else
-            {
-                fileList.Add(newFile);
-            }
-
-            xmlDoc.Save(xmlFilePath);
-
-            return AssemblyManifestProcessResult.Created;
-        }
-        else
-        {
-            // Check if the public key matches
-            string? existingPublicKeyToken = existingFile.Attribute("PublicKeyToken")?.Value;
-
-            if (existingPublicKeyToken != publicKeyToken)
-            {
-                if (updatePublicKey)
-                {
-                    existingFile.SetAttributeValue("PublicKeyToken", publicKeyToken);
-                    xmlDoc.Save(xmlFilePath);
-
-                    return AssemblyManifestProcessResult.PublicKeyUpdated;
-                }
-                else
-                {
-                    return AssemblyManifestProcessResult.PublicKeyDoesNotMatch;
-                }
-            }
-        }
-
-        // Default return value (although not all cases are covered).
-        return AssemblyManifestProcessResult.OK;
+        return manifestEditor.Upsert(entry, updatePublicKey);
 
         static string NormalizeFileVersion(string? fileVersion)
         {
