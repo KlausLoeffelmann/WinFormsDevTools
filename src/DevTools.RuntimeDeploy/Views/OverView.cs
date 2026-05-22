@@ -1,6 +1,6 @@
 using DevTools.RuntimeDeploy.Domain;
 using DevTools.RuntimeDeploy.Infrastructure;
-using static DevTools.RuntimeDeploy.WinFormsBuildArtefactsManager;
+using static DevTools.RuntimeDeploy.Domain.BuildArtefactsScanner;
 
 namespace DevTools.RuntimeDeploy.Views;
 

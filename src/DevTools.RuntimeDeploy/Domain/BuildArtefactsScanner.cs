@@ -1,75 +1,65 @@
-﻿namespace DevTools.RuntimeDeploy;
+namespace DevTools.RuntimeDeploy.Domain;
 
 /// <summary>
-///  Provides functionality to extract the available generated assemblies 
+///  Provides functionality to extract the available generated assemblies
 ///  from the Artifacts folder of the WinForms GitHub repository.
 /// </summary>
-internal partial class WinFormsBuildArtefactsManager
+internal partial class BuildArtefactsScanner
 {
     public const string BinSystemWindowsFormsPath = "\\bin\\System.Windows.Forms";
     public const string BinPath = "\\bin";
     public const string ObjPath = "\\obj";
 
     // Definition of additional potential Framework Moniker paths,
-    // which are TFM independent (.NET Standard):
+    // which are TFM independent (.NET Standard) and ship alongside the
+    // main TFM-specific build outputs.
     private static readonly string[] s_additionalTfmPaths =
     [
         "\\netstandard2.0",
-        "\\netstandard2.1"
+        "\\netstandard2.1",
     ];
 
-    public WinFormsBuildArtefactsManager(string pathToGitHubRepo) 
+    public BuildArtefactsScanner(string pathToGitHubRepo)
         => PathToGitHubRepo = pathToGitHubRepo;
 
     public TargetFrameworkSourceItem[] GetAvailableTargets()
     {
         DirectoryInfo binWinForms = new(PathToGitHubRepo + BinSystemWindowsFormsPath);
 
-        var result = binWinForms.GetDirectories(
-            searchPattern: "*.*",
-            enumerationOptions: new EnumerationOptions()
-            {
-                RecurseSubdirectories = true
-            })
-
-            .Select(item => new
-            {
-                Directoy = item,
-                MiddlePath = item.FullName.Replace(PathToBinSystemWindowsForms, "")
-            })
-
-            .Select(item => new TargetFrameworkSourceItem(
-                name: item.MiddlePath[1..].Replace("\\", " - "),
-                tfmPaths: item.MiddlePath,
-                directory: item.Directoy))
-            .ToList();
-
-        // Take the first element we have:
-        if (result.Count > 0)
-        {
-            var mainTFMTarget = result[0];
-
-            for (int i = 0; i < s_additionalTfmPaths.Length; i++)
-            {
-                // Replace the last part of the Directory with the name of the additional TFM paths:
-                if (mainTFMTarget.Directory.Parent is DirectoryInfo parent)
+        return [..
+            binWinForms.GetDirectories(
+                searchPattern: "*.*",
+                enumerationOptions: new EnumerationOptions
                 {
-                    // let's test, if the additional TFM exist:
-                    DirectoryInfo additionalTfmPath = new(parent.FullName + s_additionalTfmPaths[i]);
-                    if (additionalTfmPath.Exists)
-                    {
-                        var additionalTFMTarget = new TargetFrameworkSourceItem(
-                            name: mainTFMTarget.Name,
-                            tfmPaths: s_additionalTfmPaths[i],
-                            directory: mainTFMTarget.Directory);
+                    RecurseSubdirectories = true,
+                })
+            .Select(item =>
+            {
+                string middlePath = item.FullName.Replace(PathToBinSystemWindowsForms, string.Empty);
 
-                        result.Add(additionalTFMTarget);
+                // Each item carries every TFM path the deploy step should pull files from:
+                // index 0 is the primary (config + main TFM, e.g. "\Debug\net10.0") and is
+                // also used to locate the ref-assembly source directory; subsequent entries
+                // are sibling netstandard fallbacks that exist on disk next to the primary.
+                List<string> tfmPaths = [middlePath];
+
+                if (item.Parent is DirectoryInfo parent)
+                {
+                    foreach (string fallback in s_additionalTfmPaths)
+                    {
+                        DirectoryInfo additional = new(parent.FullName + fallback);
+                        if (additional.Exists)
+                        {
+                            tfmPaths.Add(fallback);
+                        }
                     }
                 }
-            }
-        }
 
-        return [.. result];
+                return new TargetFrameworkSourceItem(
+                    name: middlePath[1..].Replace("\\", " - "),
+                    tfmPaths: tfmPaths,
+                    directory: item);
+            })];
     }
 
     public DesktopAssemblyInfo[] GetWinFormsRuntimeAssemblies(TargetFrameworkSourceItem target, bool includeRefAssemblies)
@@ -80,8 +70,10 @@ internal partial class WinFormsBuildArtefactsManager
                 searchPattern: "*.dll",
                 enumerationOptions: new EnumerationOptions() { RecurseSubdirectories = true })
 
-            // TfmPaths holds the TFM, for example ".NET9" but also ".NET Standard 2.0", which would apply for ALL TFMs.
-            .Where(item => target.TfmPaths.Any(tfmItem => item.Directory!.FullName.EndsWith(tfmItem)))
+            // TfmPaths is the list of TFM directory suffixes to include for this source item
+            // (the primary main-TFM path plus any present netstandard fallbacks). A DLL is
+            // considered "in scope" if its parent directory's full name ends with any of them.
+            .Where(item => target.TfmPaths.Any(tfmItem => item.Directory!.FullName.EndsWith(tfmItem, StringComparison.OrdinalIgnoreCase)))
             .GroupBy(
                 keySelector: item => item.Directory!.Parent!.Parent!,
                 elementSelector: elementItem => elementItem,
@@ -102,17 +94,17 @@ internal partial class WinFormsBuildArtefactsManager
                     Name = group.Key.Name,
                     AssemblyFiles = assemblyFiles,
                     RefAssemblyFiles = includeRefAssemblies
-                        ? FindRefAssemblySourceFiles(group.Key, target.TfmPaths)
-                        : []
+                        ? FindRefAssemblySourceFiles(group.Key, target.TfmPaths[0])
+                        : [],
                 };
             })];
 
-        FileInfo[] FindRefAssemblySourceFiles(DirectoryInfo directory, string tfmPath)
+        FileInfo[] FindRefAssemblySourceFiles(DirectoryInfo directory, string primaryTfmPath)
         {
             var uniqueFiles = new HashSet<(string Name, long Size)>();
             var allFiles = new List<FileInfo>();
 
-            var refDirectory = new DirectoryInfo($"{PathToGitHubRepo}{ObjPath}\\{directory.Name}\\{tfmPath}\\ref");
+            var refDirectory = new DirectoryInfo($"{PathToGitHubRepo}{ObjPath}\\{directory.Name}\\{primaryTfmPath}\\ref");
             if (refDirectory.Exists)
             {
                 foreach (var file in refDirectory.GetFiles("*.dll"))
@@ -131,6 +123,6 @@ internal partial class WinFormsBuildArtefactsManager
 
     public string PathToGitHubRepo { get; }
 
-    public string PathToBinSystemWindowsForms 
+    public string PathToBinSystemWindowsForms
         => PathToGitHubRepo + BinSystemWindowsFormsPath;
 }

@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.WinForms;
 using System.ComponentModel;
 using WarpToolkit.ComponentModel;
-using static DevTools.RuntimeDeploy.WinFormsBuildArtefactsManager;
+using static DevTools.RuntimeDeploy.Domain.BuildArtefactsScanner;
 
 namespace DevTools.RuntimeDeploy;
 

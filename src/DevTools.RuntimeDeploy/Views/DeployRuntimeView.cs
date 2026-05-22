@@ -3,14 +3,14 @@ using DevTools.RuntimeDeploy.Infrastructure;
 using System.Data;
 using System.Xml.Linq;
 using WarpToolkit.ComponentModel;
-using static DevTools.RuntimeDeploy.WinFormsBuildArtefactsManager;
+using static DevTools.RuntimeDeploy.Domain.BuildArtefactsScanner;
 
 namespace DevTools.RuntimeDeploy.Views;
 
 public partial class DeployRuntimeView : UserControl
 {
     private readonly Control[] _controlsForEnablingHandling;
-    private WinFormsBuildArtefactsManager? _gitHubRepoManager;
+    private BuildArtefactsScanner? _gitHubRepoManager;
 
     private const string ACCESSIBILITY = "Accessibility";
     private const string MICROSOFT_VISUALBASIC = "Microsoft.VisualBasic";

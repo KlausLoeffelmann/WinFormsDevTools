@@ -1,8 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
+using System.Diagnostics.CodeAnalysis;
 
-namespace DevTools.RuntimeDeploy;
+namespace DevTools.RuntimeDeploy.Domain;
 
-internal partial class WinFormsBuildArtefactsManager
+internal partial class BuildArtefactsScanner
 {
     internal class DesktopAssemblyInfo
     {
@@ -17,7 +17,7 @@ internal partial class WinFormsBuildArtefactsManager
 
         public FileInfo[]? RefAssemblyFiles { get; init; }
 
-        public override string ToString() 
+        public override string ToString()
             => $"Directory: {Name} Files: {AssemblyFiles?.Length}";
     }
 }
