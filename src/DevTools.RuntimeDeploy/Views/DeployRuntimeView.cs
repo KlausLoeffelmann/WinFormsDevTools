@@ -201,6 +201,11 @@ public partial class DeployRuntimeView : UserControl
             return;
         }
 
+        if (_replaceTargetSDKVersionComboBox.SelectedItem is not TargetFrameworkTargetItem targetFrameworkTarget)
+        {
+            return;
+        }
+
         // Get the source file directories from the first item in the list view.
         DirectoryInfo sourceAssemblyBasePath = firstItem.AssemblyFiles[0].Directory!;
         DirectoryInfo sourceRefAssemblyBasePath = default!;
@@ -210,27 +215,27 @@ public partial class DeployRuntimeView : UserControl
             sourceRefAssemblyBasePath = firstItem.RefAssemblyFiles[0].Directory!;
         }
 
+        // Snapshot every piece of UI state the background work needs onto plain
+        // locals on the UI thread. After this point Task.Run no longer touches any
+        // control directly; UI writes happen through Control.InvokeAsync.
+        bool dryRun = _dryRunCheckBox.Checked;
+        DesktopAssemblyInfo[] checkedAssemblies =
+        [
+            ..from ListViewItem item in _availableAssembliesListView.Items
+              where item.Checked
+              select (DesktopAssemblyInfo)item.Tag!
+        ];
+
         _copyCommandButton.Enabled = false;
         CommandBatch commandBatch = new();
-
-        if (_replaceTargetSDKVersionComboBox.SelectedItem is null)
-        {
-            return;
-        }
 
         var batchTask = commandBatch.StartBatchAsync(
             windowTitle: "Copy .NET Desktop runtime assemblies",
             showCommandBatchWindow: true,
-            dryRun: _dryRunCheckBox.Checked);
+            dryRun: dryRun);
 
         var processTask = Task.Run(async () =>
         {
-            // We're only reading.
-            Control.CheckForIllegalCrossThreadCalls = false;
-
-            TargetFrameworkTargetItem targetFrameworkTarget = null!;
-            targetFrameworkTarget = (TargetFrameworkTargetItem)_replaceTargetSDKVersionComboBox.SelectedItem;
-
             DirectoryInfo targetSharedAssemblyBasePath = new($"{FrameworkInfo.NetDesktopLibsDirectory}\\{targetFrameworkTarget.Name}");
             DirectoryInfo targetRefAssemblyBasePath = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\" + $"{targetFrameworkTarget.Name}");
             DirectoryInfo targetRefAssemblyPath = new($"{targetRefAssemblyBasePath}\\ref\\net{FrameworkVersionFormatter.ToMajorMinor(targetFrameworkTarget.Name)}");
@@ -251,23 +256,13 @@ public partial class DeployRuntimeView : UserControl
             await commandBatch.WriteLineInfoAsync($"Source RefAssembly directory:{sourceRefAssemblyBasePath}\\ref");
             await commandBatch.WriteLineInfoAsync($"");
 
-            bool foundCheckedItems = false;
-
             DirectoryInfo targetDir;
 
             // Create a HashSet to store the processed files.
             HashSet<FileInfo> processedFiles = [];
 
-            foreach (ListViewItem item in _availableAssembliesListView.Items)
+            foreach (DesktopAssemblyInfo assemblyInfo in checkedAssemblies)
             {
-                if (!item.Checked)
-                {
-                    continue;
-                }
-
-                foundCheckedItems = true;
-                DesktopAssemblyInfo assemblyInfo = (DesktopAssemblyInfo)item.Tag!;
-
                 bool vbFirst = false, csFirst = false;
 
                 foreach (FileInfo fileItem in assemblyInfo.AssemblyFiles)
@@ -364,6 +359,12 @@ public partial class DeployRuntimeView : UserControl
                         continue;
                     }
 
+                    // Add the file to the processed files HashSet (mirror the non-ref-assembly
+                    // loop above: mark as processed BEFORE invoking manifest logic so a skip
+                    // from ProcessManifestResult does not cause the same file to be inspected
+                    // again later in the iteration).
+                    processedFiles.Add(fileItem);
+
                     // Determine the file type for ref assembly
                     string fileName = Path.GetFileNameWithoutExtension(fileItem.Name);
                     string currentFileType = AssemblyFileTypeClassifier.Classify(fileName);
@@ -382,9 +383,6 @@ public partial class DeployRuntimeView : UserControl
                         continue;
                     }
 
-                    // Add the file to the processed files HashSet
-                    processedFiles.Add(fileItem);
-
                     await commandBatch.CopyFileCommandAsync(
                         fileItem,
                         targetRefAssemblyPath,
@@ -393,14 +391,14 @@ public partial class DeployRuntimeView : UserControl
                 }
             }
 
-            if (!foundCheckedItems)
+            if (checkedAssemblies.Length == 0)
             {
                 await commandBatch.WriteLineWarningAsync("No items were selected, found nothing to copy.");
             }
 
             await commandBatch.EndBatchAsync("End of Command Batch.");
 
-            _copyCommandButton.Enabled = true;
+            await InvokeAsync(() => _copyCommandButton.Enabled = true);
         });
 
         await Task.WhenAll(batchTask, processTask);
