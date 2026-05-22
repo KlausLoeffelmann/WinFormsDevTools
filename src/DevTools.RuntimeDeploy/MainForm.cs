@@ -1,7 +1,10 @@
 using DevTools.Libs;
 using DevTools.RuntimeDeploy.Domain;
 using DevTools.RuntimeDeploy.Views;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.WinForms;
 using System.ComponentModel;
+using WarpToolkit.ComponentModel;
 using static DevTools.RuntimeDeploy.WinFormsBuildArtefactsManager;
 
 namespace DevTools.RuntimeDeploy;
@@ -14,6 +17,8 @@ public partial class MainForm : Form
     public MainForm()
     {
         InitializeComponent();
+
+        UserSettings = WinFormsApplication.Services.GetRequiredService<IUserSettingsService>();
 
         _overView = new OverView();
         _deployRuntimeView = new DeployRuntimeView();
@@ -42,6 +47,15 @@ public partial class MainForm : Form
     private void TabControl_TabChanged(object? sender, EventArgs e)
     {
     }
+
+    /// <summary>
+    ///  Per-user settings service, resolved from the DI container set up
+    ///  by <c>WinFormsApplication.CreateBuilder</c> in <c>Program.Main</c>.
+    ///  Hosted UserControls reach it through this property via their
+    ///  <c>ParentForm</c> cast.
+    /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    internal IUserSettingsService UserSettings { get; }
 
     [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
     internal Dictionary<string, DirectoryInfo>? SdkFolders { get; private set; }

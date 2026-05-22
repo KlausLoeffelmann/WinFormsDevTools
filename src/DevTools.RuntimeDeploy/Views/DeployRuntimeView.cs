@@ -3,6 +3,7 @@ using DevTools.RuntimeDeploy.Domain;
 using DevTools.RuntimeDeploy.Infrastructure;
 using System.Data;
 using System.Xml.Linq;
+using WarpToolkit.ComponentModel;
 using static DevTools.RuntimeDeploy.WinFormsBuildArtefactsManager;
 
 namespace DevTools.RuntimeDeploy.Views;
@@ -90,7 +91,10 @@ public partial class DeployRuntimeView : UserControl
     }
 
     private void SetupControls_DeployRuntimeBinaries_Tab()
-        => _pathToArtefactsRepoTextBox.Text = Properties.Settings.Default.PathToWinFormsGitHubRepo;
+    {
+        IUserSettingsService settings = ((MainForm)ParentForm!).UserSettings;
+        _pathToArtefactsRepoTextBox.Text = settings.Get(SettingKeys.PathToWinFormsGitHubRepo, string.Empty);
+    }
 
     private void HandleControlEnabling_DeployRuntimeBinariesTab(bool enable, params Control[] excludeControlsForHandling)
     {
@@ -155,8 +159,10 @@ public partial class DeployRuntimeView : UserControl
         if (dialogResult == DialogResult.OK)
         {
             _pathToArtefactsRepoTextBox.Text = browserDialog.SelectedPath;
-            Properties.Settings.Default.PathToWinFormsGitHubRepo = browserDialog.SelectedPath;
-            Properties.Settings.Default.Save();
+
+            IUserSettingsService settings = ((MainForm)ParentForm!).UserSettings;
+            settings.Set(SettingKeys.PathToWinFormsGitHubRepo, browserDialog.SelectedPath);
+            settings.Flush();
         }
     }
 
