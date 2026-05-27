@@ -35,21 +35,24 @@ partial class MainForm
         // 
         // _tabControl
         // 
-        _tabControl.Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
-        _tabControl.Location = new Point(20, 23);
+        _tabControl.Dock = DockStyle.Fill;
+        _tabControl.Location = new Point(5, 5);
+        _tabControl.Margin = new Padding(4, 4, 4, 4);
         _tabControl.Name = "_tabControl";
-        _tabControl.Size = new Size(1384, 845);
+        _tabControl.Size = new Size(1246, 726);
         _tabControl.TabIndex = 0;
         // 
         // MainForm
         // 
-        AutoScaleDimensions = new SizeF(12F, 30F);
+        AutoScaleDimensions = new SizeF(14F, 36F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(1429, 893);
+        ClientSize = new Size(1256, 736);
         Controls.Add(_tabControl);
-        Margin = new Padding(3, 4, 3, 4);
-        MinimumSize = new Size(1339, 722);
+        Font = new Font("Segoe UI", 11.1428576F, FontStyle.Regular, GraphicsUnit.Point, 0);
+        Margin = new Padding(4, 5, 4, 5);
+        MinimumSize = new Size(1280, 800);
         Name = "MainForm";
+        Padding = new Padding(5);
         StartPosition = FormStartPosition.CenterScreen;
         Text = "WinFormsDevTool";
         ResumeLayout(false);

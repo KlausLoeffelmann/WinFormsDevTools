@@ -43,27 +43,27 @@ partial class PathShortCutControl
         tableLayoutPanel1.Controls.Add(_revealInExplorerButton, 1, 0);
         tableLayoutPanel1.Dock = DockStyle.Fill;
         tableLayoutPanel1.Location = new Point(0, 0);
-        tableLayoutPanel1.Margin = new Padding(4, 4, 4, 4);
+        tableLayoutPanel1.Margin = new Padding(4);
         tableLayoutPanel1.Name = "tableLayoutPanel1";
         tableLayoutPanel1.RowCount = 1;
         tableLayoutPanel1.RowStyles.Add(new RowStyle());
-        tableLayoutPanel1.Size = new Size(552, 49);
+        tableLayoutPanel1.Size = new Size(587, 47);
         tableLayoutPanel1.TabIndex = 0;
         // 
         // _pathTextBox
         // 
         _pathTextBox.Dock = DockStyle.Fill;
         _pathTextBox.Location = new Point(4, 4);
-        _pathTextBox.Margin = new Padding(4, 4, 4, 4);
+        _pathTextBox.Margin = new Padding(4);
         _pathTextBox.Name = "_pathTextBox";
         _pathTextBox.ReadOnly = true;
-        _pathTextBox.Size = new Size(460, 37);
+        _pathTextBox.Size = new Size(495, 35);
         _pathTextBox.TabIndex = 0;
         // 
         // _revealInExplorerButton
         // 
-        _revealInExplorerButton.Location = new Point(472, 4);
-        _revealInExplorerButton.Margin = new Padding(4, 4, 4, 4);
+        _revealInExplorerButton.Location = new Point(507, 4);
+        _revealInExplorerButton.Margin = new Padding(4);
         _revealInExplorerButton.Name = "_revealInExplorerButton";
         _revealInExplorerButton.Size = new Size(76, 37);
         _revealInExplorerButton.TabIndex = 1;
@@ -77,9 +77,9 @@ partial class PathShortCutControl
         AutoScaleDimensions = new SizeF(12F, 30F);
         AutoScaleMode = AutoScaleMode.Font;
         Controls.Add(tableLayoutPanel1);
-        Margin = new Padding(4, 4, 4, 4);
+        Margin = new Padding(4);
         Name = "PathShortCutControl";
-        Size = new Size(552, 49);
+        Size = new Size(587, 47);
         tableLayoutPanel1.ResumeLayout(false);
         tableLayoutPanel1.PerformLayout();
         ResumeLayout(false);
