@@ -24,8 +24,8 @@ public partial class OverView : UserControl
             (nameof(TargetFrameworkTargetItem.Name), ".NET SDK Version"),
             (nameof(TargetFrameworkTargetItem.PathFullName), "Path"));
 
-        _pscWinFormsGitHubRepo.PathFullName = mainForm.UserSettings.Get(SettingKeys.PathToWinFormsGitHubRepo, "- Not defined yet. -");
-        _pscNetSdkAssemblies.PathFullName = FrameworkInfo.NetDesktopLibsDirectory.FullName;
-        _pscNewSdkRefAssemblies.PathFullName = FrameworkInfo.NetDesktopRefsDirectory.FullName;
+        _pscWinFormsGitHubRepo.FileOrFolderPath = mainForm.UserSettings.Get(SettingKeys.PathToWinFormsGitHubRepo, "- Not defined yet. -");
+        _pscNetSdkAssemblies.FileOrFolderPath = FrameworkInfo.NetDesktopLibsDirectory.FullName;
+        _pscNewSdkRefAssemblies.FileOrFolderPath = FrameworkInfo.NetDesktopRefsDirectory.FullName;
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace DevTools.RuntimeDeploy.Views;
+﻿using WarpToolkit.WinForms.Controls;
+
+namespace DevTools.RuntimeDeploy.Views;
 
 partial class OverView
 {
@@ -30,13 +32,13 @@ partial class OverView
     {
         groupBox2 = new GroupBox();
         label8 = new Label();
-        _pscTemplateCache = new PathShortCutControl();
+        _pscTemplateCache = new FilePathPicker();
         label7 = new Label();
-        _pscNewSdkRefAssemblies = new PathShortCutControl();
+        _pscNewSdkRefAssemblies = new FilePathPicker();
         label6 = new Label();
-        _pscNetSdkAssemblies = new PathShortCutControl();
+        _pscNetSdkAssemblies = new FilePathPicker();
         label5 = new Label();
-        _pscWinFormsGitHubRepo = new PathShortCutControl();
+        _pscWinFormsGitHubRepo = new FilePathPicker();
         groupBox1 = new GroupBox();
         _netDesktopSdksListView = new ListView();
         _netSdkVersionColumn = new ColumnHeader();
@@ -80,6 +82,9 @@ partial class OverView
         _pscTemplateCache.Location = new Point(347, 213);
         _pscTemplateCache.Margin = new Padding(2);
         _pscTemplateCache.Name = "_pscTemplateCache";
+        _pscTemplateCache.PickerMode = FilePathPickerMode.FolderBrowser;
+        _pscTemplateCache.ShowPickButton = false;
+        _pscTemplateCache.ShowRevealButton = true;
         _pscTemplateCache.Size = new Size(956, 50);
         _pscTemplateCache.TabIndex = 6;
         // 
@@ -98,6 +103,9 @@ partial class OverView
         _pscNewSdkRefAssemblies.Location = new Point(347, 159);
         _pscNewSdkRefAssemblies.Margin = new Padding(2);
         _pscNewSdkRefAssemblies.Name = "_pscNewSdkRefAssemblies";
+        _pscNewSdkRefAssemblies.PickerMode = FilePathPickerMode.FolderBrowser;
+        _pscNewSdkRefAssemblies.ShowPickButton = false;
+        _pscNewSdkRefAssemblies.ShowRevealButton = true;
         _pscNewSdkRefAssemblies.Size = new Size(956, 50);
         _pscNewSdkRefAssemblies.TabIndex = 4;
         // 
@@ -116,6 +124,9 @@ partial class OverView
         _pscNetSdkAssemblies.Location = new Point(347, 105);
         _pscNetSdkAssemblies.Margin = new Padding(2);
         _pscNetSdkAssemblies.Name = "_pscNetSdkAssemblies";
+        _pscNetSdkAssemblies.PickerMode = FilePathPickerMode.FolderBrowser;
+        _pscNetSdkAssemblies.ShowPickButton = false;
+        _pscNetSdkAssemblies.ShowRevealButton = true;
         _pscNetSdkAssemblies.Size = new Size(956, 50);
         _pscNetSdkAssemblies.TabIndex = 2;
         // 
@@ -134,6 +145,9 @@ partial class OverView
         _pscWinFormsGitHubRepo.Location = new Point(347, 51);
         _pscWinFormsGitHubRepo.Margin = new Padding(2);
         _pscWinFormsGitHubRepo.Name = "_winFormsGithubRepo";
+        _pscWinFormsGitHubRepo.PickerMode = FilePathPickerMode.FolderBrowser;
+        _pscWinFormsGitHubRepo.ShowPickButton = false;
+        _pscWinFormsGitHubRepo.ShowRevealButton = true;
         _pscWinFormsGitHubRepo.Size = new Size(956, 50);
         _pscWinFormsGitHubRepo.TabIndex = 0;
         // 
@@ -177,7 +191,7 @@ partial class OverView
         // OverView
         // 
         AutoScaleDimensions = new SizeF(12F, 30F);
-        AutoScaleMode = AutoScaleMode.Font;
+        AutoScaleMode = AutoScaleMode.Inherit;
         Controls.Add(groupBox2);
         Controls.Add(groupBox1);
         Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -193,13 +207,13 @@ partial class OverView
 
     private GroupBox groupBox2;
     private Label label8;
-    private PathShortCutControl _pscTemplateCache;
+    private FilePathPicker _pscTemplateCache;
     private Label label7;
-    private PathShortCutControl _pscNewSdkRefAssemblies;
+    private FilePathPicker _pscNewSdkRefAssemblies;
     private Label label6;
-    private PathShortCutControl _pscNetSdkAssemblies;
+    private FilePathPicker _pscNetSdkAssemblies;
     private Label label5;
-    private PathShortCutControl _pscWinFormsGitHubRepo;
+    private FilePathPicker _pscWinFormsGitHubRepo;
     private GroupBox groupBox1;
     private ListView _netDesktopSdksListView;
     private ColumnHeader _netSdkVersionColumn;

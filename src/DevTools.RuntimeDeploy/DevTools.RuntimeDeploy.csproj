@@ -16,6 +16,10 @@
     <PackageReference Include="WarpToolkit.ComponentModel" />
     <PackageReference Include="WarpToolkit.Desktop.AppServices" />
     <PackageReference Include="WarpToolkit.WinForms" />
+    <PackageReference Include="WarpToolkit.WinForms.AppServices" />
+    <PackageReference Include="WarpToolkit.WinForms.Async" />
+    <PackageReference Include="WarpToolkit.WinForms.Extensions" />
+    <PackageReference Include="WarpToolkit.WinForms.Specialized" />
   </ItemGroup>
 
   <ItemGroup>
