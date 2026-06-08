@@ -1,3 +1,7 @@
+using DevTools.RuntimeDeploy.Infrastructure;
+using DevTools.RuntimeDeploy.Views;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.WinForms;
 using WarpToolkit.WinForms.AppServices;
 using WarpToolkit.WinForms.AppServices.ServiceExtensions;
@@ -20,7 +24,18 @@ internal static class Program
             .UseDefaultFont(new Font("Segoe UI", 11f))
             .UseStartupForm<MainForm>();
 
-        builder.Services.AddWinFormsUserSettingsService();
+        builder.Logging.AddConsole();
+
+        builder.Services
+            .AddWinFormsUserSettingsService()
+            .AddWinFormsExceptionService();
+
+        builder.Services
+            .AddScoped<RuntimeDeploySettingsService>()
+            .AddScoped<RuntimeDeployStatusService>()
+            .AddScoped<OverView>()
+            .AddScoped<DeployRuntimeView>()
+            .AddTransient<OptionsForm>();
 
         WinFormsApplication app = builder.Build();
         app.Run();

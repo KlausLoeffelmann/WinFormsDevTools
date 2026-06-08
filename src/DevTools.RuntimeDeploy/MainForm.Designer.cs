@@ -30,17 +30,115 @@ partial class MainForm
     /// </summary>
     private void InitializeComponent()
     {
+        components = new System.ComponentModel.Container();
         _tabControl = new FluentTabControl();
+        _menuStrip = new MenuStrip();
+        _toolsMenuItem = new ToolStripMenuItem();
+        _optionsMenuItem = new ToolStripMenuItem();
+        _statusStrip = new StatusStrip();
+        _statusMessageLabel = new ToolStripStatusLabel();
+        _notifyIcon = new NotifyIcon(components);
+        _trayContextMenu = new ContextMenuStrip(components);
+        _restoreTrayMenuItem = new ToolStripMenuItem();
+        _optionsTrayMenuItem = new ToolStripMenuItem();
+        _traySeparator = new ToolStripSeparator();
+        _quitTrayMenuItem = new ToolStripMenuItem();
+        _menuStrip.SuspendLayout();
+        _statusStrip.SuspendLayout();
+        _trayContextMenu.SuspendLayout();
         SuspendLayout();
         // 
         // _tabControl
         // 
         _tabControl.Dock = DockStyle.Fill;
-        _tabControl.Location = new Point(0, 0);
+        _tabControl.Location = new Point(0, 33);
         _tabControl.Margin = new Padding(3, 4, 3, 4);
         _tabControl.Name = "_tabControl";
-        _tabControl.Size = new Size(1429, 893);
+        _tabControl.Size = new Size(1429, 826);
         _tabControl.TabIndex = 0;
+        // 
+        // _menuStrip
+        // 
+        _menuStrip.ImageScalingSize = new Size(20, 20);
+        _menuStrip.Items.AddRange(new ToolStripItem[] { _toolsMenuItem });
+        _menuStrip.Location = new Point(0, 0);
+        _menuStrip.Name = "_menuStrip";
+        _menuStrip.Size = new Size(1429, 33);
+        _menuStrip.TabIndex = 1;
+        _menuStrip.Text = "menuStrip1";
+        // 
+        // _toolsMenuItem
+        // 
+        _toolsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { _optionsMenuItem });
+        _toolsMenuItem.Name = "_toolsMenuItem";
+        _toolsMenuItem.Size = new Size(69, 29);
+        _toolsMenuItem.Text = "&Tools";
+        // 
+        // _optionsMenuItem
+        // 
+        _optionsMenuItem.Name = "_optionsMenuItem";
+        _optionsMenuItem.Size = new Size(180, 34);
+        _optionsMenuItem.Text = "&Options...";
+        _optionsMenuItem.Click += OptionsMenuItem_Click;
+        // 
+        // _statusStrip
+        // 
+        _statusStrip.ImageScalingSize = new Size(20, 20);
+        _statusStrip.Items.AddRange(new ToolStripItem[] { _statusMessageLabel });
+        _statusStrip.Location = new Point(0, 859);
+        _statusStrip.Name = "_statusStrip";
+        _statusStrip.Size = new Size(1429, 34);
+        _statusStrip.TabIndex = 2;
+        _statusStrip.Text = "statusStrip1";
+        // 
+        // _statusMessageLabel
+        // 
+        _statusMessageLabel.Name = "_statusMessageLabel";
+        _statusMessageLabel.Size = new Size(1414, 27);
+        _statusMessageLabel.Spring = true;
+        _statusMessageLabel.Text = "Ready.";
+        _statusMessageLabel.TextAlign = ContentAlignment.MiddleLeft;
+        // 
+        // _notifyIcon
+        // 
+        _notifyIcon.ContextMenuStrip = _trayContextMenu;
+        _notifyIcon.Icon = SystemIcons.Application;
+        _notifyIcon.Text = "WinForms Runtime Deploy";
+        _notifyIcon.DoubleClick += NotifyIcon_DoubleClick;
+        _notifyIcon.MouseClick += NotifyIcon_MouseClick;
+        // 
+        // _trayContextMenu
+        // 
+        _trayContextMenu.ImageScalingSize = new Size(20, 20);
+        _trayContextMenu.Items.AddRange(new ToolStripItem[] { _restoreTrayMenuItem, _optionsTrayMenuItem, _traySeparator, _quitTrayMenuItem });
+        _trayContextMenu.Name = "_trayContextMenu";
+        _trayContextMenu.Size = new Size(181, 112);
+        // 
+        // _restoreTrayMenuItem
+        // 
+        _restoreTrayMenuItem.Name = "_restoreTrayMenuItem";
+        _restoreTrayMenuItem.Size = new Size(180, 32);
+        _restoreTrayMenuItem.Text = "Restore App...";
+        _restoreTrayMenuItem.Click += RestoreMenuItem_Click;
+        // 
+        // _optionsTrayMenuItem
+        // 
+        _optionsTrayMenuItem.Name = "_optionsTrayMenuItem";
+        _optionsTrayMenuItem.Size = new Size(180, 32);
+        _optionsTrayMenuItem.Text = "Options...";
+        _optionsTrayMenuItem.Click += OptionsMenuItem_Click;
+        // 
+        // _traySeparator
+        // 
+        _traySeparator.Name = "_traySeparator";
+        _traySeparator.Size = new Size(177, 6);
+        // 
+        // _quitTrayMenuItem
+        // 
+        _quitTrayMenuItem.Name = "_quitTrayMenuItem";
+        _quitTrayMenuItem.Size = new Size(180, 32);
+        _quitTrayMenuItem.Text = "Quit";
+        _quitTrayMenuItem.Click += QuitMenuItem_Click;
         // 
         // MainForm
         // 
@@ -48,16 +146,36 @@ partial class MainForm
         AutoScaleMode = AutoScaleMode.Font;
         ClientSize = new Size(1429, 893);
         Controls.Add(_tabControl);
+        Controls.Add(_statusStrip);
+        Controls.Add(_menuStrip);
         Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
+        MainMenuStrip = _menuStrip;
         Margin = new Padding(3, 4, 3, 4);
         MinimumSize = new Size(1339, 722);
         Name = "MainForm";
         StartPosition = FormStartPosition.CenterScreen;
         Text = "WinFormsDevTool";
+        _menuStrip.ResumeLayout(false);
+        _menuStrip.PerformLayout();
+        _statusStrip.ResumeLayout(false);
+        _statusStrip.PerformLayout();
+        _trayContextMenu.ResumeLayout(false);
         ResumeLayout(false);
+        PerformLayout();
     }
 
     #endregion
 
     private FluentTabControl _tabControl;
+    private MenuStrip _menuStrip;
+    private ToolStripMenuItem _toolsMenuItem;
+    private ToolStripMenuItem _optionsMenuItem;
+    private StatusStrip _statusStrip;
+    private ToolStripStatusLabel _statusMessageLabel;
+    private NotifyIcon _notifyIcon;
+    private ContextMenuStrip _trayContextMenu;
+    private ToolStripMenuItem _restoreTrayMenuItem;
+    private ToolStripMenuItem _optionsTrayMenuItem;
+    private ToolStripSeparator _traySeparator;
+    private ToolStripMenuItem _quitTrayMenuItem;
 }

@@ -1,7 +1,7 @@
 using DevTools.RuntimeDeploy.Domain;
 using DevTools.RuntimeDeploy.Infrastructure;
+using Microsoft.Extensions.Logging;
 using System.Data;
-using WarpToolkit.ComponentModel;
 using static DevTools.RuntimeDeploy.Domain.BuildArtefactsScanner;
 
 namespace DevTools.RuntimeDeploy.Views;
@@ -10,6 +10,9 @@ public partial class DeployRuntimeView : UserControl
 {
     private readonly Control[] _controlsForEnablingHandling;
     private BuildArtefactsScanner? _gitHubRepoManager;
+    private RuntimeDeploySettingsService? _settings;
+    private RuntimeDeployStatusService? _statusService;
+    private ILogger<DeployRuntimeView>? _logger;
 
     private const string ACCESSIBILITY = "Accessibility";
     private const string MICROSOFT_VISUALBASIC = "Microsoft.VisualBasic";
@@ -79,19 +82,45 @@ public partial class DeployRuntimeView : UserControl
         ];
     }
 
+    public DeployRuntimeView(
+        RuntimeDeploySettingsService settings,
+        RuntimeDeployStatusService statusService,
+        ILogger<DeployRuntimeView> logger) : this()
+    {
+        _settings = settings;
+        _statusService = statusService;
+        _logger = logger;
+    }
+
     protected override void OnLoad(EventArgs e)
     {
+        base.OnLoad(e);
+
         MainForm mainForm = (MainForm)ParentForm!;
         _replaceTargetSDKVersionComboBox.Items.AddRange(mainForm.SdkTargets);
-        _replaceTargetSDKVersionComboBox.SelectedIndex = _replaceTargetSDKVersionComboBox.Items.Count - 1;
+        if (_replaceTargetSDKVersionComboBox.Items.Count > 0)
+        {
+            _replaceTargetSDKVersionComboBox.SelectedIndex = _replaceTargetSDKVersionComboBox.Items.Count - 1;
+        }
 
         SetupControls_DeployRuntimeBinaries_Tab();
     }
 
+    internal void RefreshFromSettings()
+    {
+        string sourceArtefactsFolder = _settings?.SourceArtefactsFolder ?? string.Empty;
+        if (!string.Equals(_pathToArtefactsRepoTextBox.Text, sourceArtefactsFolder, StringComparison.OrdinalIgnoreCase))
+        {
+            _pathToArtefactsRepoTextBox.Text = sourceArtefactsFolder;
+            return;
+        }
+
+        DeployAvailableAssemblies();
+    }
+
     private void SetupControls_DeployRuntimeBinaries_Tab()
     {
-        IUserSettingsService settings = ((MainForm)ParentForm!).UserSettings;
-        _pathToArtefactsRepoTextBox.Text = settings.Get(SettingKeys.PathToWinFormsGitHubRepo, string.Empty);
+        _pathToArtefactsRepoTextBox.Text = _settings?.SourceArtefactsFolder ?? string.Empty;
     }
 
     private void HandleControlEnabling_DeployRuntimeBinariesTab(bool enable, params Control[] excludeControlsForHandling)
@@ -109,17 +138,35 @@ public partial class DeployRuntimeView : UserControl
     {
         if (string.IsNullOrWhiteSpace(_pathToArtefactsRepoTextBox.Text))
         {
+            _availableDesktopRuntimesComboBox.Items.Clear();
+            _availableAssembliesListView.Items.Clear();
             HandleControlEnabling_DeployRuntimeBinariesTab(false);
         }
         else
         {
-            _gitHubRepoManager = new(_pathToArtefactsRepoTextBox.Text);
+            try
+            {
+                _availableDesktopRuntimesComboBox.Items.Clear();
+                _availableAssembliesListView.Items.Clear();
+                _gitHubRepoManager = new(_pathToArtefactsRepoTextBox.Text);
 
-            var targets = _gitHubRepoManager
-                .GetAvailableTargets();
+                var targets = _gitHubRepoManager
+                    .GetAvailableTargets();
 
-            _availableDesktopRuntimesComboBox.Items.AddRange(targets);
-            _availableDesktopRuntimesComboBox.SelectedIndex = targets.Length - 1;
+                _availableDesktopRuntimesComboBox.Items.AddRange(targets);
+                if (targets.Length > 0)
+                {
+                    _availableDesktopRuntimesComboBox.SelectedIndex = targets.Length - 1;
+                }
+
+                HandleControlEnabling_DeployRuntimeBinariesTab(true);
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Could not enumerate RuntimeDeploy source targets.");
+                _statusService?.ReportException(ex);
+                HandleControlEnabling_DeployRuntimeBinariesTab(false, _availableDesktopRuntimesComboBox);
+            }
         }
     }
 
@@ -131,9 +178,13 @@ public partial class DeployRuntimeView : UserControl
             return;
         }
 
+        HashSet<string> excludedAssemblyNames = _settings?.GetExcludedAssemblyNames() ?? [];
+
         var assemblies = _gitHubRepoManager.GetWinFormsRuntimeAssemblies(
             (TargetFrameworkSourceItem)_availableDesktopRuntimesComboBox.SelectedItem,
-            _checkForRespectiveRefAssembliesCheckBox.Checked);
+            _checkForRespectiveRefAssembliesCheckBox.Checked)
+            .Where(assembly => !excludedAssemblyNames.Contains(assembly.Name))
+            .ToArray();
 
         _availableAssembliesListView.ConfigureDetailsView(checkBoxes: true);
 
@@ -150,22 +201,24 @@ public partial class DeployRuntimeView : UserControl
     {
         FolderBrowserDialog browserDialog = new()
         {
-            Description = "Pick the path to the WinForms GitHub repo:"
+            Description = "Pick the path to the WinForms artifacts folder:"
         };
 
         DialogResult dialogResult = browserDialog.ShowDialog();
         if (dialogResult == DialogResult.OK)
         {
             _pathToArtefactsRepoTextBox.Text = browserDialog.SelectedPath;
-
-            IUserSettingsService settings = ((MainForm)ParentForm!).UserSettings;
-            settings.Set(SettingKeys.PathToWinFormsGitHubRepo, browserDialog.SelectedPath);
-            settings.Flush();
+            if (_settings is not null)
+            {
+                _settings.SourceArtefactsFolder = browserDialog.SelectedPath;
+            }
         }
     }
 
     private async void CopyCommandButton_Click(object sender, EventArgs e)
     {
+        try
+        {
         if (_availableAssembliesListView.Items.Count == 0)
         {
             // Show a message box if there are no items in the list view.
@@ -427,6 +480,13 @@ public partial class DeployRuntimeView : UserControl
         });
 
         await Task.WhenAll(batchTask, processTask);
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "Copy command failed.");
+            _statusService?.ReportException(ex);
+            _copyCommandButton.Enabled = true;
+        }
 
         static async Task<bool> ProcessManifestResult(
             CommandBatch commandBatch, 
