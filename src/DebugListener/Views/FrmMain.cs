@@ -1,5 +1,5 @@
 using WarpToolkit.ComponentModel;
-using WarpToolkit.WinForms.Extensions.UIExtensions;
+using WarpToolkit.WinForms.Extensions.UI;
 using DebugListener.ViewModels;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
@@ -23,7 +23,7 @@ public partial class FrmMain : Form
         InitializeComponent();
         _settingsService = serviceProvider.GetRequiredService<IUserSettingsService>(); ;
 
-        _vmMain = _settingsService.GetSetting<VmMain>(
+        _vmMain = _settingsService.Get(
             nameof(VmMain),
             new VmMain());
     }
@@ -50,7 +50,7 @@ public partial class FrmMain : Form
 
         Debug.Assert(_settingsService is not null, "IUserSettingsService is null");
 
-        Rectangle bounds = _settingsService.GetSetting(
+        Rectangle bounds = _settingsService.Get(
             "bounds",
             this.CenterToScreen(
                 horizontalFillGrade: 80,
@@ -76,9 +76,9 @@ public partial class FrmMain : Form
     protected override void OnFormClosed(FormClosedEventArgs e)
     {
         base.OnFormClosed(e);
-        _settingsService.SaveSetting("bounds", Bounds);
-        _settingsService.SaveSetting(nameof(VmMain), _vmMain);
-        _settingsService.Save();
+        _settingsService.Set("bounds", Bounds);
+        _settingsService.Set(nameof(VmMain), _vmMain);
+        _settingsService.Flush();
     }
 
     private void ClearLogs_Click(object sender, EventArgs e)

@@ -18,9 +18,9 @@ namespace DevTools.ShadowCacheSpy
             _appSettings = DataContext as AppSettings;
         }
 
-        protected override void OnClosing(CancelEventArgs e)
+        protected override void OnFormClosing(FormClosingEventArgs e)
         {
-            base.OnClosing(e);
+            base.OnFormClosing(e);
 
             if (DataContext is not null && _appSettings is null)
             {

@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.Setup.Configuration;
-using WarpToolkit.WinForms.Tooling;
+using WarpToolkit.WinForms.Specialized;
 
 namespace DevTools.ShadowCacheSpy;
 

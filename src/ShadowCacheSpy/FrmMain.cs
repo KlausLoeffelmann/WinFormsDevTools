@@ -1,9 +1,9 @@
 using WarpToolkit.ComponentModel;
-using WarpToolkit.DesktopUI.AppServices;
 using WarpToolkit.WinForms.AppServices;
-using WarpToolkit.WinForms.Extensions.UIExtensions;
-using WarpToolkit.WinForms.Tooling;
+using WarpToolkit.WinForms.Specialized;
 using System.Diagnostics;
+using WarpToolkit.WinForms.Extensions.UI;
+using WarpToolkit.Desktop.AppServices;
 
 namespace DevTools.ShadowCacheSpy;
 
@@ -21,8 +21,8 @@ public partial class FrmMain : Form
         InitializeComponent();
         _timerLoopCancellation = new AwaitableCancellationTokenSource();
 
-        _settingsService = WinFormsUserSettingsService.CreateAndLoad();
-        _appSettings = _settingsService.GetSetting("appSettings", new AppSettings());
+        _settingsService = WinFormsUserSettingsService.GetOrThrow();
+        _appSettings = _settingsService.Get("appSettings", new AppSettings());
 
         _fileSystemWatcher.EnableRaisingEvents = true;
 
@@ -38,7 +38,7 @@ public partial class FrmMain : Form
 
         _tslWatchPath.Text = _appSettings.WatchFolder ?? "No folder has been setup to being watched.";
 
-        var bounds = _settingsService.GetSetting(
+        Rectangle bounds = _settingsService.Get(
             "bounds",
             this.CenterToScreen(
                 horizontalFillGrade: 80,
@@ -107,9 +107,9 @@ public partial class FrmMain : Form
     protected override void OnFormClosed(FormClosedEventArgs e)
     {
         base.OnFormClosed(e);
-        _settingsService.SaveSetting("appSettings", _appSettings);
-        _settingsService.SaveSetting("bounds", this.GetRestorableBounds());
-        _settingsService.Save();
+        _settingsService.Set("appSettings", _appSettings);
+        _settingsService.Set("bounds", this.GetRestorableBounds());
+        _settingsService.Flush();
     }
 
     private async void Options_Click(object sender, EventArgs e)
@@ -120,7 +120,7 @@ public partial class FrmMain : Form
         if (result.DialogCloseReason == DialogCloseReason.OK)
         {
             _appSettings = result.ReturnValue!;
-            _settingsService.Save();
+            _settingsService.Flush();
             _fileSystemWatcher.Path = _appSettings.WatchFolder!;
             _fileSystemWatcher.IncludeSubdirectories = true;
         }

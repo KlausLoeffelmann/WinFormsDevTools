@@ -1,5 +1,7 @@
-﻿using WarpToolkit.WinForms.Containers;
-using WarpToolkit.WinForms.Tooling;
+﻿using System.Windows.Forms.Design.Behavior;
+using WarpToolkit.WinForms.Containers;
+using WarpToolkit.WinForms.Containers.Adorners;
+using WarpToolkit.WinForms.Specialized;
 
 namespace DevTools.Libs;
 
@@ -33,7 +35,7 @@ partial class CommandBatchForm
     {
         _okButton = new Button();
         _console = new ConsoleControl();
-        _consoleAdorner = new AdornmentPanel();
+        _consoleAdorner = new AdornerPanel();
         _consoleAdorner.SuspendLayout();
         SuspendLayout();
         // 
@@ -88,5 +90,5 @@ partial class CommandBatchForm
 
     private Button _okButton;
     private ConsoleControl _console;
-    private AdornmentPanel _consoleAdorner;
+    private AdornerPanel _consoleAdorner;
 }

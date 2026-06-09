@@ -10,7 +10,7 @@
 
   <ItemGroup>
 	<PackageReference Include="WarpToolkit.WinForms" />
-	<PackageReference Include="WarpToolkit.WinForms.Tooling" />
+	<PackageReference Include="WarpToolkit.WinForms.Specialized" />
     <PackageReference Include="NuGet.Versioning" />
   </ItemGroup>
 
