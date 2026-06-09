@@ -1,10 +1,9 @@
-using DevTools.RuntimeDeploy.Infrastructure;
 using DevTools.RuntimeDeploy.Domain;
+using DevTools.RuntimeDeploy.Infrastructure;
 using DevTools.RuntimeDeploy.Views;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System.ComponentModel;
-using System.Threading;
 using WarpToolkit.ComponentModel;
 using WarpToolkit.Desktop.AppServices;
 using static DevTools.RuntimeDeploy.Domain.BuildArtefactsScanner;
@@ -13,13 +12,13 @@ namespace DevTools.RuntimeDeploy;
 
 public partial class MainForm : Form, IServiceProvider
 {
-    private IServiceProvider? _serviceProvider;
-    private ILogger<MainForm>? _logger;
-    private IUserSettingsService? _userSettings;
-    private IWinFormsAppExceptionService? _exceptionService;
-    private RuntimeDeployStatusService? _statusService;
-    private DeployRuntimeView? _deployRuntimeView;
-    private OverView? _overView;
+    private readonly IServiceProvider? _serviceProvider;
+    private readonly ILogger<MainForm>? _logger;
+    private readonly IUserSettingsService? _userSettings;
+    private readonly IWinFormsAppExceptionService? _exceptionService;
+    private readonly RuntimeDeployStatusService? _statusService;
+    private readonly DeployRuntimeView? _deployRuntimeView;
+    private readonly OverView? _overView;
     private bool _allowClose;
     private bool _tabsInitialized;
 
@@ -65,36 +64,40 @@ public partial class MainForm : Form, IServiceProvider
             ?? throw new InvalidOperationException($"Service of type '{serviceType.Name}' is not registered.");
     }
 
-    protected override void OnLoad(EventArgs e)
+    protected override async void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
 
         RestoreSavedBounds();
         InitializeSdkTargets();
         InitializeTabs();
-        ShowStatus("Ready.", SystemColors.ControlText);
+    }
+
+    private async Task UpdateStatusAsync(string statusText)
+    {
+        _statusService?.ReportInfo(statusText);
+        await Task.Delay(1000);
     }
 
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
+        base.OnFormClosing(e);
+
         if (!_allowClose && e.CloseReason == CloseReason.UserClosing)
         {
             e.Cancel = true;
-            MinimizeToTray();
+ 
+            InvokeAsync(() => MinimizeToTray());
             return;
         }
 
         SaveBounds();
         _notifyIcon.Visible = false;
-        base.OnFormClosing(e);
     }
 
     protected override void OnFormClosed(FormClosedEventArgs e)
     {
-        if (_statusService is not null)
-        {
-            _statusService.StatusReported -= StatusService_StatusReported;
-        }
+        _statusService?.StatusReported -= StatusService_StatusReported;
 
         base.OnFormClosed(e);
     }
@@ -129,12 +132,7 @@ public partial class MainForm : Form, IServiceProvider
 
         _tabControl.AddTab("Overview", _overView);
         _tabControl.AddTab("Deploy Runtime", _deployRuntimeView);
-        _tabControl.TabChanged += TabControl_TabChanged;
         _tabsInitialized = true;
-    }
-
-    private void TabControl_TabChanged(object? sender, EventArgs e)
-    {
     }
 
     private void OnApplicationThreadException(object? sender, ThreadExceptionEventArgs e)
@@ -209,20 +207,25 @@ public partial class MainForm : Form, IServiceProvider
 
     private void MinimizeToTray()
     {
-        _notifyIcon.Visible = true;
-        ShowInTaskbar = false;
-        WindowState = FormWindowState.Minimized;
         Hide();
-        ShowStatus("Runtime Deploy is still running in the notification area.", SystemColors.ControlText);
+        _notifyIcon.Visible = true;
+
+        // Recreted handle, so it should be called after Hide() to avoid
+        // issues with taskbar pinning and focus stealing.
+        ShowInTaskbar = false;
+
+        WindowState = FormWindowState.Minimized;
     }
 
     private void RestoreFromTray()
     {
-        Show();
         ShowInTaskbar = true;
+        Show();
+
         WindowState = FormWindowState.Normal;
         _notifyIcon.Visible = false;
         Activate();
+
         ShowStatus("Ready.", SystemColors.ControlText);
     }
 

@@ -21,7 +21,6 @@ internal static class Program
         builder
             .UseHighDpiMode(HighDpiMode.SystemAware)
             .UseColorMode(SystemColorMode.System)
-            .UseDefaultFont(new Font("Segoe UI", 11f))
             .UseStartupForm<MainForm>();
 
         builder.Logging.AddConsole();

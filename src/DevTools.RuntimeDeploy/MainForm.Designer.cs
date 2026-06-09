@@ -31,6 +31,7 @@ partial class MainForm
     private void InitializeComponent()
     {
         components = new System.ComponentModel.Container();
+        System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
         _tabControl = new FluentTabControl();
         _menuStrip = new MenuStrip();
         _toolsMenuItem = new ToolStripMenuItem();
@@ -54,7 +55,7 @@ partial class MainForm
         _tabControl.Location = new Point(0, 33);
         _tabControl.Margin = new Padding(3, 4, 3, 4);
         _tabControl.Name = "_tabControl";
-        _tabControl.Size = new Size(1429, 826);
+        _tabControl.Size = new Size(1359, 597);
         _tabControl.TabIndex = 0;
         // 
         // _menuStrip
@@ -63,7 +64,7 @@ partial class MainForm
         _menuStrip.Items.AddRange(new ToolStripItem[] { _toolsMenuItem });
         _menuStrip.Location = new Point(0, 0);
         _menuStrip.Name = "_menuStrip";
-        _menuStrip.Size = new Size(1429, 33);
+        _menuStrip.Size = new Size(1359, 33);
         _menuStrip.TabIndex = 1;
         _menuStrip.Text = "menuStrip1";
         // 
@@ -77,7 +78,7 @@ partial class MainForm
         // _optionsMenuItem
         // 
         _optionsMenuItem.Name = "_optionsMenuItem";
-        _optionsMenuItem.Size = new Size(180, 34);
+        _optionsMenuItem.Size = new Size(190, 34);
         _optionsMenuItem.Text = "&Options...";
         _optionsMenuItem.Click += OptionsMenuItem_Click;
         // 
@@ -85,16 +86,18 @@ partial class MainForm
         // 
         _statusStrip.ImageScalingSize = new Size(20, 20);
         _statusStrip.Items.AddRange(new ToolStripItem[] { _statusMessageLabel });
-        _statusStrip.Location = new Point(0, 859);
+        _statusStrip.Location = new Point(0, 630);
         _statusStrip.Name = "_statusStrip";
-        _statusStrip.Size = new Size(1429, 34);
+        _statusStrip.Size = new Size(1359, 36);
         _statusStrip.TabIndex = 2;
         _statusStrip.Text = "statusStrip1";
         // 
         // _statusMessageLabel
         // 
+        _statusMessageLabel.ForeColor = Color.FromArgb(128, 128, 255);
         _statusMessageLabel.Name = "_statusMessageLabel";
-        _statusMessageLabel.Size = new Size(1414, 27);
+        _statusMessageLabel.Padding = new Padding(2);
+        _statusMessageLabel.Size = new Size(1344, 29);
         _statusMessageLabel.Spring = true;
         _statusMessageLabel.Text = "Ready.";
         _statusMessageLabel.TextAlign = ContentAlignment.MiddleLeft;
@@ -102,7 +105,7 @@ partial class MainForm
         // _notifyIcon
         // 
         _notifyIcon.ContextMenuStrip = _trayContextMenu;
-        _notifyIcon.Icon = SystemIcons.Application;
+        _notifyIcon.Icon = (Icon)resources.GetObject("_notifyIcon.Icon");
         _notifyIcon.Text = "WinForms Runtime Deploy";
         _notifyIcon.DoubleClick += NotifyIcon_DoubleClick;
         _notifyIcon.MouseClick += NotifyIcon_MouseClick;
@@ -112,31 +115,31 @@ partial class MainForm
         _trayContextMenu.ImageScalingSize = new Size(20, 20);
         _trayContextMenu.Items.AddRange(new ToolStripItem[] { _restoreTrayMenuItem, _optionsTrayMenuItem, _traySeparator, _quitTrayMenuItem });
         _trayContextMenu.Name = "_trayContextMenu";
-        _trayContextMenu.Size = new Size(181, 112);
+        _trayContextMenu.Size = new Size(195, 106);
         // 
         // _restoreTrayMenuItem
         // 
         _restoreTrayMenuItem.Name = "_restoreTrayMenuItem";
-        _restoreTrayMenuItem.Size = new Size(180, 32);
+        _restoreTrayMenuItem.Size = new Size(194, 32);
         _restoreTrayMenuItem.Text = "Restore App...";
         _restoreTrayMenuItem.Click += RestoreMenuItem_Click;
         // 
         // _optionsTrayMenuItem
         // 
         _optionsTrayMenuItem.Name = "_optionsTrayMenuItem";
-        _optionsTrayMenuItem.Size = new Size(180, 32);
+        _optionsTrayMenuItem.Size = new Size(194, 32);
         _optionsTrayMenuItem.Text = "Options...";
         _optionsTrayMenuItem.Click += OptionsMenuItem_Click;
         // 
         // _traySeparator
         // 
         _traySeparator.Name = "_traySeparator";
-        _traySeparator.Size = new Size(177, 6);
+        _traySeparator.Size = new Size(191, 6);
         // 
         // _quitTrayMenuItem
         // 
         _quitTrayMenuItem.Name = "_quitTrayMenuItem";
-        _quitTrayMenuItem.Size = new Size(180, 32);
+        _quitTrayMenuItem.Size = new Size(194, 32);
         _quitTrayMenuItem.Text = "Quit";
         _quitTrayMenuItem.Click += QuitMenuItem_Click;
         // 
@@ -144,7 +147,7 @@ partial class MainForm
         // 
         AutoScaleDimensions = new SizeF(12F, 30F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(1429, 893);
+        ClientSize = new Size(1359, 666);
         Controls.Add(_tabControl);
         Controls.Add(_statusStrip);
         Controls.Add(_menuStrip);

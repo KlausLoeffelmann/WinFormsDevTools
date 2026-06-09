@@ -8,6 +8,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <ApplicationManifest>app.manifest</ApplicationManifest>
 	<ApplicationHighDpiMode>SystemAware</ApplicationHighDpiMode>
+	<_SuppressWinFormsTrimError>true</_SuppressWinFormsTrimError>
+	<EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+	<PublishedTrimmed>true</PublishedTrimmed>
+	<TrimmerSingleWarn>false</TrimmerSingleWarn>
   </PropertyGroup>
 
   <ItemGroup>

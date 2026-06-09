@@ -11,6 +11,8 @@
 // strongly-typed equivalents (no PropertyInfo.GetValue, no boxing,
 // no nameof strings).
 
+using System.Diagnostics.CodeAnalysis;
+
 namespace DevTools.RuntimeDeploy.Infrastructure;
 
 internal static class ListViewExtensions
@@ -38,7 +40,7 @@ internal static class ListViewExtensions
         }
     }
 
-    public static void AddItemsWithColumnHeadersFromType<T>(
+    public static void AddItemsWithColumnHeadersFromType<[DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.PublicProperties)] T>(
         this ListView listView,
         IEnumerable<T> dataItems,
         bool addSourceDataToTag,

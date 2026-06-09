@@ -117,4 +117,56 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <metadata name="_menuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="_statusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>182, 17</value>
+  </metadata>
+  <metadata name="_notifyIcon.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>349, 17</value>
+  </metadata>
+  <metadata name="_trayContextMenu.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>512, 17</value>
+  </metadata>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="_notifyIcon.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        AAABAAEAMDAQAAAAAADoBwAAFgAAACgAAAAwAAAAYAAAAAEABAAAAAAAAAYAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAACAAACAAAAAgIAAgAAAAIAAgACAgAAAgICAAMDAwAAAAP8AAP8AAAD//wD/AAAA/wD/AP//
+        AAD///8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAB3d3d3d3
+        d3d3d3d3d3d3d3d3d3d3dwAAB4iIiIiIiIiIiIiIiIiIiIiIiIiIiHAAB4//////////////////////
+        ////+HAAB4//////////////////////////+HAAB4//////////////////////////+HAAB4/4iIiI
+        iIiIiIiI////////////+HAAB4/4d3d3d3d3d3d4//iIiIiP////+HAAB4/4d3d3d3d3d3d4////////
+        ////+HAAB4/4d3d3d3d3d3d4//iIiIiP////+HAAB4/4d3d3d3d3d3d4////////////+HAAB4/4d3d3
+        d3d3d3d4//iIiIiP////+HAAB4/4d3d3d3d3d3d4////////////+HAAB4/4d3d3d3d3d3d4//iIiIiP
+        ////+HAAB4/4d3d3d3d3d3d4////////////+HAAB4/4d3d3d3d3d3d4/////////3d3+HAAB4/4d3d3
+        d3d3d3d4/////////3d3+HAAB4/4d3d3d3d3d3d4//iIiIiP/3d3+HAAB4/4d3d3d3d3d3d4////////
+        /3d3+HAAB4/4d3d3d3d3d3d4//iIiIiP/3d3+HAAB4/4d3d3d3d3d3d4/////////3d3+HAAB4/4d3d3
+        d3d3d3d4//iIiIiP/3d3+HAAB4/4d3d3d3d3d3d4/////////3d3+HAAB4/4d3d3d3d3d3d4//iIiIiP
+        /3d3+HAAB4/4d3d3d3d3d3d4/////////3d3+HAAB4/4d3d3d3d3d3d4//iIiIiP/3d3+HAAB4/4d3d3
+        d3d3d3d4/////////3d3+HAAB4/4d3d3d3d3d3d4//iIiIiP/3d3+HAAB4/4d3d3d3d3d3d4////////
+        /3d3+HAAB4/4iIiIiIiIiIiI//iIiIiP/3d3+HAAB4//////////////////////////+HAAB4//////
+        ////////////////////+HAAB4//////////////////////////+HAAB4iIiIiIiIiIiIiIiIiIiIiI
+        iIiIiHAAB4iIiIiIiIiIiIiIiIiIiIiIiIiIiHAAB4iIiIiIiIiIiIiIiIiIiId4h3iHeHAAB3d3d3d3
+        d3d3d3d3d3d3d3d3d3d3d3AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+        AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA////////AAD///////8AAP//
+        /////wAA////////AAD///////8AAIAAAAAAAwAAgAAAAAABAACAAAAAAAEAAIAAAAAAAQAAgAAAAAAB
+        AACAAAAAAAEAAIAAAAAAAQAAgAAAAAABAACAAAAAAAEAAIAAAAAAAQAAgAAAAAABAACAAAAAAAEAAIAA
+        AAAAAQAAgAAAAAABAACAAAAAAAEAAIAAAAAAAQAAgAAAAAABAACAAAAAAAEAAIAAAAAAAQAAgAAAAAAB
+        AACAAAAAAAEAAIAAAAAAAQAAgAAAAAABAACAAAAAAAEAAIAAAAAAAQAAgAAAAAABAACAAAAAAAEAAIAA
+        AAAAAQAAgAAAAAABAACAAAAAAAEAAIAAAAAAAQAAgAAAAAABAACAAAAAAAEAAIAAAAAAAQAAgAAAAAAB
+        AACAAAAAAAEAAIAAAAAAAQAAgAAAAAABAAD///////8AAP///////wAA////////AAD///////8AAP//
+        /////wAA
+</value>
+  </data>
 </root>
