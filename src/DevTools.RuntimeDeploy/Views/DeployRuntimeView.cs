@@ -1,17 +1,18 @@
-﻿using DevTools.Libs;
+using DevTools.RuntimeDeploy.Domain;
+using DevTools.RuntimeDeploy.Infrastructure;
+using Microsoft.Extensions.Logging;
 using System.Data;
-using System.Diagnostics;
-using System.Reflection;
-using System.Xml.Linq;
-using static DevTools.RuntimeDeploy.WinFormsBuildArtefactsManager;
-using static WfRuntimeDeployDevTools.RuntimeDeploy.WinFormsGitHubRepoManager;
+using static DevTools.RuntimeDeploy.Domain.BuildArtefactsScanner;
 
 namespace DevTools.RuntimeDeploy.Views;
 
 public partial class DeployRuntimeView : UserControl
 {
     private readonly Control[] _controlsForEnablingHandling;
-    private WinFormsBuildArtefactsManager? _gitHubRepoManager;
+    private BuildArtefactsScanner? _gitHubRepoManager;
+    private RuntimeDeploySettingsService? _settings;
+    private RuntimeDeployStatusService? _statusService;
+    private ILogger<DeployRuntimeView>? _logger;
 
     private const string ACCESSIBILITY = "Accessibility";
     private const string MICROSOFT_VISUALBASIC = "Microsoft.VisualBasic";
@@ -81,17 +82,46 @@ public partial class DeployRuntimeView : UserControl
         ];
     }
 
+    public DeployRuntimeView(
+        RuntimeDeploySettingsService settings,
+        RuntimeDeployStatusService statusService,
+        ILogger<DeployRuntimeView> logger) : this()
+    {
+        _settings = settings;
+        _statusService = statusService;
+        _logger = logger;
+    }
+
     protected override void OnLoad(EventArgs e)
     {
+        base.OnLoad(e);
+
         MainForm mainForm = (MainForm)ParentForm!;
         _replaceTargetSDKVersionComboBox.Items.AddRange(mainForm.SdkTargets);
-        _replaceTargetSDKVersionComboBox.SelectedIndex = _replaceTargetSDKVersionComboBox.Items.Count - 1;
+        if (_replaceTargetSDKVersionComboBox.Items.Count > 0)
+        {
+            _replaceTargetSDKVersionComboBox.SelectedIndex = _replaceTargetSDKVersionComboBox.Items.Count - 1;
+        }
 
         SetupControls_DeployRuntimeBinaries_Tab();
     }
 
+    internal void RefreshFromSettings()
+    {
+        string sourceArtefactsFolder = _settings?.SourceArtefactsFolder ?? string.Empty;
+        if (!string.Equals(_pathToArtefactsRepoTextBox.Text, sourceArtefactsFolder, StringComparison.OrdinalIgnoreCase))
+        {
+            _pathToArtefactsRepoTextBox.Text = sourceArtefactsFolder;
+            return;
+        }
+
+        DeployAvailableAssemblies();
+    }
+
     private void SetupControls_DeployRuntimeBinaries_Tab()
-        => _pathToArtefactsRepoTextBox.Text = Properties.Settings.Default.PathToWinFormsGitHubRepo;
+    {
+        _pathToArtefactsRepoTextBox.Text = _settings?.SourceArtefactsFolder ?? string.Empty;
+    }
 
     private void HandleControlEnabling_DeployRuntimeBinariesTab(bool enable, params Control[] excludeControlsForHandling)
     {
@@ -108,17 +138,35 @@ public partial class DeployRuntimeView : UserControl
     {
         if (string.IsNullOrWhiteSpace(_pathToArtefactsRepoTextBox.Text))
         {
+            _availableDesktopRuntimesComboBox.Items.Clear();
+            _availableAssembliesListView.Items.Clear();
             HandleControlEnabling_DeployRuntimeBinariesTab(false);
         }
         else
         {
-            _gitHubRepoManager = new(_pathToArtefactsRepoTextBox.Text);
+            try
+            {
+                _availableDesktopRuntimesComboBox.Items.Clear();
+                _availableAssembliesListView.Items.Clear();
+                _gitHubRepoManager = new(_pathToArtefactsRepoTextBox.Text);
 
-            var targets = _gitHubRepoManager
-                .GetAvailableTargets();
+                var targets = _gitHubRepoManager
+                    .GetAvailableTargets();
 
-            _availableDesktopRuntimesComboBox.Items.AddRange(targets);
-            _availableDesktopRuntimesComboBox.SelectedIndex = targets.Length - 1;
+                _availableDesktopRuntimesComboBox.Items.AddRange(targets);
+                if (targets.Length > 0)
+                {
+                    _availableDesktopRuntimesComboBox.SelectedIndex = targets.Length - 1;
+                }
+
+                HandleControlEnabling_DeployRuntimeBinariesTab(true);
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "Could not enumerate RuntimeDeploy source targets.");
+                _statusService?.ReportException(ex);
+                HandleControlEnabling_DeployRuntimeBinariesTab(false, _availableDesktopRuntimesComboBox);
+            }
         }
     }
 
@@ -130,9 +178,13 @@ public partial class DeployRuntimeView : UserControl
             return;
         }
 
+        HashSet<string> excludedAssemblyNames = _settings?.GetExcludedAssemblyNames() ?? [];
+
         var assemblies = _gitHubRepoManager.GetWinFormsRuntimeAssemblies(
             (TargetFrameworkSourceItem)_availableDesktopRuntimesComboBox.SelectedItem,
-            _checkForRespectiveRefAssembliesCheckBox.Checked);
+            _checkForRespectiveRefAssembliesCheckBox.Checked)
+            .Where(assembly => !excludedAssemblyNames.Contains(assembly.Name))
+            .ToArray();
 
         _availableAssembliesListView.ConfigureDetailsView(checkBoxes: true);
 
@@ -149,20 +201,24 @@ public partial class DeployRuntimeView : UserControl
     {
         FolderBrowserDialog browserDialog = new()
         {
-            Description = "Pick the path to the WinForms GitHub repo:"
+            Description = "Pick the path to the WinForms artifacts folder:"
         };
 
         DialogResult dialogResult = browserDialog.ShowDialog();
         if (dialogResult == DialogResult.OK)
         {
             _pathToArtefactsRepoTextBox.Text = browserDialog.SelectedPath;
-            Properties.Settings.Default.PathToWinFormsGitHubRepo = browserDialog.SelectedPath;
-            Properties.Settings.Default.Save();
+            if (_settings is not null)
+            {
+                _settings.SourceArtefactsFolder = browserDialog.SelectedPath;
+            }
         }
     }
 
     private async void CopyCommandButton_Click(object sender, EventArgs e)
     {
+        try
+        {
         if (_availableAssembliesListView.Items.Count == 0)
         {
             // Show a message box if there are no items in the list view.
@@ -197,6 +253,11 @@ public partial class DeployRuntimeView : UserControl
             return;
         }
 
+        if (_replaceTargetSDKVersionComboBox.SelectedItem is not TargetFrameworkTargetItem targetFrameworkTarget)
+        {
+            return;
+        }
+
         // Get the source file directories from the first item in the list view.
         DirectoryInfo sourceAssemblyBasePath = firstItem.AssemblyFiles[0].Directory!;
         DirectoryInfo sourceRefAssemblyBasePath = default!;
@@ -206,30 +267,30 @@ public partial class DeployRuntimeView : UserControl
             sourceRefAssemblyBasePath = firstItem.RefAssemblyFiles[0].Directory!;
         }
 
+        // Snapshot every piece of UI state the background work needs onto plain
+        // locals on the UI thread. After this point Task.Run no longer touches any
+        // control directly; UI writes happen through Control.InvokeAsync.
+        bool dryRun = _dryRunCheckBox.Checked;
+        DesktopAssemblyInfo[] checkedAssemblies =
+        [
+            ..from ListViewItem item in _availableAssembliesListView.Items
+              where item.Checked
+              select (DesktopAssemblyInfo)item.Tag!
+        ];
+
         _copyCommandButton.Enabled = false;
         CommandBatch commandBatch = new();
-
-        if (_replaceTargetSDKVersionComboBox.SelectedItem is null)
-        {
-            return;
-        }
 
         var batchTask = commandBatch.StartBatchAsync(
             windowTitle: "Copy .NET Desktop runtime assemblies",
             showCommandBatchWindow: true,
-            dryRun: _dryRunCheckBox.Checked);
+            dryRun: dryRun);
 
         var processTask = Task.Run(async () =>
         {
-            // We're only reading.
-            Control.CheckForIllegalCrossThreadCalls = false;
-
-            TargetFrameworkTargetItem targetFrameworkTarget = null!;
-            targetFrameworkTarget = (TargetFrameworkTargetItem)_replaceTargetSDKVersionComboBox.SelectedItem;
-
             DirectoryInfo targetSharedAssemblyBasePath = new($"{FrameworkInfo.NetDesktopLibsDirectory}\\{targetFrameworkTarget.Name}");
             DirectoryInfo targetRefAssemblyBasePath = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\" + $"{targetFrameworkTarget.Name}");
-            DirectoryInfo targetRefAssemblyPath = new($"{targetRefAssemblyBasePath}\\ref\\net{MajorMinorVersionString(targetFrameworkTarget.Name)}");
+            DirectoryInfo targetRefAssemblyPath = new($"{targetRefAssemblyBasePath}\\ref\\net{FrameworkVersionFormatter.ToMajorMinor(targetFrameworkTarget.Name)}");
             DirectoryInfo packageAssembliesManifestPath = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\{targetFrameworkTarget.Name}\\data");
 
             // Create a new DirectoryInfo for the analyzers directory, which is the same as the ref directory
@@ -237,6 +298,23 @@ public partial class DeployRuntimeView : UserControl
             DirectoryInfo analyzersDir = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\{targetFrameworkTarget.Name}\\analyzers\\dotnet");
             DirectoryInfo cSharpAnalyzersDir = new($"{analyzersDir.FullName}\\{CSharpSubfolderPath}");
             DirectoryInfo visualBasicAnalyzersDir = new($"{analyzersDir.FullName}\\{VisualBasicSubfolderPath}");
+
+            // Load the manifest once for the whole batch and save once at the
+            // end (the old code re-loaded and re-saved per assembly).
+            string manifestPath = $"{packageAssembliesManifestPath.FullName}\\FrameworkList.xml";
+            FrameworkListManifestEditor? manifestEditor;
+            try
+            {
+                manifestEditor = new FrameworkListManifestEditor(manifestPath);
+            }
+            catch (Exception ex)
+            {
+                await commandBatch.WriteLineErrorAsync(
+                    $"Could not load FrameworkList manifest '{manifestPath}': {ex.Message}");
+                await commandBatch.EndBatchAsync("End of Command Batch.");
+                await InvokeAsync(() => _copyCommandButton.Enabled = true);
+                return;
+            }
 
             await commandBatch.WriteLineInfoAsync($"Destination Assembly directory:{targetSharedAssemblyBasePath}");
             await commandBatch.WriteLineInfoAsync($"Destination REF-Assembly directory:{targetRefAssemblyPath.FullName}");
@@ -247,23 +325,13 @@ public partial class DeployRuntimeView : UserControl
             await commandBatch.WriteLineInfoAsync($"Source RefAssembly directory:{sourceRefAssemblyBasePath}\\ref");
             await commandBatch.WriteLineInfoAsync($"");
 
-            bool foundCheckedItems = false;
-
             DirectoryInfo targetDir;
 
             // Create a HashSet to store the processed files.
             HashSet<FileInfo> processedFiles = [];
 
-            foreach (ListViewItem item in _availableAssembliesListView.Items)
+            foreach (DesktopAssemblyInfo assemblyInfo in checkedAssemblies)
             {
-                if (!item.Checked)
-                {
-                    continue;
-                }
-
-                foundCheckedItems = true;
-                DesktopAssemblyInfo assemblyInfo = (DesktopAssemblyInfo)item.Tag!;
-
                 bool vbFirst = false, csFirst = false;
 
                 foreach (FileInfo fileItem in assemblyInfo.AssemblyFiles)
@@ -279,7 +347,7 @@ public partial class DeployRuntimeView : UserControl
 
                     // Determine the file type based on the file name without extension
                     string fileName = Path.GetFileNameWithoutExtension(fileItem.Name);
-                    string currentFileType = GetFileTypeForAssembly(fileName);
+                    string currentFileType = AssemblyFileTypeClassifier.Classify(fileName);
 
                     // If the file starts with "System.Windows.Forms.Analyzers", copy it to the analyzers directory.
                     // But. If the file ends with "VisualBasic.dll", we need to copy it in the SubFolder "\\vb", and
@@ -328,12 +396,11 @@ public partial class DeployRuntimeView : UserControl
 
                         // Update the AssemblyInfo.xml file with the assembly information.
                         AssemblyManifestProcessResult result = UpdateAssemblyInfo(
-                            xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
+                            manifestEditor: manifestEditor,
                             destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetDir}\\{fileItem.Name}")),
                             fileType: currentFileType,
                             targetFrameworkVersion: targetFrameworkTarget.Name,
-                            updatePublicKey: false,
-                            isRefAssembly: false);
+                            updatePublicKey: false);
 
                         if (await ProcessManifestResult(commandBatch, fileItem, result))
                         {
@@ -360,26 +427,28 @@ public partial class DeployRuntimeView : UserControl
                         continue;
                     }
 
+                    // Add the file to the processed files HashSet (mirror the non-ref-assembly
+                    // loop above: mark as processed BEFORE invoking manifest logic so a skip
+                    // from ProcessManifestResult does not cause the same file to be inspected
+                    // again later in the iteration).
+                    processedFiles.Add(fileItem);
+
                     // Determine the file type for ref assembly
                     string fileName = Path.GetFileNameWithoutExtension(fileItem.Name);
-                    string currentFileType = GetFileTypeForAssembly(fileName);
+                    string currentFileType = AssemblyFileTypeClassifier.Classify(fileName);
 
                     // Update the AssemblyInfo.xml file with the assembly information.
                     AssemblyManifestProcessResult result = UpdateAssemblyInfo(
-                        xmlFilePath: packageAssembliesManifestPath.FullName + "\\FrameworkList.xml",
+                        manifestEditor: manifestEditor,
                         destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetRefAssemblyPath}\\{fileItem.Name}")),
                         fileType: currentFileType,
                         targetFrameworkVersion: targetFrameworkTarget.Name,
-                        updatePublicKey: false,
-                        isRefAssembly: true);
+                        updatePublicKey: false);
 
                     if (await ProcessManifestResult(commandBatch, fileItem, result))
                     {
                         continue;
                     }
-
-                    // Add the file to the processed files HashSet
-                    processedFiles.Add(fileItem);
 
                     await commandBatch.CopyFileCommandAsync(
                         fileItem,
@@ -389,30 +458,35 @@ public partial class DeployRuntimeView : UserControl
                 }
             }
 
-            if (!foundCheckedItems)
+            if (checkedAssemblies.Length == 0)
             {
                 await commandBatch.WriteLineWarningAsync("No items were selected, found nothing to copy.");
             }
 
+            // Persist all manifest mutations performed during the batch.
+            try
+            {
+                manifestEditor.Save();
+            }
+            catch (Exception ex)
+            {
+                await commandBatch.WriteLineErrorAsync(
+                    $"Failed to write FrameworkList manifest '{manifestPath}': {ex.Message}");
+            }
+
             await commandBatch.EndBatchAsync("End of Command Batch.");
 
-            _copyCommandButton.Enabled = true;
-
-            static string MajorMinorVersionString(string versionString)
-            {
-                string[] items = versionString.Split('.');
-
-                return items.Length switch
-                {
-                    1 => $"{items[0]}.0",
-                    > 1 => $"{items[0]}.{items[1]}",
-                    _ => throw new ArgumentException(
-                        "Could not figure out .NET Major/Minor Version for Ref Assemblies.")
-                };
-            }
+            await InvokeAsync(() => _copyCommandButton.Enabled = true);
         });
 
         await Task.WhenAll(batchTask, processTask);
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "Copy command failed.");
+            _statusService?.ReportException(ex);
+            _copyCommandButton.Enabled = true;
+        }
 
         static async Task<bool> ProcessManifestResult(
             CommandBatch commandBatch, 
@@ -442,234 +516,53 @@ public partial class DeployRuntimeView : UserControl
         }
     }
 
-    private AssemblyManifestProcessResult UpdateAssemblyInfo(
-        string xmlFilePath,
+    private static AssemblyManifestProcessResult UpdateAssemblyInfo(
+        FrameworkListManifestEditor manifestEditor,
         (DirectoryInfo targetBasePath, FileInfo targetFile) destinationAssemblyFileInfo,
         string fileType,
         string targetFrameworkVersion,
-        bool updatePublicKey,
-        bool isRefAssembly)
+        bool updatePublicKey)
     {
         if (!destinationAssemblyFileInfo.targetFile.Exists)
         {
             return AssemblyManifestProcessResult.MissingAssembly;
         }
 
-        Assembly assembly;
-        AssemblyName? assemblyName = null;
-        AssemblyMetadata? assemblyMetadata;
-
-        // Create a temporary assembly manager that will be disposed when done
-        using var tempManager = new AssemblyTempManager();
-
-        if (isRefAssembly)
+        AssemblyProbeResult? probe = AssemblyProbe.TryRead(destinationAssemblyFileInfo.targetFile.FullName);
+        if (probe is null)
         {
-            assemblyMetadata = AssemblyMetadataReader.GetAssemblyMetadata(
-                destinationAssemblyFileInfo.targetFile.FullName);
-        }
-        else
-        {
-            try
-            {
-                // Use temporary manager to load assembly from a copy instead of the original file
-                assembly = tempManager.LoadAssemblyFromCopy(destinationAssemblyFileInfo.targetFile.FullName)!;
-
-                if (assembly is null)
-                {
-                    return AssemblyManifestProcessResult.InvalidAssembly;
-                }
-
-                assemblyName = assembly.GetName();
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Couldn't load image of assembly: {ex.Message}");
-                return AssemblyManifestProcessResult.InvalidAssembly;
-            }
+            return AssemblyManifestProcessResult.InvalidAssembly;
         }
 
-        // If we still don't have an assembly name, try to get it directly from the file
-        if (assemblyName is null)
-        {
-            try
-            {
-                assemblyName = tempManager.GetAssemblyName(destinationAssemblyFileInfo.targetFile.FullName);
-                
-                if (assemblyName is null)
-                {
-                    return AssemblyManifestProcessResult.InvalidAssembly;
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Couldn't get assembly name: {ex.Message}");
-                return AssemblyManifestProcessResult.InvalidAssembly;
-            }
-        }
-
-        var publicTokenBytes = assemblyName.GetPublicKeyToken();
-        if (publicTokenBytes is null || publicTokenBytes.Length == 0)
+        if (string.IsNullOrEmpty(probe.PublicKeyTokenHex))
         {
             return AssemblyManifestProcessResult.MissingPublicKey;
         }
 
-        string publicKeyToken = Convert.ToHexStringLower(publicTokenBytes);
-
-        XDocument xmlDoc;
-
-        try
-        {
-            xmlDoc = XDocument.Load(xmlFilePath);
-
-            if (xmlDoc is null)
-            {
-                return AssemblyManifestProcessResult.InvalidXmlFile;
-            }
-        }
-        catch (Exception)
-        {
-            return AssemblyManifestProcessResult.InvalidXmlFile;
-        }
-
-        XElement? fileList = xmlDoc.Element("FileList") 
-            ?? throw new Exception("Invalid XML format.");
-
-        XElement existingFile = null!;
-
-        // Get the delta-string between the targetBasePath and the targetFile:
+        // Path of the destination file relative to the ref-pack base, in Windows
+        // backslash form. The editor converts to forward-slash for the manifest.
         string deltaPath = destinationAssemblyFileInfo.targetFile.FullName
             .Replace(destinationAssemblyFileInfo.targetBasePath.FullName, string.Empty)
             .TrimStart('\\');
 
-        // Create a HashSet which holds the end element of a new type, so we know where to insert a new entry.
-        Dictionary<string, XElement> assemblyTypes = [];
-        string? currentAssemblyType = null;
-        bool multipleTypes = false;
-        XElement lastEntry = null!;
+        FrameworkListEntry entry = new(
+            FileType: fileType,
+            RelativePath: deltaPath,
+            AssemblyName: probe.Name,
+            PublicKeyToken: probe.PublicKeyTokenHex,
+            AssemblyVersion: FrameworkVersionFormatter.ToMajorOnly(targetFrameworkVersion, probe.Version),
+            FileVersion: FrameworkVersionFormatter.ToMajorOnly(targetFrameworkVersion, NormalizeFileVersion(probe.FileVersion)),
+            Profile: "WindowsForms");
 
-        // Not the same as in that Silicon Valley episode, just saying! ;-)
-        foreach (var file in fileList.Elements("File"))
+        return manifestEditor.Upsert(entry, updatePublicKey);
+
+        static string NormalizeFileVersion(string? fileVersion)
         {
-            // We need to build a list of assembly types, so we know where to insert a new entry.
-            // That list then contains the respective last entry with that specific type.
-            if (currentAssemblyType is null)
-            {
-                currentAssemblyType = file.Attribute("Type")?.Value;
-            }
-            else if (currentAssemblyType != file.Attribute("Type")?.Value)
-            {
-                multipleTypes = true;
-                assemblyTypes.Add(currentAssemblyType, lastEntry);
-                currentAssemblyType = file.Attribute("Type")?.Value;
-            }
+            string version = fileVersion ?? FrameworkVersionFormatter.FailedReadSentinel;
 
-            var pathAttr = file.Attribute("Path")?.Value;
-
-            lastEntry = file;
-
-            if (pathAttr is not null && IsPathMatch(pathAttr.AsSpan(), deltaPath))
-            {
-                existingFile = file;
-                break;
-            }
-        }
-
-        if (existingFile is null && multipleTypes && lastEntry is not null)
-        {
-            // List only remains important, when we need to extend the list
-            // and need to know where to insert the entry.
-            assemblyTypes.Add(currentAssemblyType!, lastEntry);
-        }
-
-        // Extra non-allocation mile gone for Paul Morgado (and probably half of DevDiv.)
-        static bool IsPathMatch(ReadOnlySpan<char> path, string deltaPath)
-        {
-            if (path.Length != deltaPath.Length)
-            {
-                return false;
-            }
-
-            for (int i = 0; i < path.Length; i++)
-            {
-                if (path[i] != deltaPath[i] && !(path[i] == '/' && deltaPath[i] == '\\'))
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
-
-        if (existingFile is null)
-        {
-            string destinationAssemblyFilePath = destinationAssemblyFileInfo.targetFile.FullName;
-
-            // Create a new entry
-            XElement newFile = new("File",
-                new XAttribute("Type", fileType),
-                new XAttribute("Path", deltaPath.Replace('\\', '/')),
-                new XAttribute("AssemblyName", assemblyName.Name!),
-                new XAttribute("PublicKeyToken", publicKeyToken),
-                new XAttribute(
-                    "AssemblyVersion",
-                    CreateMainFrameworkVersion(targetFrameworkVersion, GetAssemblyVersion(destinationAssemblyFilePath))),
-                new XAttribute(
-                    "FileVersion",
-                    CreateMainFrameworkVersion(targetFrameworkVersion, GetFileVersion(destinationAssemblyFilePath))),
-                new XAttribute("Profile", "WindowsForms"));
-
-            // Insert the new entry behind the respective last type entry:
-            if (assemblyTypes.TryGetValue(fileType, out XElement? lastTypeEntry))
-            {
-                lastTypeEntry.AddAfterSelf(newFile);
-            }
-            else
-            {
-                fileList.Add(newFile);
-            }
-
-            xmlDoc.Save(xmlFilePath);
-
-            return AssemblyManifestProcessResult.Created;
-        }
-        else
-        {
-            // Check if the public key matches
-            string? existingPublicKeyToken = existingFile.Attribute("PublicKeyToken")?.Value;
-
-            if (existingPublicKeyToken != publicKeyToken)
-            {
-                if (updatePublicKey)
-                {
-                    existingFile.SetAttributeValue("PublicKeyToken", publicKeyToken);
-                    xmlDoc.Save(xmlFilePath);
-
-                    return AssemblyManifestProcessResult.PublicKeyUpdated;
-                }
-                else
-                {
-                    return AssemblyManifestProcessResult.PublicKeyDoesNotMatch;
-                }
-            }
-        }
-
-        // Default return value (although not all cases are covered).
-        return AssemblyManifestProcessResult.OK;
-
-        string GetFileVersion(string assemblyFilePath)
-        {
-            string version = "42.42.42.42424";
-
-            try
-            {
-                var fileVersionInfo = FileVersionInfo.GetVersionInfo(assemblyFilePath);
-                version = fileVersionInfo.FileVersion ?? version;
-            }
-            catch (Exception)
-            {
-                return version;
-            }
-
+            // Defensive: clamp to a clean dotted-numeric "a.b.c.d" form. FileVersion may carry
+            // a build-suffix like "9.6.4-dev"; ToMajorOnly handles both shapes, but capping here
+            // preserves the historical behaviour of the deleted GetFileVersion helper.
             string[] parts = version.Split('.');
             if (parts.Length >= 4)
             {
@@ -678,116 +571,5 @@ public partial class DeployRuntimeView : UserControl
 
             return version;
         }
-
-        string GetAssemblyVersion(string assemblyFilePath)
-        {
-            string version = "42.42.42.42424";
-
-            try
-            {
-                // Use the temp manager to load from a copy instead
-                var tempAssembly = tempManager.LoadAssemblyFromCopy(assemblyFilePath);
-                if (tempAssembly != null)
-                {
-                    var tempAssemblyName = tempAssembly.GetName();
-                    version = tempAssemblyName.Version?.ToString() ?? version;
-                }
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine($"Error getting assembly version: {ex.Message}");
-                return version;
-            }
-
-            string[] parts = version.Split('.');
-            if (parts.Length >= 4)
-            {
-                version = $"{parts[0]}.{parts[1]}.{parts[2]}.{parts[3]}";
-            }
-
-            return version;
-        }
-    }
-
-    /// <summary>
-    /// Returns the "rounded" version of an assembly, meaning: 9.6.4-dev -> 9.0.0.0.
-    /// If assembly version starts with "42", the rounded Framework version is returned.
-    /// </summary>
-    /// <param name="actualFrameworkVersion"></param>
-    /// <param name="assemblyVersion"></param>
-    /// <returns></returns>
-    private string CreateMainFrameworkVersion(string actualFrameworkVersion, string assemblyVersion)
-    {
-        string version;
-
-        if (assemblyVersion.StartsWith("42"))
-        {
-            version = actualFrameworkVersion;
-        }
-        else
-        {
-            version = assemblyVersion;
-        }
-
-        string[] parts = version.Split('.');
-        if (parts.Length < 4)
-        {
-            return version;
-        }
-
-        return $"{parts[0]}.0.0.0";
-    }
-
-    /// <summary>
-    /// Determines the file type based on the assembly name.
-    /// </summary>
-    /// <param name="assemblyName">The name of the assembly.</param>
-    /// <returns>The file type as a string.</returns>
-    private string GetFileTypeForAssembly(string assemblyName)
-    {
-        // Determine file type based on assembly name
-        if (assemblyName.StartsWith("System.Windows.Forms"))
-        {
-            if (assemblyName.Contains("Analyzers"))
-            {
-                return "Analyzer";
-            }
-            else if (assemblyName.Contains("Primitives"))
-            {
-                return "Primitive";
-            }
-            else if (assemblyName.Contains("Design"))
-            {
-                return "Design";
-            }
-            return "WinForms";
-        }
-        else if (assemblyName.StartsWith("System.Drawing"))
-        {
-            if (assemblyName.Contains("Design"))
-            {
-                return "DrawingDesign";
-            }
-            return "Drawing";
-        }
-        else if (assemblyName.StartsWith("Microsoft.VisualBasic"))
-        {
-            return "VisualBasic";
-        }
-        else if (assemblyName.StartsWith("Accessibility"))
-        {
-            return "Accessibility";
-        }
-        else if (assemblyName.StartsWith("System.Design"))
-        {
-            return "Design";
-        }
-        else if (assemblyName.StartsWith("System.Private.Windows.Core"))
-        {
-            return "WindowsCore";
-        }
-
-        // Default type if we can't determine
-        return "Unknown";
     }
 }

@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk.Razor">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -11,26 +11,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" />
+    <PackageReference Include="NuGet.Versioning" />
+    <PackageReference Include="WarpToolkit.ComponentModel" />
+    <PackageReference Include="WarpToolkit.Desktop.AppServices" />
     <PackageReference Include="WarpToolkit.WinForms" />
+    <PackageReference Include="WarpToolkit.WinForms.AppServices" />
+    <PackageReference Include="WarpToolkit.WinForms.Async" />
+    <PackageReference Include="WarpToolkit.WinForms.Extensions" />
+    <PackageReference Include="WarpToolkit.WinForms.Specialized" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\WinFormsToolLib\DevTools.Libs.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Properties\Settings.Designer.cs">
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Update="Properties\Settings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
+    <Compile Update="Infrastructure\CommandBatchForm.cs" />
   </ItemGroup>
 
 </Project>

@@ -18,9 +18,13 @@
     <PackageVersion Include="xunit.runner.visualstudio" Version="3.1.5" />
 
 	  <!-- Define your package versions here -->
+    <PackageVersion Include="WarpToolkit.ComponentModel" Version="$(WarpToolkitVersion)" />
+    <PackageVersion Include="WarpToolkit.Desktop.AppServices" Version="$(WarpToolkitVersion)" />
     <PackageVersion Include="WarpToolkit.Desktop.Async" Version="$(WarpToolkitVersion)" />
     <PackageVersion Include="WarpToolkit.WinForms" Version="$(WarpToolkitVersion)" />
     <PackageVersion Include="WarpToolkit.WinForms.AppServices" Version="$(WarpToolkitVersion)" />
+    <PackageVersion Include="WarpToolkit.WinForms.Async" Version="$(WarpToolkitVersion)" />
+    <PackageVersion Include="WarpToolkit.WinForms.Extensions" Version="$(WarpToolkitVersion)" />
     <PackageVersion Include="WarpToolkit.WinForms.Specialized" Version="$(WarpToolkitVersion)" />
   </ItemGroup>
 </Project>

@@ -1,9 +1,9 @@
-using WarpToolkit.ComponentModel;
-using WarpToolkit.WinForms.AppServices;
-using WarpToolkit.WinForms.Specialized;
 using System.Diagnostics;
-using WarpToolkit.WinForms.Extensions.UI;
+using WarpToolkit.ComponentModel;
 using WarpToolkit.Desktop.AppServices;
+using WarpToolkit.WinForms.AppServices;
+using WarpToolkit.WinForms.Extensions.UI;
+using WarpToolkit.WinForms.Specialized;
 
 namespace DevTools.ShadowCacheSpy;
 

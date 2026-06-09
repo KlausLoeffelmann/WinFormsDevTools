@@ -187,7 +187,7 @@ partial class DeployRuntimeView
         // DeployRuntimeView
         // 
         AutoScaleDimensions = new SizeF(12F, 30F);
-        AutoScaleMode = AutoScaleMode.Font;
+        AutoScaleMode = AutoScaleMode.Inherit;
         Controls.Add(_pickPathToArtefactsButton);
         Controls.Add(_chkStandardAssemblies);
         Controls.Add(_dryRunCheckBox);
