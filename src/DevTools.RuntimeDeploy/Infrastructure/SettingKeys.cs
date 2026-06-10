@@ -16,4 +16,10 @@ internal static class SettingKeys
     public const string ExcludedAssemblyNames = "ExcludedAssemblyNames";
 
     public const string MainFormBounds = "MainForm.Bounds";
+
+    /// <summary>
+    ///  Whether the main window position/size is persisted across sessions.
+    ///  When disabled, bounds are neither saved on exit nor restored on launch.
+    /// </summary>
+    public const string SaveWindowPositions = "MainForm.SaveWindowPositions";
 }

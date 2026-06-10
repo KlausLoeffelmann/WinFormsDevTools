@@ -68,6 +68,7 @@ public partial class MainForm : Form, IServiceProvider
     {
         base.OnLoad(e);
 
+        LoadSaveWindowPositionsSetting();
         RestoreSavedBounds();
         InitializeSdkTargets();
         InitializeTabs();
@@ -166,6 +167,12 @@ public partial class MainForm : Form, IServiceProvider
         _statusMessageLabel.ForeColor = foregroundColor;
     }
 
+    private void LoadSaveWindowPositionsSetting()
+    {
+        bool savePositions = _userSettings?.Get(SettingKeys.SaveWindowPositions, true) ?? true;
+        _saveWindowPositionsMenuItem.Checked = savePositions;
+    }
+
     private void RestoreSavedBounds()
     {
         if (_userSettings is null)
@@ -180,6 +187,13 @@ public partial class MainForm : Form, IServiceProvider
             Width,
             Height);
 
+        if (!_saveWindowPositionsMenuItem.Checked)
+        {
+            StartPosition = FormStartPosition.Manual;
+            Bounds = defaultBounds;
+            return;
+        }
+
         Rectangle bounds = _userSettings.Get(SettingKeys.MainFormBounds, defaultBounds);
         if (!Screen.AllScreens.Any(screen => screen.WorkingArea.IntersectsWith(bounds)))
         {
@@ -192,7 +206,7 @@ public partial class MainForm : Form, IServiceProvider
 
     private void SaveBounds()
     {
-        if (_userSettings is null)
+        if (_userSettings is null || !_saveWindowPositionsMenuItem.Checked)
         {
             return;
         }
@@ -202,6 +216,17 @@ public partial class MainForm : Form, IServiceProvider
             : RestoreBounds;
 
         _userSettings.Set(SettingKeys.MainFormBounds, bounds);
+        _userSettings.Flush();
+    }
+
+    private void SaveWindowPositionsMenuItem_Click(object sender, EventArgs e)
+    {
+        if (_userSettings is null)
+        {
+            return;
+        }
+
+        _userSettings.Set(SettingKeys.SaveWindowPositions, _saveWindowPositionsMenuItem.Checked);
         _userSettings.Flush();
     }
 

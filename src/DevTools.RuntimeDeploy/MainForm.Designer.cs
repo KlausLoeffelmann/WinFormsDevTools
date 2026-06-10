@@ -36,6 +36,9 @@ partial class MainForm
         _menuStrip = new MenuStrip();
         _toolsMenuItem = new ToolStripMenuItem();
         _optionsMenuItem = new ToolStripMenuItem();
+        _saveWindowPositionsMenuItem = new ToolStripMenuItem();
+        _toolsSeparator = new ToolStripSeparator();
+        _quitMenuItem = new ToolStripMenuItem();
         _statusStrip = new StatusStrip();
         _statusMessageLabel = new ToolStripStatusLabel();
         _notifyIcon = new NotifyIcon(components);
@@ -70,7 +73,7 @@ partial class MainForm
         // 
         // _toolsMenuItem
         // 
-        _toolsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { _optionsMenuItem });
+        _toolsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { _optionsMenuItem, _saveWindowPositionsMenuItem, _toolsSeparator, _quitMenuItem });
         _toolsMenuItem.Name = "_toolsMenuItem";
         _toolsMenuItem.Size = new Size(69, 29);
         _toolsMenuItem.Text = "&Tools";
@@ -81,6 +84,28 @@ partial class MainForm
         _optionsMenuItem.Size = new Size(190, 34);
         _optionsMenuItem.Text = "&Options...";
         _optionsMenuItem.Click += OptionsMenuItem_Click;
+        // 
+        // _saveWindowPositionsMenuItem
+        // 
+        _saveWindowPositionsMenuItem.CheckOnClick = true;
+        _saveWindowPositionsMenuItem.Checked = true;
+        _saveWindowPositionsMenuItem.CheckState = CheckState.Checked;
+        _saveWindowPositionsMenuItem.Name = "_saveWindowPositionsMenuItem";
+        _saveWindowPositionsMenuItem.Size = new Size(190, 34);
+        _saveWindowPositionsMenuItem.Text = "&Save Window positions";
+        _saveWindowPositionsMenuItem.Click += SaveWindowPositionsMenuItem_Click;
+        // 
+        // _toolsSeparator
+        // 
+        _toolsSeparator.Name = "_toolsSeparator";
+        _toolsSeparator.Size = new Size(187, 6);
+        // 
+        // _quitMenuItem
+        // 
+        _quitMenuItem.Name = "_quitMenuItem";
+        _quitMenuItem.Size = new Size(190, 34);
+        _quitMenuItem.Text = "&Quit";
+        _quitMenuItem.Click += QuitMenuItem_Click;
         // 
         // _statusStrip
         // 
@@ -173,6 +198,9 @@ partial class MainForm
     private MenuStrip _menuStrip;
     private ToolStripMenuItem _toolsMenuItem;
     private ToolStripMenuItem _optionsMenuItem;
+    private ToolStripMenuItem _saveWindowPositionsMenuItem;
+    private ToolStripSeparator _toolsSeparator;
+    private ToolStripMenuItem _quitMenuItem;
     private StatusStrip _statusStrip;
     private ToolStripStatusLabel _statusMessageLabel;
     private NotifyIcon _notifyIcon;

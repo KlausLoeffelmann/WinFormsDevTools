@@ -2,6 +2,15 @@ namespace DevTools.RuntimeDeploy.Infrastructure;
 
 public partial class CommandBatchForm : Form
 {
+    // Completes once the form has actually been shown (handle created and the
+    // window pump is running). Writes to the embedded ConsoleControl marshal onto
+    // the UI thread from a background thread; if they are issued before the modeless
+    // ShowAsync() Show() call has completed they race with window creation, which
+    // drops the early output and can dead-lock the next ShowAsync(). Gating every
+    // write on this signal keeps the console reliable across repeated batches.
+    private readonly TaskCompletionSource _shownCompletion =
+        new(TaskCreationOptions.RunContinuationsAsynchronously);
+
     public CommandBatchForm(string? windowTitle)
     {
         InitializeComponent();
@@ -9,25 +18,62 @@ public partial class CommandBatchForm : Form
         windowTitle ??= $"Command Batch";
 
         Text = windowTitle + $" - started {DateTime.Now: ddd, yy/MM/dd hh:mm:ss}";
+
+        // ShowAsync() shows the window modeless and does not dispose it on close,
+        // which would otherwise leak the form and the ConsoleControl background
+        // queue. Dispose deterministically once the window is closed.
+        FormClosed += (_, _) => Dispose();
     }
 
-    public Task WriteAsync(string message)
-        => _console.WriteAsync(message);
+    protected override void OnShown(EventArgs e)
+    {
+        base.OnShown(e);
+        _shownCompletion.TrySetResult();
+    }
 
-    public Task WriteWarningAsync(string message)
-        => _console.WriteAsync(message, textColor: Color.Yellow);
+    protected override void OnFormClosed(FormClosedEventArgs e)
+    {
+        // Unblock any writes still waiting on the shown signal if the window is
+        // closed before it was ever shown.
+        _shownCompletion.TrySetResult();
+        base.OnFormClosed(e);
+    }
 
-    public Task WriteErrorAsync(string message)
-    => _console.WriteAsync(message, textColor: Color.DarkRed);
+    public async Task WriteAsync(string message)
+    {
+        await _shownCompletion.Task;
+        await _console.WriteAsync(message);
+    }
 
-    public Task WriteLineAsync(string message)
-        => _console.WriteLineAsync(message);
+    public async Task WriteWarningAsync(string message)
+    {
+        await _shownCompletion.Task;
+        await _console.WriteAsync(message, textColor: Color.Yellow);
+    }
 
-    public Task WriteLineWarningAsync(string message)
-        => _console.WriteLineAsync(message, textColor: Color.Yellow);
+    public async Task WriteErrorAsync(string message)
+    {
+        await _shownCompletion.Task;
+        await _console.WriteAsync(message, textColor: Color.DarkRed);
+    }
 
-    public Task WriteLineErrorAsync(string message)
-        => _console.WriteLineAsync(message, textColor: Color.DarkRed);
+    public async Task WriteLineAsync(string message)
+    {
+        await _shownCompletion.Task;
+        await _console.WriteLineAsync(message);
+    }
+
+    public async Task WriteLineWarningAsync(string message)
+    {
+        await _shownCompletion.Task;
+        await _console.WriteLineAsync(message, textColor: Color.Yellow);
+    }
+
+    public async Task WriteLineErrorAsync(string message)
+    {
+        await _shownCompletion.Task;
+        await _console.WriteLineAsync(message, textColor: Color.DarkRed);
+    }
 
     public Task StartBatchAsync()
     {
@@ -35,12 +81,12 @@ public partial class CommandBatchForm : Form
         return ShowAsync();
     }
 
-    public async Task EndBatchAsync() 
+    public async Task EndBatchAsync()
     {
+        await _shownCompletion.Task;
         _okButton.Enabled = true;
-        await Task.CompletedTask;
     }
 
-    private void OkButton_Click(object sender, EventArgs e) 
+    private void OkButton_Click(object sender, EventArgs e)
         => Close();
 }
