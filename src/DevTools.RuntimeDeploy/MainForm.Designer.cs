@@ -58,7 +58,7 @@ partial class MainForm
         _tabControl.Location = new Point(0, 33);
         _tabControl.Margin = new Padding(3, 4, 3, 4);
         _tabControl.Name = "_tabControl";
-        _tabControl.Size = new Size(1359, 597);
+        _tabControl.Size = new Size(1317, 597);
         _tabControl.TabIndex = 0;
         // 
         // _menuStrip
@@ -67,7 +67,7 @@ partial class MainForm
         _menuStrip.Items.AddRange(new ToolStripItem[] { _toolsMenuItem });
         _menuStrip.Location = new Point(0, 0);
         _menuStrip.Name = "_menuStrip";
-        _menuStrip.Size = new Size(1359, 33);
+        _menuStrip.Size = new Size(1317, 33);
         _menuStrip.TabIndex = 1;
         _menuStrip.Text = "menuStrip1";
         // 
@@ -81,29 +81,29 @@ partial class MainForm
         // _optionsMenuItem
         // 
         _optionsMenuItem.Name = "_optionsMenuItem";
-        _optionsMenuItem.Size = new Size(190, 34);
+        _optionsMenuItem.Size = new Size(300, 34);
         _optionsMenuItem.Text = "&Options...";
         _optionsMenuItem.Click += OptionsMenuItem_Click;
         // 
         // _saveWindowPositionsMenuItem
         // 
-        _saveWindowPositionsMenuItem.CheckOnClick = true;
         _saveWindowPositionsMenuItem.Checked = true;
+        _saveWindowPositionsMenuItem.CheckOnClick = true;
         _saveWindowPositionsMenuItem.CheckState = CheckState.Checked;
         _saveWindowPositionsMenuItem.Name = "_saveWindowPositionsMenuItem";
-        _saveWindowPositionsMenuItem.Size = new Size(190, 34);
+        _saveWindowPositionsMenuItem.Size = new Size(300, 34);
         _saveWindowPositionsMenuItem.Text = "&Save Window positions";
         _saveWindowPositionsMenuItem.Click += SaveWindowPositionsMenuItem_Click;
         // 
         // _toolsSeparator
         // 
         _toolsSeparator.Name = "_toolsSeparator";
-        _toolsSeparator.Size = new Size(187, 6);
+        _toolsSeparator.Size = new Size(297, 6);
         // 
         // _quitMenuItem
         // 
         _quitMenuItem.Name = "_quitMenuItem";
-        _quitMenuItem.Size = new Size(190, 34);
+        _quitMenuItem.Size = new Size(300, 34);
         _quitMenuItem.Text = "&Quit";
         _quitMenuItem.Click += QuitMenuItem_Click;
         // 
@@ -113,7 +113,7 @@ partial class MainForm
         _statusStrip.Items.AddRange(new ToolStripItem[] { _statusMessageLabel });
         _statusStrip.Location = new Point(0, 630);
         _statusStrip.Name = "_statusStrip";
-        _statusStrip.Size = new Size(1359, 36);
+        _statusStrip.Size = new Size(1317, 36);
         _statusStrip.TabIndex = 2;
         _statusStrip.Text = "statusStrip1";
         // 
@@ -122,7 +122,7 @@ partial class MainForm
         _statusMessageLabel.ForeColor = Color.FromArgb(128, 128, 255);
         _statusMessageLabel.Name = "_statusMessageLabel";
         _statusMessageLabel.Padding = new Padding(2);
-        _statusMessageLabel.Size = new Size(1344, 29);
+        _statusMessageLabel.Size = new Size(1302, 29);
         _statusMessageLabel.Spring = true;
         _statusMessageLabel.Text = "Ready.";
         _statusMessageLabel.TextAlign = ContentAlignment.MiddleLeft;
@@ -172,11 +172,12 @@ partial class MainForm
         // 
         AutoScaleDimensions = new SizeF(12F, 30F);
         AutoScaleMode = AutoScaleMode.Font;
-        ClientSize = new Size(1359, 666);
+        ClientSize = new Size(1317, 666);
         Controls.Add(_tabControl);
         Controls.Add(_statusStrip);
         Controls.Add(_menuStrip);
         Font = new Font("Segoe UI", 11F, FontStyle.Regular, GraphicsUnit.Point, 0);
+        Icon = (Icon)resources.GetObject("$this.Icon");
         MainMenuStrip = _menuStrip;
         Margin = new Padding(3, 4, 3, 4);
         MinimumSize = new Size(1339, 722);
