@@ -1,12 +1,12 @@
 using System.Diagnostics;
 using System.Reflection;
 
-namespace DevTools.RuntimeDeploy.Domain;
+namespace DevTools.RuntimeDeploy.Engine.Domain;
 
 /// <summary>
 ///  Result of probing an assembly file for its strong-name and version metadata.
 /// </summary>
-internal sealed record AssemblyProbeResult(
+public sealed record AssemblyProbeResult(
     string Name,
     string Version,
     string PublicKeyTokenHex,
@@ -34,7 +34,7 @@ internal sealed record AssemblyProbeResult(
 ///   step required by the strong-name token format).
 ///  </para>
 /// </remarks>
-internal static class AssemblyProbe
+public static class AssemblyProbe
 {
     /// <summary>
     ///  Attempts to read identity and version metadata from the assembly at

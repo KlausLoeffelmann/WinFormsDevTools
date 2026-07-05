@@ -1,10 +1,10 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace DevTools.RuntimeDeploy.Domain;
+namespace DevTools.RuntimeDeploy.Engine.Domain;
 
-internal partial class BuildArtefactsScanner
+public partial class BuildArtefactsScanner
 {
-    internal class DesktopAssemblyInfo
+    public class DesktopAssemblyInfo
     {
         [AllowNull]
         public string Name { get; init; }

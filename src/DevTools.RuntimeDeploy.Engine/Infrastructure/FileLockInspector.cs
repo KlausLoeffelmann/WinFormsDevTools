@@ -1,7 +1,7 @@
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 
-namespace DevTools.RuntimeDeploy.Infrastructure;
+namespace DevTools.RuntimeDeploy.Engine.Infrastructure;
 
 /// <summary>
 ///  Describes a single process that currently holds a lock on a file.

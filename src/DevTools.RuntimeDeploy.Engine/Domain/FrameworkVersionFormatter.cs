@@ -1,10 +1,10 @@
-namespace DevTools.RuntimeDeploy.Domain;
+namespace DevTools.RuntimeDeploy.Engine.Domain;
 
 /// <summary>
 ///  Normalises assembly / framework version strings for inclusion in the
 ///  <c>FrameworkList.xml</c> manifest of the .NET Desktop ref-pack.
 /// </summary>
-internal static class FrameworkVersionFormatter
+public static class FrameworkVersionFormatter
 {
     /// <summary>
     ///  Sentinel value returned by the file/assembly-version helpers when

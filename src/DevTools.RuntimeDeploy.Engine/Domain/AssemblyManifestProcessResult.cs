@@ -1,10 +1,10 @@
-namespace DevTools.RuntimeDeploy.Domain;
+namespace DevTools.RuntimeDeploy.Engine.Domain;
 
 /// <summary>
 ///  Outcome of probing an assembly and (potentially) upserting its entry
 ///  into <c>FrameworkList.xml</c>.
 /// </summary>
-internal enum AssemblyManifestProcessResult
+public enum AssemblyManifestProcessResult
 {
     /// <summary>The destination assembly file was not found.</summary>
     MissingAssembly,

@@ -1,10 +1,10 @@
-namespace DevTools.RuntimeDeploy.Domain;
+namespace DevTools.RuntimeDeploy.Engine.Domain;
 
 /// <summary>
 ///  Provides functionality to extract the available generated assemblies
 ///  from the Artifacts folder of the WinForms GitHub repository.
 /// </summary>
-internal partial class BuildArtefactsScanner
+public partial class BuildArtefactsScanner
 {
     public const string BinSystemWindowsFormsPath = "\\bin\\System.Windows.Forms";
     public const string BinPath = "\\bin";

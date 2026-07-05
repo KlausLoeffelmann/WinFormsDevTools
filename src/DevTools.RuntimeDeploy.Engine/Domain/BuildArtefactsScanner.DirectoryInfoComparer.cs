@@ -1,12 +1,12 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace DevTools.RuntimeDeploy.Domain;
+namespace DevTools.RuntimeDeploy.Engine.Domain;
 
-internal partial class BuildArtefactsScanner
+public partial class BuildArtefactsScanner
 {
     private static DirectoryInfoComparer? s_instance;
 
-    internal class DirectoryInfoComparer : IEqualityComparer<DirectoryInfo>
+    public class DirectoryInfoComparer : IEqualityComparer<DirectoryInfo>
     {
         public bool Equals(DirectoryInfo? x, DirectoryInfo? y)
             => string.Equals(x?.Name, y?.Name, StringComparison.OrdinalIgnoreCase);

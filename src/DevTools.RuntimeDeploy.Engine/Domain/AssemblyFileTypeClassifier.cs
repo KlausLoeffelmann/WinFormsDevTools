@@ -1,4 +1,4 @@
-namespace DevTools.RuntimeDeploy.Domain;
+namespace DevTools.RuntimeDeploy.Engine.Domain;
 
 /// <summary>
 ///  Classifies an assembly file by its base name into a <c>FrameworkList.xml</c>
@@ -19,7 +19,7 @@ namespace DevTools.RuntimeDeploy.Domain;
 ///   silently could break SDK consumers.
 ///  </para>
 /// </remarks>
-internal static class AssemblyFileTypeClassifier
+public static class AssemblyFileTypeClassifier
 {
     /// <summary>
     ///  Returns the FrameworkList <c>Type</c> attribute value for an

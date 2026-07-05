@@ -1,6 +1,6 @@
-namespace DevTools.RuntimeDeploy.Domain;
+namespace DevTools.RuntimeDeploy.Engine.Domain;
 
-internal partial class BuildArtefactsScanner
+public partial class BuildArtefactsScanner
 {
     /// <summary>
     ///  Describes one available "source" entry inside the cloned WinForms
@@ -18,7 +18,7 @@ internal partial class BuildArtefactsScanner
     ///  that physically exist on disk.
     /// </param>
     /// <param name="directory">The main TFM build output directory.</param>
-    internal class TargetFrameworkSourceItem(string name, IReadOnlyList<string> tfmPaths, DirectoryInfo directory)
+    public class TargetFrameworkSourceItem(string name, IReadOnlyList<string> tfmPaths, DirectoryInfo directory)
     {
         public string Name { get; init; } = name;
 

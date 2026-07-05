@@ -1,12 +1,12 @@
 using NuGet.Versioning;
 
-namespace DevTools.RuntimeDeploy.Domain;
+namespace DevTools.RuntimeDeploy.Engine.Domain;
 
 /// <summary>
 ///  Locates the installed .NET Desktop runtime / ref-pack folders under
 ///  Program Files and enumerates the available SDK versions.
 /// </summary>
-internal static class FrameworkInfo
+public static class FrameworkInfo
 {
     private const string PathToNetDesktopLibs = @"\dotnet\shared\Microsoft.WindowsDesktop.App";
     private const string PathToNetDesktopRefs = @"\dotnet\packs\Microsoft.WindowsDesktop.App.Ref";
