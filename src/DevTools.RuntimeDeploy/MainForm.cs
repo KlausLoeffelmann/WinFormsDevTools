@@ -284,6 +284,28 @@ public partial class MainForm : Form, IServiceProvider
     private void OptionsMenuItem_Click(object sender, EventArgs e)
         => ShowOptionsDialog();
 
+    private void CreateRuntimePatcherMenuItem_Click(object sender, EventArgs e)
+    {
+        if (_serviceProvider is null)
+        {
+            return;
+        }
+
+        using CreateRuntimePatcherForm form = _serviceProvider.GetRequiredService<CreateRuntimePatcherForm>();
+        form.ShowDialog(this);
+    }
+
+    private void RestoreBackupMenuItem_Click(object sender, EventArgs e)
+    {
+        if (_serviceProvider is null)
+        {
+            return;
+        }
+
+        using RestoreBackupForm form = _serviceProvider.GetRequiredService<RestoreBackupForm>();
+        form.ShowDialog(this);
+    }
+
     private void QuitMenuItem_Click(object sender, EventArgs e)
     {
         _allowClose = true;

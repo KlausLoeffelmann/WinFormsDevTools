@@ -35,7 +35,9 @@ internal static class Program
             .AddScoped<OverView>()
             .AddTransient<AssetSelectionControl>()
             .AddScoped<DeployRuntimeView>()
-            .AddTransient<OptionsForm>();
+            .AddTransient<OptionsForm>()
+            .AddTransient<CreateRuntimePatcherForm>()
+            .AddTransient<RestoreBackupForm>();
 
         WinFormsApplication app = builder.Build();
         app.Run();
