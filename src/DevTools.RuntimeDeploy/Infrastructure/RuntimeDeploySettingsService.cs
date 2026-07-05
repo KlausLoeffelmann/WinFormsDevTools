@@ -56,6 +56,27 @@ public sealed class RuntimeDeploySettingsService(IUserSettingsService userSettin
     }
 
     /// <summary>
+    ///  Root folder under which backups (created before overwriting existing
+    ///  runtime assemblies) are stored. Defaults to
+    ///  <see cref="Engine.PatchBackup.BackupService.DefaultBackupRoot"/>.
+    /// </summary>
+    public string BackupRootFolder
+    {
+        get
+        {
+            string path = userSettings.Get(SettingKeys.BackupRootFolder, string.Empty);
+            return string.IsNullOrWhiteSpace(path)
+                ? Engine.PatchBackup.BackupService.DefaultBackupRoot.FullName
+                : path;
+        }
+        set
+        {
+            userSettings.Set(SettingKeys.BackupRootFolder, value);
+            userSettings.Flush();
+        }
+    }
+
+    /// <summary>
     ///  Font used for the application UI. Setting the value persists it immediately.
     /// </summary>
     public Font UiFont

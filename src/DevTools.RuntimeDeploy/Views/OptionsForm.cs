@@ -46,6 +46,8 @@ public partial class OptionsForm : Form
             LoadTargets();
         }
 
+        _backupFolderTextBox.Text = _settings.BackupRootFolder;
+
         _uiFont = _settings.UiFont;
         _outputFont = _settings.OutputFont;
         UpdateFontPreview(_uiFontPreviewLabel, _uiFont);
@@ -116,6 +118,20 @@ public partial class OptionsForm : Form
         _targetsComboBox.Items.Clear();
         _assembliesListView.Items.Clear();
         _assembliesLoaded = false;
+    }
+
+    private void BrowseBackupFolderButton_Click(object sender, EventArgs e)
+    {
+        using FolderBrowserDialog dialog = new()
+        {
+            Description = "Pick the folder where backups of overwritten runtime assemblies are stored:",
+            SelectedPath = Directory.Exists(_backupFolderTextBox.Text) ? _backupFolderTextBox.Text : string.Empty
+        };
+
+        if (dialog.ShowDialog(this) == DialogResult.OK)
+        {
+            _backupFolderTextBox.Text = dialog.SelectedPath;
+        }
     }
 
     private void LoadAssembliesButton_Click(object sender, EventArgs e)
@@ -200,6 +216,11 @@ public partial class OptionsForm : Form
         }
 
         _settings.SourceArtefactsFolder = _sourceFolderTextBox.Text;
+
+        if (!string.IsNullOrWhiteSpace(_backupFolderTextBox.Text))
+        {
+            _settings.BackupRootFolder = _backupFolderTextBox.Text;
+        }
 
         if (_assembliesLoaded)
         {

@@ -26,6 +26,10 @@ partial class OptionsForm
         _loadAssembliesButton = new Button();
         _assembliesLabel = new Label();
         _assembliesListView = new ListView();
+        _backupGroupBox = new GroupBox();
+        _backupFolderLabel = new Label();
+        _backupFolderTextBox = new TextBox();
+        _browseBackupFolderButton = new Button();
         _fontsGroupBox = new GroupBox();
         _uiFontCaptionLabel = new Label();
         _uiFontPreviewLabel = new Label();
@@ -35,6 +39,7 @@ partial class OptionsForm
         _changeOutputFontButton = new Button();
         _okButton = new Button();
         _cancelButton = new Button();
+        _backupGroupBox.SuspendLayout();
         _fontsGroupBox.SuspendLayout();
         SuspendLayout();
         // 
@@ -115,6 +120,47 @@ partial class OptionsForm
         _assembliesListView.UseCompatibleStateImageBehavior = false;
         _assembliesListView.View = View.Details;
         // 
+        // _backupGroupBox
+        // 
+        _backupGroupBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        _backupGroupBox.Controls.Add(_backupFolderLabel);
+        _backupGroupBox.Controls.Add(_backupFolderTextBox);
+        _backupGroupBox.Controls.Add(_browseBackupFolderButton);
+        _backupGroupBox.Location = new Point(15, 521);
+        _backupGroupBox.Name = "_backupGroupBox";
+        _backupGroupBox.Size = new Size(1093, 90);
+        _backupGroupBox.TabIndex = 8;
+        _backupGroupBox.TabStop = false;
+        _backupGroupBox.Text = "Backup";
+        // 
+        // _backupFolderLabel
+        // 
+        _backupFolderLabel.AutoSize = true;
+        _backupFolderLabel.Location = new Point(18, 42);
+        _backupFolderLabel.Name = "_backupFolderLabel";
+        _backupFolderLabel.Size = new Size(155, 30);
+        _backupFolderLabel.TabIndex = 0;
+        _backupFolderLabel.Text = "Backup folder:";
+        // 
+        // _backupFolderTextBox
+        // 
+        _backupFolderTextBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        _backupFolderTextBox.Location = new Point(200, 39);
+        _backupFolderTextBox.Name = "_backupFolderTextBox";
+        _backupFolderTextBox.Size = new Size(825, 38);
+        _backupFolderTextBox.TabIndex = 1;
+        // 
+        // _browseBackupFolderButton
+        // 
+        _browseBackupFolderButton.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+        _browseBackupFolderButton.Location = new Point(1033, 37);
+        _browseBackupFolderButton.Name = "_browseBackupFolderButton";
+        _browseBackupFolderButton.Size = new Size(50, 42);
+        _browseBackupFolderButton.TabIndex = 2;
+        _browseBackupFolderButton.Text = "...";
+        _browseBackupFolderButton.UseVisualStyleBackColor = true;
+        _browseBackupFolderButton.Click += BrowseBackupFolderButton_Click;
+        // 
         // _fontsGroupBox
         // 
         _fontsGroupBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
@@ -124,10 +170,10 @@ partial class OptionsForm
         _fontsGroupBox.Controls.Add(_outputFontCaptionLabel);
         _fontsGroupBox.Controls.Add(_outputFontPreviewLabel);
         _fontsGroupBox.Controls.Add(_changeOutputFontButton);
-        _fontsGroupBox.Location = new Point(15, 521);
+        _fontsGroupBox.Location = new Point(15, 621);
         _fontsGroupBox.Name = "_fontsGroupBox";
         _fontsGroupBox.Size = new Size(1093, 130);
-        _fontsGroupBox.TabIndex = 8;
+        _fontsGroupBox.TabIndex = 9;
         _fontsGroupBox.TabStop = false;
         _fontsGroupBox.Text = "Fonts";
         // 
@@ -196,10 +242,10 @@ partial class OptionsForm
         // _okButton
         // 
         _okButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-        _okButton.Location = new Point(869, 661);
+        _okButton.Location = new Point(869, 761);
         _okButton.Name = "_okButton";
         _okButton.Size = new Size(115, 44);
-        _okButton.TabIndex = 9;
+        _okButton.TabIndex = 10;
         _okButton.Text = "OK";
         _okButton.UseVisualStyleBackColor = true;
         _okButton.Click += OkButton_Click;
@@ -208,10 +254,10 @@ partial class OptionsForm
         // 
         _cancelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
         _cancelButton.DialogResult = DialogResult.Cancel;
-        _cancelButton.Location = new Point(993, 661);
+        _cancelButton.Location = new Point(993, 761);
         _cancelButton.Name = "_cancelButton";
         _cancelButton.Size = new Size(115, 44);
-        _cancelButton.TabIndex = 10;
+        _cancelButton.TabIndex = 11;
         _cancelButton.Text = "Cancel";
         _cancelButton.UseVisualStyleBackColor = true;
         // 
@@ -221,10 +267,11 @@ partial class OptionsForm
         AutoScaleDimensions = new SizeF(12F, 30F);
         AutoScaleMode = AutoScaleMode.Font;
         CancelButton = _cancelButton;
-        ClientSize = new Size(1123, 722);
+        ClientSize = new Size(1123, 822);
         Controls.Add(_cancelButton);
         Controls.Add(_okButton);
         Controls.Add(_fontsGroupBox);
+        Controls.Add(_backupGroupBox);
         Controls.Add(_assembliesListView);
         Controls.Add(_assembliesLabel);
         Controls.Add(_loadAssembliesButton);
@@ -237,11 +284,13 @@ partial class OptionsForm
         FormBorderStyle = FormBorderStyle.SizableToolWindow;
         Margin = new Padding(3, 4, 3, 4);
         MinimizeBox = false;
-        MinimumSize = new Size(980, 620);
+        MinimumSize = new Size(980, 720);
         Name = "OptionsForm";
         ShowInTaskbar = false;
         StartPosition = FormStartPosition.CenterParent;
         Text = "Runtime Deploy Options";
+        _backupGroupBox.ResumeLayout(false);
+        _backupGroupBox.PerformLayout();
         _fontsGroupBox.ResumeLayout(false);
         _fontsGroupBox.PerformLayout();
         ResumeLayout(false);
@@ -258,6 +307,10 @@ partial class OptionsForm
     private Button _loadAssembliesButton;
     private Label _assembliesLabel;
     private ListView _assembliesListView;
+    private GroupBox _backupGroupBox;
+    private Label _backupFolderLabel;
+    private TextBox _backupFolderTextBox;
+    private Button _browseBackupFolderButton;
     private GroupBox _fontsGroupBox;
     private Label _uiFontCaptionLabel;
     private Label _uiFontPreviewLabel;

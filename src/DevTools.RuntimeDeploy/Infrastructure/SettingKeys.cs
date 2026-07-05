@@ -15,6 +15,13 @@ internal static class SettingKeys
 
     public const string ExcludedAssemblyNames = "ExcludedAssemblyNames";
 
+    /// <summary>
+    ///  Root folder under which backups (created before overwriting existing
+    ///  runtime assemblies) are stored.
+    /// </summary>
+    public const string BackupRootFolder = "BackupRootFolder";
+
+
     public const string MainFormBounds = "MainForm.Bounds";
 
     /// <summary>
