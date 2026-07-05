@@ -12,6 +12,8 @@ public partial class OptionsForm : Form
     private ILogger<OptionsForm>? _logger;
     private BuildArtefactsScanner? _scanner;
     private bool _assembliesLoaded;
+    private Font _uiFont = RuntimeDeploySettingsService.DefaultUiFont;
+    private Font _outputFont = RuntimeDeploySettingsService.DefaultOutputFont;
 
     public OptionsForm()
     {
@@ -42,6 +44,55 @@ public partial class OptionsForm : Form
         if (!string.IsNullOrWhiteSpace(_sourceFolderTextBox.Text))
         {
             LoadTargets();
+        }
+
+        _uiFont = _settings.UiFont;
+        _outputFont = _settings.OutputFont;
+        UpdateFontPreview(_uiFontPreviewLabel, _uiFont);
+        UpdateFontPreview(_outputFontPreviewLabel, _outputFont);
+    }
+
+    private static void UpdateFontPreview(Label previewLabel, Font font)
+    {
+        previewLabel.Font = font;
+        previewLabel.Text = $"{font.Name}, {font.SizeInPoints:0.#}pt"
+            + (font.Style == FontStyle.Regular ? string.Empty : $", {font.Style}");
+    }
+
+    private void ChangeUiFontButton_Click(object sender, EventArgs e)
+        => PickFont(ref _uiFont, _uiFontPreviewLabel, isUiFont: true);
+
+    private void ChangeOutputFontButton_Click(object sender, EventArgs e)
+        => PickFont(ref _outputFont, _outputFontPreviewLabel, isUiFont: false);
+
+    private void PickFont(ref Font currentFont, Label previewLabel, bool isUiFont)
+    {
+        using FontDialog dialog = new()
+        {
+            Font = currentFont,
+            ShowEffects = false,
+            FontMustExist = true
+        };
+
+        if (dialog.ShowDialog(this) != DialogResult.OK)
+        {
+            return;
+        }
+
+        currentFont = dialog.Font;
+        UpdateFontPreview(previewLabel, currentFont);
+
+        // Persist the new font immediately, as requested.
+        if (_settings is not null)
+        {
+            if (isUiFont)
+            {
+                _settings.UiFont = currentFont;
+            }
+            else
+            {
+                _settings.OutputFont = currentFont;
+            }
         }
     }
 

@@ -284,7 +284,8 @@ public partial class DeployRuntimeView : UserControl
         var batchTask = commandBatch.StartBatchAsync(
             windowTitle: "Copy .NET Desktop runtime assemblies",
             showCommandBatchWindow: true,
-            dryRun: dryRun);
+            dryRun: dryRun,
+            outputFont: _settings?.OutputFont);
 
         var processTask = Task.Run(async () =>
         {

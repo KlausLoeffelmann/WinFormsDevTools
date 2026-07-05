@@ -11,9 +11,14 @@ public partial class CommandBatchForm : Form
     private readonly TaskCompletionSource _shownCompletion =
         new(TaskCreationOptions.RunContinuationsAsynchronously);
 
-    public CommandBatchForm(string? windowTitle)
+    public CommandBatchForm(string? windowTitle, Font? consoleFont = null)
     {
         InitializeComponent();
+
+        if (consoleFont is not null)
+        {
+            _console.Font = consoleFont;
+        }
 
         windowTitle ??= $"Command Batch";
 
@@ -54,7 +59,7 @@ public partial class CommandBatchForm : Form
     public async Task WriteErrorAsync(string message)
     {
         await _shownCompletion.Task;
-        await _console.WriteAsync(message, textColor: Color.DarkRed);
+        await _console.WriteAsync(message, textColor: Color.Red);
     }
 
     public async Task WriteLineAsync(string message)
@@ -72,7 +77,7 @@ public partial class CommandBatchForm : Form
     public async Task WriteLineErrorAsync(string message)
     {
         await _shownCompletion.Task;
-        await _console.WriteLineAsync(message, textColor: Color.DarkRed);
+        await _console.WriteLineAsync(message, textColor: Color.Red);
     }
 
     public Task StartBatchAsync()

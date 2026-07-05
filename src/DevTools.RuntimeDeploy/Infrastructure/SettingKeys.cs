@@ -22,4 +22,14 @@ internal static class SettingKeys
     ///  When disabled, bounds are neither saved on exit nor restored on launch.
     /// </summary>
     public const string SaveWindowPositions = "MainForm.SaveWindowPositions";
+
+    /// <summary>
+    ///  The font used for the application UI (forms, menu strip, status strip).
+    /// </summary>
+    public const string UiFont = "Fonts.Ui";
+
+    /// <summary>
+    ///  The font used for the command-batch output (console) window.
+    /// </summary>
+    public const string OutputFont = "Fonts.Output";
 }

@@ -1,6 +1,10 @@
 ---
 name: warp-api-decision-guide
+
 description: Brief decision guide that maps a WinForms development task to the correct WARP-Toolkit NuGet package(s) and entry-point types. Use this skill as the FIRST step when the user asks "how do I do X with WARP?" or "which WARP package should I use for X?" before diving into a topic-specific WARP skill.
+
+metadata: Latest NuGet version for required packages "0.9.323-preview.gb01532b307"
+
 ---
 
 # WARP-Toolkit API Decision Guide
@@ -14,9 +18,6 @@ WARP skill.
 For deep context on each package see
 `src/docs/GettingStarted/API-Overview.md` and the per-package files under
 `src/docs/reference/` in this repo.
-
-The current preview version of every WARP NuGet is:
-`0.9.7-preview.g32895b766b`.
 
 ## How to use this skill
 
@@ -48,6 +49,7 @@ The current preview version of every WARP NuGet is:
 | Add AI chat to a form (designer-droppable, provider-agnostic) | Drag an `AIChatServiceBase`-derived component from `WarpToolkit.WinForms.AI` onto the form. The full chat UI is `ChatView` from `WarpToolkit.WinForms.Chat` | `WarpToolkit.WinForms.AI.md`, `WarpToolkit.WinForms.Chat.md` |
 | Build prompts / parse streamed responses / declare `[AITemplate]` request types | `WarpToolkit.Desktop.AI` (`PromptBuilder`, `ReturnTokenParser`) and `WarpToolkit.Microsoft.Extensions.AI` (`AIChatClient<T>`, `AIChatHistory`, `[AITemplate]`, `[AITemplateSegment]`, `[AIGenerated]`) | `WarpToolkit.Desktop.AI.md`, `WarpToolkit.Microsoft.Extensions.AI.md` |
 | Inspect / rewrite C# source with Roslyn, preserving comments | `WarpToolkit.Desktop.Roslyn` (`DocumentExtensions`, `MemberDeclarationExtensions`, `ReplaceCommentsByGuids` / `ReplaceGuidsByComments`) | `WarpToolkit.Desktop.Roslyn.md` |
+| Port / migrate an entire VB.NET project (or every VB project in a `.sln`) to C# | **Don't hand-translate.** Generate a small Roslyn CLI that drives `WarpToolkit.Desktop.Roslyn` (`VisualBasicConverter.ConvertText` + the C#→C# WithEvents collapse pass) over the `.vbproj`/`.sln` — the library does the bulk algorithmically. Hand-fix only `// TODO(vb-convert):` markers (`ConversionResult.HasManualWork` / `Manual` diagnostics). | `warptoolkit-vb-to-csharp-converter` skill |
 | Show a Roslyn-classified source document in a control | `RoslynDocumentView` from `WarpToolkit.WinForms.Roslyn` | `WarpToolkit.WinForms.Roslyn.md` |
 | Add a designer-aware logger to the app | `WarpToolkit.Microsoft.Extensions` (`AddTimeStampedDebug`, `AddWinFormsFileLogger`, `UseWinFormsLogging`) | `WarpToolkit.Microsoft.Extensions.md` |
 | A sub-millisecond timer for animations or media | `HighPrecisionTimer` from `WarpToolkit.Windows.Interop.PrecisionTimer` | `WarpToolkit.Windows.Interop.md` |
@@ -85,6 +87,13 @@ under `src/CopilotSkills/`):
   (GitHub auth/client helpers, local Git repository inspection, branch metadata,
   and safe branch composition through temporary worktrees).
 
+- **`warptoolkit-vb-to-csharp-converter`** — building a `vbconvert`-style CLI on
+  `WarpToolkit.Desktop.Roslyn` that ports a whole VB project to C#: the
+  `ConvertText` / `ConversionOptions` API, the project-wide WithEvents and
+  constructor collectors, the C#→C# WithEvents collapse post-pass, and
+  MSBuildWorkspace wiring. Consult this whenever a VB→C# migration is indicated —
+  the library does the algorithmic bulk so the model never hand-translates.
+
 ## Anti-patterns to avoid
 
 - **Do not** roll your own `Application.Run(new MainForm())` startup when an
@@ -105,3 +114,9 @@ under `src/CopilotSkills/`):
 
 - **Do not** create a `Program.cs` for VB. WARP follows the VB Application
   Framework conventions instead.
+
+- **Do not** hand-translate a VB→C# migration file-by-file in chat — it burns
+  millions of tokens and drifts in style. Generate a CLI on the WARP-Roslyn
+  converter (`WarpToolkit.Desktop.Roslyn`) that does the algorithmic bulk, then
+  review only the `// TODO(vb-convert):` markers / `Manual` diagnostics. See the
+  `warptoolkit-vb-to-csharp-converter` skill.

@@ -17,6 +17,7 @@ public partial class MainForm : Form, IServiceProvider
     private readonly IUserSettingsService? _userSettings;
     private readonly IWinFormsAppExceptionService? _exceptionService;
     private readonly RuntimeDeployStatusService? _statusService;
+    private readonly RuntimeDeploySettingsService? _settingsService;
     private readonly DeployRuntimeView? _deployRuntimeView;
     private readonly OverView? _overView;
     private bool _allowClose;
@@ -33,6 +34,7 @@ public partial class MainForm : Form, IServiceProvider
         IUserSettingsService userSettings,
         IWinFormsAppExceptionService exceptionService,
         RuntimeDeployStatusService statusService,
+        RuntimeDeploySettingsService settingsService,
         OverView overView,
         DeployRuntimeView deployRuntimeView) : this()
     {
@@ -43,6 +45,7 @@ public partial class MainForm : Form, IServiceProvider
         _userSettings = userSettings;
         _exceptionService = exceptionService;
         _statusService = statusService;
+        _settingsService = settingsService;
         _overView = overView;
         _deployRuntimeView = deployRuntimeView;
 
@@ -68,10 +71,31 @@ public partial class MainForm : Form, IServiceProvider
     {
         base.OnLoad(e);
 
+        // Assign the configured fonts to the Form (and the non-ambient MenuStrip /
+        // StatusStrip) BEFORE restoring the saved bounds, so the explicit bounds win
+        // over any auto-scale resize triggered by the font change.
+        ApplyFontsFromSettings();
         LoadSaveWindowPositionsSetting();
         RestoreSavedBounds();
         InitializeSdkTargets();
         InitializeTabs();
+    }
+
+    private void ApplyFontsFromSettings()
+    {
+        if (_settingsService is null)
+        {
+            return;
+        }
+
+        Font uiFont = _settingsService.UiFont;
+
+        Font = uiFont;
+
+        // MenuStrip and StatusStrip do not inherit the Form's ambient Font, so they
+        // must be assigned explicitly.
+        _menuStrip.Font = uiFont;
+        _statusStrip.Font = uiFont;
     }
 
     private async Task UpdateStatusAsync(string statusText)
@@ -285,7 +309,13 @@ public partial class MainForm : Form, IServiceProvider
         }
 
         using OptionsForm optionsForm = _serviceProvider.GetRequiredService<OptionsForm>();
-        if (optionsForm.ShowDialog(this) == DialogResult.OK)
+        DialogResult result = optionsForm.ShowDialog(this);
+
+        // Fonts are persisted immediately when changed in the dialog, so re-apply
+        // them regardless of how the dialog was dismissed.
+        ApplyFontsFromSettings();
+
+        if (result == DialogResult.OK)
         {
             _overView?.RefreshFromSettings();
             _deployRuntimeView?.RefreshFromSettings();
