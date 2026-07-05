@@ -33,6 +33,7 @@ internal static class Program
             .AddScoped<RuntimeDeploySettingsService>()
             .AddScoped<RuntimeDeployStatusService>()
             .AddScoped<OverView>()
+            .AddTransient<AssetSelectionControl>()
             .AddScoped<DeployRuntimeView>()
             .AddTransient<OptionsForm>();
 

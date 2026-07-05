@@ -8,85 +8,30 @@ namespace DevTools.RuntimeDeploy.Views;
 
 public partial class DeployRuntimeView : UserControl
 {
-    private readonly Control[] _controlsForEnablingHandling;
-    private BuildArtefactsScanner? _gitHubRepoManager;
+    private readonly AssetSelectionControl? _assetSelectionControl;
     private RuntimeDeploySettingsService? _settings;
     private RuntimeDeployStatusService? _statusService;
     private ILogger<DeployRuntimeView>? _logger;
 
-    private const string ACCESSIBILITY = "Accessibility";
-    private const string MICROSOFT_VISUALBASIC = "Microsoft.VisualBasic";
-    private const string MICROSOFT_VISUALBASIC_FACADE = "Microsoft.VisualBasic.Facade";
-    private const string MICROSOFT_VISUALBASIC_FORMS = "Microsoft.VisualBasic.Forms";
-    private const string MICROSOFT_PRIVATE_WINFORMS = "Microsoft.Private.Winforms";
-    private const string SYSTEM_DESIGN_FACADE = "System.Design.Facade";
-    private const string SYSTEM_DRAWING_COMMON = "System.Drawing.Common";
-    private const string SYSTEM_DRAWING_DESIGN_FACADE = "System.Drawing.Design.Facade";
-    private const string SYSTEM_DRAWING_FACADE = "System.Drawing.Facade";
-    private const string SYSTEM_PRIVATE_WINDOWS_CORE = "System.Private.Windows.Core";
-    private const string SYSTEM_PRIVATE_WINDOWS_GDIPLUS = "System.Private.Windows.GdiPlus";
-    private const string SYSTEM_WINDOWS_FORMS = "System.Windows.Forms";
-    private const string SYSTEM_WINDOWS_FORMS_ANALYZERS = "System.Windows.Forms.Analyzers";
-    private const string SYSTEM_WINDOWS_FORMS_ANALYZERS_CSHARP = "System.Windows.Forms.Analyzers.CSharp";
-    private const string SYSTEM_WINDOWS_FORMS_ANALYZERS_VISUALBASIC = "System.Windows.Forms.Analyzers.VisualBasic";
-    private const string SYSTEM_WINDOWS_FORMS_ANALYZERS_CODEFIXES_CSHARP = "System.Windows.Forms.Analyzers.CodeFixes.CSharp";
-    private const string SYSTEM_WINDOWS_FORMS_ANALYZERS_CODEFIXES_VISUALBASIC = "System.Windows.Forms.Analyzers.CodeFixes.VisualBasic";
-    private const string SYSTEM_WINDOWS_FORMS_DESIGN = "System.Windows.Forms.Design";
-    private const string SYSTEM_WINDOWS_FORMS_PRIMITIVES = "System.Windows.Forms.Primitives";
-    private const string SYSTEM_WINDOWS_FORMS_PRIVATESOURCEGENERATORS = "System.Windows.Forms.PrivateSourceGenerators";
-
     private const string VisualBasicSubfolderPath = "vb";
     private const string CSharpSubfolderPath = "cs";
-
-    private readonly string[] s_preCheckItems =
-    [
-        ACCESSIBILITY,
-        MICROSOFT_VISUALBASIC,
-        MICROSOFT_VISUALBASIC_FACADE,
-        MICROSOFT_VISUALBASIC_FORMS,
-        MICROSOFT_PRIVATE_WINFORMS,
-        SYSTEM_DESIGN_FACADE,
-        SYSTEM_DRAWING_COMMON,
-        SYSTEM_DRAWING_DESIGN_FACADE,
-        SYSTEM_DRAWING_FACADE,
-        SYSTEM_PRIVATE_WINDOWS_CORE,
-        SYSTEM_PRIVATE_WINDOWS_GDIPLUS,
-        SYSTEM_WINDOWS_FORMS,
-        SYSTEM_WINDOWS_FORMS_ANALYZERS,
-        SYSTEM_WINDOWS_FORMS_ANALYZERS_CSHARP,
-        SYSTEM_WINDOWS_FORMS_ANALYZERS_VISUALBASIC,
-        SYSTEM_WINDOWS_FORMS_ANALYZERS_CODEFIXES_CSHARP,
-        SYSTEM_WINDOWS_FORMS_ANALYZERS_CODEFIXES_VISUALBASIC,
-        SYSTEM_WINDOWS_FORMS_DESIGN,
-        SYSTEM_WINDOWS_FORMS_PRIMITIVES,
-        SYSTEM_WINDOWS_FORMS_PRIVATESOURCEGENERATORS
-    ];
 
     public DeployRuntimeView()
     {
         InitializeComponent();
-
-        _pathToArtefactsRepoTextBox.TextChanged +=
-            (sender, e) => DeployAvailableRuntimes();
-
-        _availableDesktopRuntimesComboBox.SelectedIndexChanged +=
-            (sender, e) => DeployAvailableAssemblies();
-
-        _controlsForEnablingHandling =
-        [
-            _availableDesktopRuntimesComboBox,
-            _checkForRespectiveRefAssembliesCheckBox,
-            _availableAssembliesListView,
-            _replaceTargetSDKVersionComboBox,
-            _copyCommandButton
-        ];
     }
 
     public DeployRuntimeView(
+        AssetSelectionControl assetSelectionControl,
         RuntimeDeploySettingsService settings,
         RuntimeDeployStatusService statusService,
         ILogger<DeployRuntimeView> logger) : this()
     {
+        _assetSelectionControl = assetSelectionControl;
+        _assetSelectionControl.Dock = DockStyle.Fill;
+        _assetSelectionControl.AvailabilityChanged += (sender, e) => UpdateCommandControlsEnabled();
+        _rootLayout.Controls.Add(_assetSelectionControl, 0, 0);
+
         _settings = settings;
         _statusService = statusService;
         _logger = logger;
@@ -103,123 +48,24 @@ public partial class DeployRuntimeView : UserControl
             _replaceTargetSDKVersionComboBox.SelectedIndex = _replaceTargetSDKVersionComboBox.Items.Count - 1;
         }
 
-        SetupControls_DeployRuntimeBinaries_Tab();
+        UpdateCommandControlsEnabled();
     }
 
     internal void RefreshFromSettings()
+        => _assetSelectionControl?.RefreshFromSettings();
+
+    private void UpdateCommandControlsEnabled()
     {
-        string sourceArtefactsFolder = _settings?.SourceArtefactsFolder ?? string.Empty;
-        if (!string.Equals(_pathToArtefactsRepoTextBox.Text, sourceArtefactsFolder, StringComparison.OrdinalIgnoreCase))
-        {
-            _pathToArtefactsRepoTextBox.Text = sourceArtefactsFolder;
-            return;
-        }
-
-        DeployAvailableAssemblies();
-    }
-
-    private void SetupControls_DeployRuntimeBinaries_Tab()
-    {
-        _pathToArtefactsRepoTextBox.Text = _settings?.SourceArtefactsFolder ?? string.Empty;
-    }
-
-    private void HandleControlEnabling_DeployRuntimeBinariesTab(bool enable, params Control[] excludeControlsForHandling)
-    {
-        foreach (var control in _controlsForEnablingHandling)
-        {
-            if (!excludeControlsForHandling.Contains(control))
-            {
-                control.Enabled = enable;
-            }
-        }
-    }
-
-    private void DeployAvailableRuntimes()
-    {
-        if (string.IsNullOrWhiteSpace(_pathToArtefactsRepoTextBox.Text))
-        {
-            _availableDesktopRuntimesComboBox.Items.Clear();
-            _availableAssembliesListView.Items.Clear();
-            HandleControlEnabling_DeployRuntimeBinariesTab(false);
-        }
-        else
-        {
-            try
-            {
-                _availableDesktopRuntimesComboBox.Items.Clear();
-                _availableAssembliesListView.Items.Clear();
-                _gitHubRepoManager = new(_pathToArtefactsRepoTextBox.Text);
-
-                var targets = _gitHubRepoManager
-                    .GetAvailableTargets();
-
-                _availableDesktopRuntimesComboBox.Items.AddRange(targets);
-                if (targets.Length > 0)
-                {
-                    _availableDesktopRuntimesComboBox.SelectedIndex = targets.Length - 1;
-                }
-
-                HandleControlEnabling_DeployRuntimeBinariesTab(true);
-            }
-            catch (Exception ex)
-            {
-                _logger?.LogError(ex, "Could not enumerate RuntimeDeploy source targets.");
-                _statusService?.ReportException(ex);
-                HandleControlEnabling_DeployRuntimeBinariesTab(false, _availableDesktopRuntimesComboBox);
-            }
-        }
-    }
-
-    private void DeployAvailableAssemblies()
-    {
-        if (_availableDesktopRuntimesComboBox.SelectedItem is null ||
-            _gitHubRepoManager is null)
-        {
-            return;
-        }
-
-        HashSet<string> excludedAssemblyNames = _settings?.GetExcludedAssemblyNames() ?? [];
-
-        var assemblies = _gitHubRepoManager.GetWinFormsRuntimeAssemblies(
-            (TargetFrameworkSourceItem)_availableDesktopRuntimesComboBox.SelectedItem,
-            _checkForRespectiveRefAssembliesCheckBox.Checked)
-            .Where(assembly => !excludedAssemblyNames.Contains(assembly.Name))
-            .ToArray();
-
-        _availableAssembliesListView.ConfigureDetailsView(checkBoxes: true);
-
-        _availableAssembliesListView.AddItemsWithColumnHeadersFromType(
-            assemblies,
-            addSourceDataToTag: true,
-            (nameof(DesktopAssemblyInfo.Name), "Assembly name"),
-            (nameof(DesktopAssemblyInfo.Path), "Path"));
-
-        _availableAssembliesListView.CheckItemsInFirstColumn(s_preCheckItems);
-    }
-
-    private void PickPathToArtefactsButton_Click(object sender, EventArgs e)
-    {
-        FolderBrowserDialog browserDialog = new()
-        {
-            Description = "Pick the path to the WinForms artifacts folder:"
-        };
-
-        DialogResult dialogResult = browserDialog.ShowDialog();
-        if (dialogResult == DialogResult.OK)
-        {
-            _pathToArtefactsRepoTextBox.Text = browserDialog.SelectedPath;
-            if (_settings is not null)
-            {
-                _settings.SourceArtefactsFolder = browserDialog.SelectedPath;
-            }
-        }
+        bool enable = _assetSelectionControl?.HasAssemblies ?? false;
+        _replaceTargetSDKVersionComboBox.Enabled = enable;
+        _copyCommandButton.Enabled = enable;
     }
 
     private async void CopyCommandButton_Click(object sender, EventArgs e)
     {
         try
         {
-        if (_availableAssembliesListView.Items.Count == 0)
+        if (_assetSelectionControl is null || !_assetSelectionControl.HasAssemblies)
         {
             // Show a message box if there are no items in the list view.
             MessageBox.Show(
@@ -231,15 +77,9 @@ public partial class DeployRuntimeView : UserControl
             return;
         }
 
-        // Find the first item in _availableAssembliesListView.Items, whose Tag has a list
-        // of RefAssemblies with at least one item:
-        DesktopAssemblyInfo? firstItem = (
-                from ListViewItem item in _availableAssembliesListView.Items
-                let assemblyInfo = (DesktopAssemblyInfo)item.Tag!
-                where assemblyInfo.RefAssemblyFiles is not null
-                    && assemblyInfo.RefAssemblyFiles.Length > 0
-                select assemblyInfo)
-            .FirstOrDefault();
+        // Find the first assembly (checked or not) whose Tag has a list of
+        // RefAssemblies with at least one item.
+        DesktopAssemblyInfo? firstItem = _assetSelectionControl.FindFirstWithRefAssemblies();
 
         if (firstItem is null)
         {
@@ -271,12 +111,7 @@ public partial class DeployRuntimeView : UserControl
         // locals on the UI thread. After this point Task.Run no longer touches any
         // control directly; UI writes happen through Control.InvokeAsync.
         bool dryRun = _dryRunCheckBox.Checked;
-        DesktopAssemblyInfo[] checkedAssemblies =
-        [
-            ..from ListViewItem item in _availableAssembliesListView.Items
-              where item.Checked
-              select (DesktopAssemblyInfo)item.Tag!
-        ];
+        DesktopAssemblyInfo[] checkedAssemblies = _assetSelectionControl.GetCheckedAssemblies();
 
         _copyCommandButton.Enabled = false;
         CommandBatch commandBatch = new();
