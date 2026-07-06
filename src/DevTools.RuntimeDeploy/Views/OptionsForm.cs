@@ -12,8 +12,8 @@ public partial class OptionsForm : Form
     private ILogger<OptionsForm>? _logger;
     private BuildArtefactsScanner? _scanner;
     private bool _assembliesLoaded;
-    private Font _uiFont = RuntimeDeploySettingsService.DefaultUiFont;
-    private Font _outputFont = RuntimeDeploySettingsService.DefaultOutputFont;
+    private Font _uiFont = RuntimeDeploySettingsService.CreateDefaultUiFont();
+    private Font _outputFont = RuntimeDeploySettingsService.CreateDefaultOutputFont();
 
     public OptionsForm()
     {

@@ -98,12 +98,6 @@ public partial class MainForm : Form, IServiceProvider
         _statusStrip.Font = uiFont;
     }
 
-    private async Task UpdateStatusAsync(string statusText)
-    {
-        _statusService?.ReportInfo(statusText);
-        await Task.Delay(1000);
-    }
-
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
         base.OnFormClosing(e);
@@ -205,6 +199,7 @@ public partial class MainForm : Form, IServiceProvider
         }
 
         Rectangle workingArea = Screen.FromControl(this).WorkingArea;
+
         Rectangle defaultBounds = new(
             workingArea.Left + ((workingArea.Width - Width) / 2),
             workingArea.Top + ((workingArea.Height - Height) / 2),
@@ -219,6 +214,7 @@ public partial class MainForm : Form, IServiceProvider
         }
 
         Rectangle bounds = _userSettings.Get(SettingKeys.MainFormBounds, defaultBounds);
+
         if (!Screen.AllScreens.Any(screen => screen.WorkingArea.IntersectsWith(bounds)))
         {
             bounds = defaultBounds;
