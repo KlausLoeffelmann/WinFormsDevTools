@@ -77,7 +77,7 @@ public partial class AssetSelectionControl : UserControl
     {
         InitializeComponent();
 
-        _pathToArtefactsRepoTextBox.TextChanged +=
+        _pathToArtefactsRepo.TextChanged +=
             (sender, e) => DeployAvailableRuntimes();
 
         _availableDesktopRuntimesComboBox.SelectedIndexChanged +=
@@ -104,7 +104,7 @@ public partial class AssetSelectionControl : UserControl
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-        _pathToArtefactsRepoTextBox.Text = _settings?.SourceArtefactsFolder ?? string.Empty;
+        _pathToArtefactsRepo.Text = _settings?.SourceArtefactsFolder ?? string.Empty;
     }
 
     /// <summary>
@@ -114,9 +114,9 @@ public partial class AssetSelectionControl : UserControl
     public void RefreshFromSettings()
     {
         string sourceArtefactsFolder = _settings?.SourceArtefactsFolder ?? string.Empty;
-        if (!string.Equals(_pathToArtefactsRepoTextBox.Text, sourceArtefactsFolder, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(_pathToArtefactsRepo.Text, sourceArtefactsFolder, StringComparison.OrdinalIgnoreCase))
         {
-            _pathToArtefactsRepoTextBox.Text = sourceArtefactsFolder;
+            _pathToArtefactsRepo.Text = sourceArtefactsFolder;
             return;
         }
 
@@ -165,7 +165,7 @@ public partial class AssetSelectionControl : UserControl
 
     private void DeployAvailableRuntimes()
     {
-        if (string.IsNullOrWhiteSpace(_pathToArtefactsRepoTextBox.Text))
+        if (string.IsNullOrWhiteSpace(_pathToArtefactsRepo.Text))
         {
             _availableDesktopRuntimesComboBox.Items.Clear();
             _availableAssembliesListView.Items.Clear();
@@ -178,7 +178,7 @@ public partial class AssetSelectionControl : UserControl
             {
                 _availableDesktopRuntimesComboBox.Items.Clear();
                 _availableAssembliesListView.Items.Clear();
-                _gitHubRepoManager = new(_pathToArtefactsRepoTextBox.Text);
+                _gitHubRepoManager = new(_pathToArtefactsRepo.Text);
 
                 var targets = _gitHubRepoManager
                     .GetAvailableTargets();
@@ -243,7 +243,7 @@ public partial class AssetSelectionControl : UserControl
         DialogResult dialogResult = browserDialog.ShowDialog();
         if (dialogResult == DialogResult.OK)
         {
-            _pathToArtefactsRepoTextBox.Text = browserDialog.SelectedPath;
+            _pathToArtefactsRepo.Text = browserDialog.SelectedPath;
             if (_settings is not null)
             {
                 _settings.SourceArtefactsFolder = browserDialog.SelectedPath;
