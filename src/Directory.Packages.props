@@ -3,7 +3,7 @@
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 
 	<!-- Define the version as a property -->
-	<WarpToolkitVersion>0.9.185-preview.g76df2ef5e7</WarpToolkitVersion>
+	<WarpToolkitVersion>0.9.323-preview.gb01532b307</WarpToolkitVersion>
   </PropertyGroup>
   
   <ItemGroup>

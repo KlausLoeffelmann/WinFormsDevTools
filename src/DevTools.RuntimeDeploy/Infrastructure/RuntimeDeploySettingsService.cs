@@ -42,11 +42,14 @@ public sealed class RuntimeDeploySettingsService(IUserSettingsService userSettin
 
     public void SaveExcludedAssemblyNames(IEnumerable<string> assemblyNames)
     {
+        // Names here are bare assembly directory names (e.g. "System.Windows.Forms.Design"),
+        // not file paths, so Path.GetFileNameWithoutExtension must not be used: it would
+        // misinterpret the trailing ".Design" segment as a file extension and strip it.
         string[] normalizedNames =
         [
             .. assemblyNames
                 .Where(name => !string.IsNullOrWhiteSpace(name))
-                .Select(name => Path.GetFileNameWithoutExtension(name.Trim()))
+                .Select(name => name.Trim())
                 .Distinct(StringComparer.OrdinalIgnoreCase)
                 .Order(StringComparer.OrdinalIgnoreCase)
         ];
