@@ -13,9 +13,6 @@ public partial class DeployRuntimeView : UserControl
     private RuntimeDeployStatusService? _statusService;
     private ILogger<DeployRuntimeView>? _logger;
 
-    private const string VisualBasicSubfolderPath = "vb";
-    private const string CSharpSubfolderPath = "cs";
-
     public DeployRuntimeView()
     {
         InitializeComponent();
@@ -30,11 +27,20 @@ public partial class DeployRuntimeView : UserControl
         _assetSelectionControl = assetSelectionControl;
         _assetSelectionControl.Dock = DockStyle.Fill;
         _assetSelectionControl.AvailabilityChanged += (sender, e) => UpdateCommandControlsEnabled();
+
+        // Source/destination date comparison (with red/green + bold coloring
+        // for assemblies that will/won't be replaced) is only relevant for
+        // the actual copy dialog, not for the "Create Runtime patcher..."
+        // package-creation dialog, which hosts the same shared control.
+        _assetSelectionControl.ShowDeploymentDateComparison = true;
+
         _rootLayout.Controls.Add(_assetSelectionControl, 0, 0);
 
         _settings = settings;
         _statusService = statusService;
         _logger = logger;
+
+        _replaceTargetSDKVersionComboBox.SelectedIndexChanged += (sender, e) => UpdateDeploymentComparisonResolver();
     }
 
     protected override void OnLoad(EventArgs e)
@@ -48,6 +54,7 @@ public partial class DeployRuntimeView : UserControl
             _replaceTargetSDKVersionComboBox.SelectedIndex = _replaceTargetSDKVersionComboBox.Items.Count - 1;
         }
 
+        UpdateDeploymentComparisonResolver();
         UpdateCommandControlsEnabled();
     }
 
@@ -59,6 +66,30 @@ public partial class DeployRuntimeView : UserControl
         bool enable = _assetSelectionControl?.HasAssemblies ?? false;
         _replaceTargetSDKVersionComboBox.Enabled = enable;
         _copyCommandButton.Enabled = enable;
+    }
+
+    /// <summary>
+    ///  Recomputes the source/destination file resolver used by the asset
+    ///  list's date comparison whenever the destination TFM selection
+    ///  changes (or on initial load).
+    /// </summary>
+    private void UpdateDeploymentComparisonResolver()
+    {
+        if (_assetSelectionControl is null)
+        {
+            return;
+        }
+
+        if (_replaceTargetSDKVersionComboBox.SelectedItem is not TargetFrameworkTargetItem targetFrameworkTarget)
+        {
+            _assetSelectionControl.SetDeploymentComparisonResolver(null);
+            return;
+        }
+
+        AssemblyDeploymentTargetResolver.TargetPaths targetPaths = AssemblyDeploymentTargetResolver.GetTargetPaths(targetFrameworkTarget);
+
+        _assetSelectionControl.SetDeploymentComparisonResolver(
+            assemblyInfo => AssemblyDeploymentTargetResolver.ResolveComparisonFiles(assemblyInfo, targetPaths));
     }
 
     private async void CopyCommandButton_Click(object sender, EventArgs e)
@@ -120,20 +151,20 @@ public partial class DeployRuntimeView : UserControl
             windowTitle: "Copy .NET Desktop runtime assemblies",
             showCommandBatchWindow: true,
             dryRun: dryRun,
-            outputFont: _settings?.OutputFont);
+            outputFont: _settings?.OutputFont,
+            settingsService: _settings);
 
         var processTask = Task.Run(async () =>
         {
-            DirectoryInfo targetSharedAssemblyBasePath = new($"{FrameworkInfo.NetDesktopLibsDirectory}\\{targetFrameworkTarget.Name}");
-            DirectoryInfo targetRefAssemblyBasePath = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\" + $"{targetFrameworkTarget.Name}");
-            DirectoryInfo targetRefAssemblyPath = new($"{targetRefAssemblyBasePath}\\ref\\net{FrameworkVersionFormatter.ToMajorMinor(targetFrameworkTarget.Name)}");
+            AssemblyDeploymentTargetResolver.TargetPaths targetPaths = AssemblyDeploymentTargetResolver.GetTargetPaths(targetFrameworkTarget);
+            DirectoryInfo targetSharedAssemblyBasePath = targetPaths.TargetSharedAssemblyBasePath;
+            DirectoryInfo targetRefAssemblyBasePath = targetPaths.TargetRefAssemblyBasePath;
+            DirectoryInfo targetRefAssemblyPath = targetPaths.TargetRefAssemblyPath;
             DirectoryInfo packageAssembliesManifestPath = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\{targetFrameworkTarget.Name}\\data");
 
-            // Create a new DirectoryInfo for the analyzers directory, which is the same as the ref directory
-            // but with the last part of the path changed to "analyzers".
-            DirectoryInfo analyzersDir = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\{targetFrameworkTarget.Name}\\analyzers\\dotnet");
-            DirectoryInfo cSharpAnalyzersDir = new($"{analyzersDir.FullName}\\{CSharpSubfolderPath}");
-            DirectoryInfo visualBasicAnalyzersDir = new($"{analyzersDir.FullName}\\{VisualBasicSubfolderPath}");
+            DirectoryInfo analyzersDir = targetPaths.AnalyzersDir;
+            DirectoryInfo cSharpAnalyzersDir = targetPaths.CSharpAnalyzersDir;
+            DirectoryInfo visualBasicAnalyzersDir = targetPaths.VisualBasicAnalyzersDir;
 
             // Load the manifest once for the whole batch and save once at the
             // end (the old code re-loaded and re-saved per assembly).
@@ -185,49 +216,31 @@ public partial class DeployRuntimeView : UserControl
                     string fileName = Path.GetFileNameWithoutExtension(fileItem.Name);
                     string currentFileType = AssemblyFileTypeClassifier.Classify(fileName);
 
-                    // If the file starts with "System.Windows.Forms.Analyzers", copy it to the analyzers directory.
-                    // But. If the file ends with "VisualBasic.dll", we need to copy it in the SubFolder "\\vb", and
-                    // if it ends with "CSharp.dll", we need to copy it in the SubFolder "\\cs".
-                    if (!fileItem.Name.StartsWith("System.Windows.Forms.Analyzers"))
+                    // Uses the same resolution logic as the "will be replaced" date
+                    // comparison shown in the asset list, so the two never drift apart.
+                    targetDir = AssemblyDeploymentTargetResolver.GetAssemblyTargetDirectory(fileItem.Name, targetPaths);
+
+                    if (fileItem.Name.StartsWith("System.Windows.Forms.Analyzers"))
                     {
-                        targetDir = targetSharedAssemblyBasePath;
-                    }
-                    else
-                    {
-                        if (fileItem.Name.EndsWith("VisualBasic.dll"))
+                        if (targetDir == visualBasicAnalyzersDir && !vbFirst)
                         {
-                            if (!vbFirst)
+                            vbFirst = true;
+
+                            // Create the vb subfolder in the analyzers directory if it does not exist:
+                            if (!Directory.Exists(visualBasicAnalyzersDir.FullName))
                             {
-                                vbFirst = true;
-
-                                // Create the vb subfolder in the analyzers directory if it does not exist:
-                                if (!Directory.Exists(visualBasicAnalyzersDir.FullName))
-                                {
-                                    Directory.CreateDirectory(visualBasicAnalyzersDir.FullName);
-                                }
+                                Directory.CreateDirectory(visualBasicAnalyzersDir.FullName);
                             }
-
-                            targetDir = visualBasicAnalyzersDir;
-
                         }
-                        else if (fileItem.Name.EndsWith("CSharp.dll"))
+                        else if (targetDir == cSharpAnalyzersDir && !csFirst)
                         {
-                            if (!csFirst)
+                            csFirst = true;
+
+                            // Create the subfolder "cs" in the analyzers directory if it does not exist:
+                            if (!Directory.Exists($"{cSharpAnalyzersDir}"))
                             {
-                                csFirst = true;
-
-                                // Create the subfolder "cs" in the analyzers directory if it does not exist:
-                                if (!Directory.Exists($"{cSharpAnalyzersDir}"))
-                                {
-                                    Directory.CreateDirectory(cSharpAnalyzersDir.FullName);
-                                }
+                                Directory.CreateDirectory(cSharpAnalyzersDir.FullName);
                             }
-
-                            targetDir = cSharpAnalyzersDir;
-                        }
-                        else
-                        {
-                            targetDir = analyzersDir;
                         }
 
                         // Update the AssemblyInfo.xml file with the assembly information.

@@ -116,6 +116,41 @@ public sealed class RuntimeDeploySettingsService(IUserSettingsService userSettin
         set => SetFont(SettingKeys.OutputFont, value);
     }
 
+    /// <summary>
+    ///  Whether window positions/sizes are persisted across sessions. Shared by
+    ///  the main window and the command-batch console window.
+    /// </summary>
+    public bool SaveWindowPositions
+    {
+        get => userSettings.Get(SettingKeys.SaveWindowPositions, true);
+        set
+        {
+            userSettings.Set(SettingKeys.SaveWindowPositions, value);
+            userSettings.Flush();
+        }
+    }
+
+    /// <summary>
+    ///  The last saved bounds of the command-batch ("console") output window,
+    ///  or <see langword="null"/> if none have been saved yet.
+    /// </summary>
+    public Rectangle? CommandBatchFormBounds
+    {
+        get => userSettings.Contains(SettingKeys.CommandBatchFormBounds)
+            ? userSettings.Get(SettingKeys.CommandBatchFormBounds, Rectangle.Empty)
+            : null;
+        set
+        {
+            if (value is not Rectangle bounds)
+            {
+                return;
+            }
+
+            userSettings.Set(SettingKeys.CommandBatchFormBounds, bounds);
+            userSettings.Flush();
+        }
+    }
+
     private Font GetFont(string key, Func<Font> createFallback)
     {
         string serialized = userSettings.Get(key, string.Empty);

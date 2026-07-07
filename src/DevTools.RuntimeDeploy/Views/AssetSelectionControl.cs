@@ -1,6 +1,7 @@
 using DevTools.RuntimeDeploy.Engine.Domain;
 using DevTools.RuntimeDeploy.Infrastructure;
 using Microsoft.Extensions.Logging;
+using System.ComponentModel;
 using static DevTools.RuntimeDeploy.Engine.Domain.BuildArtefactsScanner;
 
 namespace DevTools.RuntimeDeploy.Views;
@@ -20,6 +21,9 @@ public partial class AssetSelectionControl : UserControl
     private RuntimeDeploySettingsService? _settings;
     private RuntimeDeployStatusService? _statusService;
     private ILogger<AssetSelectionControl>? _logger;
+
+    private Func<DesktopAssemblyInfo, (FileInfo? SourceFile, FileInfo? DestinationFile)>? _deploymentComparisonResolver;
+    private Font? _deploymentComparisonBoldFont;
 
     private const string ACCESSIBILITY = "Accessibility";
     private const string MICROSOFT_VISUALBASIC = "Microsoft.VisualBasic";
@@ -73,6 +77,17 @@ public partial class AssetSelectionControl : UserControl
     /// </summary>
     public event EventHandler? AvailabilityChanged;
 
+    /// <summary>
+    ///  When <see langword="true"/> (set only by the actual copy dialog -
+    ///  <see cref="DeployRuntimeView"/> - not the package-creation dialog or
+    ///  the Options tools list, which host the same shared control), the
+    ///  assembly list also shows "Source Date" / "Destination Date" columns
+    ///  and colors each row to flag assemblies whose destination copy is
+    ///  older than the source (and will therefore be replaced by a copy).
+    /// </summary>
+    [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
+    public bool ShowDeploymentDateComparison { get; set; }
+
     public AssetSelectionControl()
     {
         InitializeComponent();
@@ -89,6 +104,10 @@ public partial class AssetSelectionControl : UserControl
             _checkForRespectiveRefAssembliesCheckBox,
             _availableAssembliesListView,
         ];
+
+        // Dispose(bool) lives in the Designer file and must not be hand-edited;
+        // the Disposed event is the supported hook for extra cleanup.
+        Disposed += (sender, e) => _deploymentComparisonBoldFont?.Dispose();
     }
 
     public AssetSelectionControl(
@@ -138,6 +157,20 @@ public partial class AssetSelectionControl : UserControl
     /// <summary>The currently selected source target's TFM/configuration item, if any.</summary>
     public TargetFrameworkSourceItem? SelectedSourceTarget
         => _availableDesktopRuntimesComboBox.SelectedItem as TargetFrameworkSourceItem;
+
+    /// <summary>
+    ///  Sets (or clears, with <see langword="null"/>) the function used to
+    ///  resolve the source/destination file pair for each listed assembly,
+    ///  and immediately refreshes the date-comparison columns/colors to
+    ///  reflect it. Only takes effect when <see cref="ShowDeploymentDateComparison"/>
+    ///  is <see langword="true"/>.
+    /// </summary>
+    public void SetDeploymentComparisonResolver(
+        Func<DesktopAssemblyInfo, (FileInfo? SourceFile, FileInfo? DestinationFile)>? resolver)
+    {
+        _deploymentComparisonResolver = resolver;
+        RefreshDeploymentDateComparison();
+    }
 
     /// <summary>
     ///  Finds the first listed assembly (checked or not) that has at least
@@ -230,7 +263,81 @@ public partial class AssetSelectionControl : UserControl
 
         _availableAssembliesListView.CheckItemsInFirstColumn(s_preCheckItems);
 
+        // AddItemsWithColumnHeadersFromType just cleared and rebuilt the
+        // columns/items above, so the date-comparison columns (if enabled)
+        // need to be (re-)added here before being populated.
+        if (ShowDeploymentDateComparison)
+        {
+            _availableAssembliesListView.Columns.Add("Source Date");
+            _availableAssembliesListView.Columns.Add("Destination Date");
+        }
+
+        RefreshDeploymentDateComparison();
+
         AvailabilityChanged?.Invoke(this, EventArgs.Empty);
+    }
+
+    /// <summary>
+    ///  Populates (or updates) the "Source Date"/"Destination Date" columns
+    ///  and colors each row dark red (Classic)/light red (DarkMode) and bold
+    ///  when the destination assembly is older than the source (i.e. it will
+    ///  be replaced by a copy), or dark green (Classic)/light green
+    ///  (DarkMode) and normal otherwise. No-op unless
+    ///  <see cref="ShowDeploymentDateComparison"/> is <see langword="true"/>.
+    /// </summary>
+    private void RefreshDeploymentDateComparison()
+    {
+        if (!ShowDeploymentDateComparison)
+        {
+            return;
+        }
+
+        Font? previousBoldFont = _deploymentComparisonBoldFont;
+        _deploymentComparisonBoldFont = new Font(_availableAssembliesListView.Font, FontStyle.Bold);
+        previousBoldFont?.Dispose();
+
+        bool isDarkMode = Application.IsDarkModeEnabled;
+        Color replacedColor = isDarkMode ? Color.LightCoral : Color.DarkRed;
+        Color upToDateColor = isDarkMode ? Color.LightGreen : Color.DarkGreen;
+
+        foreach (ListViewItem item in _availableAssembliesListView.Items)
+        {
+            if (item.Tag is not DesktopAssemblyInfo assemblyInfo)
+            {
+                continue;
+            }
+
+            (FileInfo? sourceFile, FileInfo? destinationFile) = _deploymentComparisonResolver is null
+                ? (null, null)
+                : _deploymentComparisonResolver(assemblyInfo);
+
+            string sourceText = sourceFile?.Exists == true
+                ? sourceFile.LastWriteTime.ToString("g")
+                : "-";
+
+            string destinationText = destinationFile?.Exists == true
+                ? destinationFile.LastWriteTime.ToString("g")
+                : "(new)";
+
+            bool willBeReplaced = sourceFile?.Exists == true
+                && (destinationFile?.Exists != true || destinationFile.LastWriteTime < sourceFile.LastWriteTime);
+
+            while (item.SubItems.Count < 4)
+            {
+                item.SubItems.Add(string.Empty);
+            }
+
+            item.SubItems[2].Text = sourceText;
+            item.SubItems[3].Text = destinationText;
+
+            item.ForeColor = willBeReplaced ? replacedColor : upToDateColor;
+            item.Font = willBeReplaced ? _deploymentComparisonBoldFont : _availableAssembliesListView.Font;
+        }
+
+        foreach (ColumnHeader columnItem in _availableAssembliesListView.Columns)
+        {
+            columnItem.Width = -2;
+        }
     }
 
     private void PickPathToArtefactsButton_Click(object sender, EventArgs e)

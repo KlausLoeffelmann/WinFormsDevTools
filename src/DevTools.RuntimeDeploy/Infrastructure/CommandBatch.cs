@@ -23,7 +23,8 @@ public class CommandBatch : ICopyProgressSink
         bool showCommandBatchWindow = true,
         bool dryRun = false,
         string? windowTitle = null,
-        Font? outputFont = null)
+        Font? outputFont = null,
+        RuntimeDeploySettingsService? settingsService = null)
     {
         Task batchTask = Task.CompletedTask;
 
@@ -37,7 +38,7 @@ public class CommandBatch : ICopyProgressSink
 
         if (showCommandBatchWindow)
         {
-            _commandBatchWindow = new CommandBatchForm(windowTitle, outputFont);
+            _commandBatchWindow = new CommandBatchForm(windowTitle, outputFont, settingsService);
             batchTask = _commandBatchWindow.StartBatchAsync();
         }
 

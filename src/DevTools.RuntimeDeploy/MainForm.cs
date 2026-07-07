@@ -252,6 +252,12 @@ public partial class MainForm : Form, IServiceProvider
 
     private void MinimizeToTray()
     {
+        // Persist the current (still-Normal) bounds before hiding: this is the
+        // only reliable point to save them for users who minimize-to-tray
+        // instead of using "Quit" - OnFormClosing's SaveBounds() only runs on
+        // an actual close, which minimize-to-tray intentionally cancels.
+        SaveBounds();
+
         Hide();
         _notifyIcon.Visible = true;
 
