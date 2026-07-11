@@ -28,6 +28,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\DevTools.RuntimeDeploy\DevTools.RuntimeDeploy.csproj" />
+    <ProjectReference Include="..\DevTools.RuntimeDeploy.Cli\DevTools.RuntimeDeploy.Cli.csproj" />
   </ItemGroup>
 
 </Project>

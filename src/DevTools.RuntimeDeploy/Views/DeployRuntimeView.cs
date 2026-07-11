@@ -108,15 +108,12 @@ public partial class DeployRuntimeView : UserControl
             return;
         }
 
-        // Find the first assembly (checked or not) whose Tag has a list of
-        // RefAssemblies with at least one item.
-        DesktopAssemblyInfo? firstItem = _assetSelectionControl.FindFirstWithRefAssemblies();
+        DesktopAssemblyInfo? firstItem = _assetSelectionControl.FindFirstAssembly();
 
         if (firstItem is null)
         {
-            // Show a message box if there are no items with RefAssemblies in the list view.
             MessageBox.Show(
-                "No items found in the list view with RefAssemblies. Please select a runtime version and try again.",
+                "No assemblies were found for the selected runtime version.",
                 "No items found",
                 MessageBoxButtons.OK,
                 MessageBoxIcon.Information);
@@ -131,12 +128,7 @@ public partial class DeployRuntimeView : UserControl
 
         // Get the source file directories from the first item in the list view.
         DirectoryInfo sourceAssemblyBasePath = firstItem.AssemblyFiles[0].Directory!;
-        DirectoryInfo sourceRefAssemblyBasePath = default!;
-
-        if (firstItem.RefAssemblyFiles is not null)
-        {
-            sourceRefAssemblyBasePath = firstItem.RefAssemblyFiles[0].Directory!;
-        }
+        DirectoryInfo? sourceRefAssemblyBasePath = firstItem.RefAssemblyFiles?.FirstOrDefault()?.Directory;
 
         // Snapshot every piece of UI state the background work needs onto plain
         // locals on the UI thread. After this point Task.Run no longer touches any
@@ -189,7 +181,11 @@ public partial class DeployRuntimeView : UserControl
             await commandBatch.WriteLineInfoAsync($"");
 
             await commandBatch.WriteLineInfoAsync($"Source Assembly directory:{sourceAssemblyBasePath}");
-            await commandBatch.WriteLineInfoAsync($"Source RefAssembly directory:{sourceRefAssemblyBasePath}\\ref");
+            if (sourceRefAssemblyBasePath is not null)
+            {
+                await commandBatch.WriteLineInfoAsync($"Source RefAssembly directory:{sourceRefAssemblyBasePath}");
+            }
+
             await commandBatch.WriteLineInfoAsync($"");
 
             DirectoryInfo targetDir;

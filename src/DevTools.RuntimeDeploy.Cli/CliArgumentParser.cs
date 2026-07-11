@@ -57,7 +57,14 @@ public static class CliArgumentParser
                     break;
 
                 case "--max-depth":
-                    options.MaxDepth = int.Parse(RequireValue(args, ref i, arg));
+                    string maxDepthValue = RequireValue(args, ref i, arg);
+                    if (!int.TryParse(maxDepthValue, out int maxDepth) || maxDepth < 0)
+                    {
+                        throw new ArgumentException(
+                            $"Option '{arg}' requires a non-negative integer value; received '{maxDepthValue}'.");
+                    }
+
+                    options.MaxDepth = maxDepth;
                     break;
 
                 case "--tfm-filter":
@@ -115,8 +122,18 @@ public static class CliArgumentParser
             return null;
         }
 
-        using FileStream stream = File.OpenRead(settingsPath);
-        RuntimePatcherSettings? settings = JsonSerializer.Deserialize(stream, EngineJsonContext.Default.RuntimePatcherSettings);
+        RuntimePatcherSettings? settings;
+        try
+        {
+            using FileStream stream = File.OpenRead(settingsPath);
+            settings = JsonSerializer.Deserialize(stream, EngineJsonContext.Default.RuntimePatcherSettings);
+        }
+        catch (JsonException ex)
+        {
+            throw new ArgumentException(
+                $"Settings file '{settingsPath}' contains invalid JSON.",
+                ex);
+        }
 
         if (settings is null)
         {

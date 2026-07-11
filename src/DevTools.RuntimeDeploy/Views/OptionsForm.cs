@@ -180,7 +180,10 @@ public partial class OptionsForm : Form
 
         try
         {
-            DesktopAssemblyInfo[] assemblies = _scanner.GetWinFormsRuntimeAssemblies(target, includeRefAssemblies: true);
+            DesktopAssemblyInfo[] assemblies = _scanner.GetWinFormsRuntimeAssemblies(
+                target,
+                includeRefAssemblies: true,
+                includeNetStandardAssemblies: true);
             HashSet<string> excludedNames = _settings?.GetExcludedAssemblyNames() ?? [];
 
             _assembliesListView.AddItemsWithColumnHeadersFromType(
@@ -216,11 +219,7 @@ public partial class OptionsForm : Form
         }
 
         _settings.SourceArtefactsFolder = _sourceFolderTextBox.Text;
-
-        if (!string.IsNullOrWhiteSpace(_backupFolderTextBox.Text))
-        {
-            _settings.BackupRootFolder = _backupFolderTextBox.Text;
-        }
+        _settings.BackupRootFolder = _backupFolderTextBox.Text;
 
         if (_assembliesLoaded)
         {

@@ -32,7 +32,8 @@ public static class BackupService
     ///  Backs up every file in <paramref name="filesAboutToBeOverwritten"/> - which
     ///  must currently exist on disk - into a new <c>.netbackup</c> file under
     ///  <paramref name="backupRoot"/>, named
-    ///  <c>Backup_{yyyyMMdd-HHmmss}_{tfm}_{configuration}.netbackup</c> (no spaces).
+    ///  <c>Backup_{yyyyMMdd-HHmmss}_{tfm}_{configuration}.netbackup</c> using
+    ///  UTC time (no spaces).
     /// </summary>
     /// <returns>The created backup file, or <see langword="null"/> if there was nothing to back up.</returns>
     public static async Task<FileInfo?> CreateBackupAsync(
@@ -55,9 +56,10 @@ public static class BackupService
 
         backupRoot.Create();
 
+        DateTime createdUtc = DateTime.UtcNow;
         string safeTfm = MakeSafeNameSegment(tfm);
         string safeConfiguration = MakeSafeNameSegment(configuration);
-        string fileName = $"Backup_{DateTime.Now:yyyyMMdd-HHmmss}_{safeTfm}_{safeConfiguration}.netbackup";
+        string fileName = $"Backup_{createdUtc:yyyyMMdd-HHmmss}_{safeTfm}_{safeConfiguration}.netbackup";
         FileInfo backupFile = new(Path.Combine(backupRoot.FullName, fileName));
 
         List<BackupFileEntry> entries = [];
@@ -84,7 +86,7 @@ public static class BackupService
 
             BackupManifest manifest = new(
                 SchemaVersion: BackupManifest.CurrentSchemaVersion,
-                CreatedUtc: DateTime.UtcNow,
+                CreatedUtc: createdUtc,
                 Tfm: tfm,
                 TfmMajorVersion: TfmMajorVersionParser.Parse(tfm),
                 Configuration: configuration,

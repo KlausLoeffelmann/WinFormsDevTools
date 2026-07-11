@@ -97,10 +97,17 @@ public partial class AssetSelectionControl : UserControl
         _availableDesktopRuntimesComboBox.SelectedIndexChanged +=
             (sender, e) => DeployAvailableAssemblies();
 
+        _checkForRespectiveRefAssembliesCheckBox.CheckedChanged +=
+            (sender, e) => DeployAvailableAssemblies();
+
+        _chkStandardAssemblies.CheckedChanged +=
+            (sender, e) => DeployAvailableAssemblies();
+
         _controlsForEnablingHandling =
         [
             _availableDesktopRuntimesComboBox,
             _checkForRespectiveRefAssembliesCheckBox,
+            _chkStandardAssemblies,
             _availableAssembliesListView,
         ];
 
@@ -187,14 +194,12 @@ public partial class AssetSelectionControl : UserControl
 
     /// <summary>
     ///  Finds the first listed assembly (checked or not) that has at least
-    ///  one ref-assembly file, used to locate the source ref-assembly base
-    ///  path for a copy/package operation.
+    ///  one runtime assembly file.
     /// </summary>
-    public DesktopAssemblyInfo? FindFirstWithRefAssemblies()
+    public DesktopAssemblyInfo? FindFirstAssembly()
         => (from ListViewItem item in _availableAssembliesListView.Items
             let assemblyInfo = (DesktopAssemblyInfo)item.Tag!
-            where assemblyInfo.RefAssemblyFiles is not null
-                && assemblyInfo.RefAssemblyFiles.Length > 0
+            where assemblyInfo.AssemblyFiles.Length > 0
             select assemblyInfo)
            .FirstOrDefault();
 
@@ -262,7 +267,8 @@ public partial class AssetSelectionControl : UserControl
 
         var assemblies = _gitHubRepoManager.GetWinFormsRuntimeAssemblies(
             (TargetFrameworkSourceItem)_availableDesktopRuntimesComboBox.SelectedItem,
-            _checkForRespectiveRefAssembliesCheckBox.Checked)
+            includeRefAssemblies: _checkForRespectiveRefAssembliesCheckBox.Checked,
+            includeNetStandardAssemblies: _chkStandardAssemblies.Checked)
             .Where(assembly => !excludedAssemblyNames.Contains(assembly.Name))
             .ToArray();
 
