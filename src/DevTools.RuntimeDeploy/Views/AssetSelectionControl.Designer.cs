@@ -165,13 +165,13 @@ partial class AssetSelectionControl
         // _pathToArtefactsRepo
         // 
         _pathToArtefactsRepo.Anchor = AnchorStyles.Left | AnchorStyles.Right;
+        _pathToArtefactsRepo.DialogTitle = "Pick the path to the WinForms artifacts folder:";
         _pathToArtefactsRepo.Location = new Point(364, 10);
         _pathToArtefactsRepo.Margin = new Padding(10);
         _pathToArtefactsRepo.Name = "_pathToArtefactsRepo";
         _pathToArtefactsRepo.PickerMode = WarpToolkit.WinForms.Controls.FilePathPickerMode.FolderBrowser;
         _pathToArtefactsRepo.Size = new Size(865, 29);
         _pathToArtefactsRepo.TabIndex = 1;
-        _pathToArtefactsRepo.Text = "filePathPicker1";
         // 
         // label3
         // 

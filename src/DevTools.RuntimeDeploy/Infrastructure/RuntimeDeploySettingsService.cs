@@ -37,13 +37,9 @@ public sealed class RuntimeDeploySettingsService(IUserSettingsService userSettin
     {
         get
         {
-            string path = userSettings.Get(
-                SettingKeys.SourceArtefactsFolder, 
-                string.Empty);
-
-            return string.IsNullOrWhiteSpace(path)
-                ? userSettings.Get(SettingKeys.PathToWinFormsGitHubRepo, string.Empty)
-                : path;
+            return userSettings.Contains(SettingKeys.SourceArtefactsFolder)
+                ? userSettings.Get(SettingKeys.SourceArtefactsFolder, string.Empty)
+                : userSettings.Get(SettingKeys.PathToWinFormsGitHubRepo, string.Empty);
         }
         set
         {

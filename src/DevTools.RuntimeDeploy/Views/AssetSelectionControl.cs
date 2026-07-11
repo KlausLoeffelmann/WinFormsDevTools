@@ -92,8 +92,7 @@ public partial class AssetSelectionControl : UserControl
     {
         InitializeComponent();
 
-        _pathToArtefactsRepo.TextChanged +=
-            (sender, e) => DeployAvailableRuntimes();
+        _pathToArtefactsRepo.PathChanged += PathToArtefactsRepo_PathChanged;
 
         _availableDesktopRuntimesComboBox.SelectedIndexChanged +=
             (sender, e) => DeployAvailableAssemblies();
@@ -123,7 +122,18 @@ public partial class AssetSelectionControl : UserControl
     protected override void OnLoad(EventArgs e)
     {
         base.OnLoad(e);
-        _pathToArtefactsRepo.Text = _settings?.SourceArtefactsFolder ?? string.Empty;
+
+        string sourceArtefactsFolder = _settings?.SourceArtefactsFolder ?? string.Empty;
+        if (!string.Equals(
+            _pathToArtefactsRepo.FileOrFolderPath,
+            sourceArtefactsFolder,
+            StringComparison.OrdinalIgnoreCase))
+        {
+            _pathToArtefactsRepo.FileOrFolderPath = sourceArtefactsFolder;
+            return;
+        }
+
+        DeployAvailableRuntimes();
     }
 
     /// <summary>
@@ -133,9 +143,12 @@ public partial class AssetSelectionControl : UserControl
     public void RefreshFromSettings()
     {
         string sourceArtefactsFolder = _settings?.SourceArtefactsFolder ?? string.Empty;
-        if (!string.Equals(_pathToArtefactsRepo.Text, sourceArtefactsFolder, StringComparison.OrdinalIgnoreCase))
+        if (!string.Equals(
+            _pathToArtefactsRepo.FileOrFolderPath,
+            sourceArtefactsFolder,
+            StringComparison.OrdinalIgnoreCase))
         {
-            _pathToArtefactsRepo.Text = sourceArtefactsFolder;
+            _pathToArtefactsRepo.FileOrFolderPath = sourceArtefactsFolder;
             return;
         }
 
@@ -198,7 +211,7 @@ public partial class AssetSelectionControl : UserControl
 
     private void DeployAvailableRuntimes()
     {
-        if (string.IsNullOrWhiteSpace(_pathToArtefactsRepo.Text))
+        if (string.IsNullOrWhiteSpace(_pathToArtefactsRepo.FileOrFolderPath))
         {
             _availableDesktopRuntimesComboBox.Items.Clear();
             _availableAssembliesListView.Items.Clear();
@@ -211,7 +224,7 @@ public partial class AssetSelectionControl : UserControl
             {
                 _availableDesktopRuntimesComboBox.Items.Clear();
                 _availableAssembliesListView.Items.Clear();
-                _gitHubRepoManager = new(_pathToArtefactsRepo.Text);
+                _gitHubRepoManager = new(_pathToArtefactsRepo.FileOrFolderPath);
 
                 var targets = _gitHubRepoManager
                     .GetAvailableTargets();
@@ -340,21 +353,18 @@ public partial class AssetSelectionControl : UserControl
         }
     }
 
-    private void PickPathToArtefactsButton_Click(object sender, EventArgs e)
+    private void PathToArtefactsRepo_PathChanged(object? sender, EventArgs e)
     {
-        FolderBrowserDialog browserDialog = new()
+        string sourceArtefactsFolder = _pathToArtefactsRepo.FileOrFolderPath;
+        if (_settings is not null &&
+            !string.Equals(
+                _settings.SourceArtefactsFolder,
+                sourceArtefactsFolder,
+                StringComparison.OrdinalIgnoreCase))
         {
-            Description = "Pick the path to the WinForms artifacts folder:"
-        };
-
-        DialogResult dialogResult = browserDialog.ShowDialog();
-        if (dialogResult == DialogResult.OK)
-        {
-            _pathToArtefactsRepo.Text = browserDialog.SelectedPath;
-            if (_settings is not null)
-            {
-                _settings.SourceArtefactsFolder = browserDialog.SelectedPath;
-            }
+            _settings.SourceArtefactsFolder = sourceArtefactsFolder;
         }
+
+        DeployAvailableRuntimes();
     }
 }

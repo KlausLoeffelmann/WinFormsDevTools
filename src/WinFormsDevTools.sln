@@ -35,6 +35,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.RuntimeDeploy.Engi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.RuntimeDeploy.Cli", "DevTools.RuntimeDeploy.Cli\DevTools.RuntimeDeploy.Cli.csproj", "{07FB4587-C4C0-425A-A33B-921D89F9AB05}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DevTools.RuntimeDeploy.Tests", "DevTools.RuntimeDeploy.Tests\DevTools.RuntimeDeploy.Tests.csproj", "{95BB36E0-D172-4F3D-A24C-EEA42AE9433C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -165,6 +167,18 @@ Global
 		{07FB4587-C4C0-425A-A33B-921D89F9AB05}.Release|x64.Build.0 = Release|Any CPU
 		{07FB4587-C4C0-425A-A33B-921D89F9AB05}.Release|x86.ActiveCfg = Release|Any CPU
 		{07FB4587-C4C0-425A-A33B-921D89F9AB05}.Release|x86.Build.0 = Release|Any CPU
+		{95BB36E0-D172-4F3D-A24C-EEA42AE9433C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{95BB36E0-D172-4F3D-A24C-EEA42AE9433C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{95BB36E0-D172-4F3D-A24C-EEA42AE9433C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{95BB36E0-D172-4F3D-A24C-EEA42AE9433C}.Debug|x64.Build.0 = Debug|Any CPU
+		{95BB36E0-D172-4F3D-A24C-EEA42AE9433C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{95BB36E0-D172-4F3D-A24C-EEA42AE9433C}.Debug|x86.Build.0 = Debug|Any CPU
+		{95BB36E0-D172-4F3D-A24C-EEA42AE9433C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{95BB36E0-D172-4F3D-A24C-EEA42AE9433C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{95BB36E0-D172-4F3D-A24C-EEA42AE9433C}.Release|x64.ActiveCfg = Release|Any CPU
+		{95BB36E0-D172-4F3D-A24C-EEA42AE9433C}.Release|x64.Build.0 = Release|Any CPU
+		{95BB36E0-D172-4F3D-A24C-EEA42AE9433C}.Release|x86.ActiveCfg = Release|Any CPU
+		{95BB36E0-D172-4F3D-A24C-EEA42AE9433C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
