@@ -1,6 +1,6 @@
-namespace DevTools.RuntimeDeploy.Domain;
+namespace DevTools.RuntimeDeploy.Engine.Domain;
 
-internal partial class BuildArtefactsScanner
+public partial class BuildArtefactsScanner
 {
     /// <summary>
     ///  Describes one available "source" entry inside the cloned WinForms
@@ -14,11 +14,11 @@ internal partial class BuildArtefactsScanner
     ///  <c>bin\System.Windows.Forms</c>). Index 0 is the primary path and
     ///  is also used to locate the ref-assembly source directory under
     ///  <c>obj\System.Windows.Forms\{primary}\ref</c>. Subsequent entries
-    ///  are sibling netstandard fallbacks (e.g. <c>"\netstandard2.0"</c>)
-    ///  that physically exist on disk.
+    ///  are same-configuration netstandard fallbacks (e.g.
+    ///  <c>"\Debug\netstandard2.0"</c>) that physically exist on disk.
     /// </param>
     /// <param name="directory">The main TFM build output directory.</param>
-    internal class TargetFrameworkSourceItem(string name, IReadOnlyList<string> tfmPaths, DirectoryInfo directory)
+    public class TargetFrameworkSourceItem(string name, IReadOnlyList<string> tfmPaths, DirectoryInfo directory)
     {
         public string Name { get; init; } = name;
 

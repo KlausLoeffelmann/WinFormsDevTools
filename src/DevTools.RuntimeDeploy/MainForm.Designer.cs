@@ -36,6 +36,8 @@ partial class MainForm
         _menuStrip = new MenuStrip();
         _toolsMenuItem = new ToolStripMenuItem();
         _optionsMenuItem = new ToolStripMenuItem();
+        _createRuntimePatcherMenuItem = new ToolStripMenuItem();
+        _restoreBackupMenuItem = new ToolStripMenuItem();
         _saveWindowPositionsMenuItem = new ToolStripMenuItem();
         _toolsSeparator = new ToolStripSeparator();
         _quitMenuItem = new ToolStripMenuItem();
@@ -73,7 +75,7 @@ partial class MainForm
         // 
         // _toolsMenuItem
         // 
-        _toolsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { _optionsMenuItem, _saveWindowPositionsMenuItem, _toolsSeparator, _quitMenuItem });
+        _toolsMenuItem.DropDownItems.AddRange(new ToolStripItem[] { _optionsMenuItem, _createRuntimePatcherMenuItem, _restoreBackupMenuItem, _saveWindowPositionsMenuItem, _toolsSeparator, _quitMenuItem });
         _toolsMenuItem.Name = "_toolsMenuItem";
         _toolsMenuItem.Size = new Size(69, 29);
         _toolsMenuItem.Text = "&Tools";
@@ -81,9 +83,23 @@ partial class MainForm
         // _optionsMenuItem
         // 
         _optionsMenuItem.Name = "_optionsMenuItem";
-        _optionsMenuItem.Size = new Size(300, 34);
+        _optionsMenuItem.Size = new Size(311, 34);
         _optionsMenuItem.Text = "&Options...";
         _optionsMenuItem.Click += OptionsMenuItem_Click;
+        // 
+        // _createRuntimePatcherMenuItem
+        // 
+        _createRuntimePatcherMenuItem.Name = "_createRuntimePatcherMenuItem";
+        _createRuntimePatcherMenuItem.Size = new Size(311, 34);
+        _createRuntimePatcherMenuItem.Text = "Create Runtime patcher...";
+        _createRuntimePatcherMenuItem.Click += CreateRuntimePatcherMenuItem_Click;
+        // 
+        // _restoreBackupMenuItem
+        // 
+        _restoreBackupMenuItem.Name = "_restoreBackupMenuItem";
+        _restoreBackupMenuItem.Size = new Size(311, 34);
+        _restoreBackupMenuItem.Text = "Restore Backup...";
+        _restoreBackupMenuItem.Click += RestoreBackupMenuItem_Click;
         // 
         // _saveWindowPositionsMenuItem
         // 
@@ -91,19 +107,19 @@ partial class MainForm
         _saveWindowPositionsMenuItem.CheckOnClick = true;
         _saveWindowPositionsMenuItem.CheckState = CheckState.Checked;
         _saveWindowPositionsMenuItem.Name = "_saveWindowPositionsMenuItem";
-        _saveWindowPositionsMenuItem.Size = new Size(300, 34);
+        _saveWindowPositionsMenuItem.Size = new Size(311, 34);
         _saveWindowPositionsMenuItem.Text = "&Save Window positions";
         _saveWindowPositionsMenuItem.Click += SaveWindowPositionsMenuItem_Click;
         // 
         // _toolsSeparator
         // 
         _toolsSeparator.Name = "_toolsSeparator";
-        _toolsSeparator.Size = new Size(297, 6);
+        _toolsSeparator.Size = new Size(308, 6);
         // 
         // _quitMenuItem
         // 
         _quitMenuItem.Name = "_quitMenuItem";
-        _quitMenuItem.Size = new Size(300, 34);
+        _quitMenuItem.Size = new Size(311, 34);
         _quitMenuItem.Text = "&Quit";
         _quitMenuItem.Click += QuitMenuItem_Click;
         // 
@@ -199,6 +215,8 @@ partial class MainForm
     private MenuStrip _menuStrip;
     private ToolStripMenuItem _toolsMenuItem;
     private ToolStripMenuItem _optionsMenuItem;
+    private ToolStripMenuItem _createRuntimePatcherMenuItem;
+    private ToolStripMenuItem _restoreBackupMenuItem;
     private ToolStripMenuItem _saveWindowPositionsMenuItem;
     private ToolStripSeparator _toolsSeparator;
     private ToolStripMenuItem _quitMenuItem;

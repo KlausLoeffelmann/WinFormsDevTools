@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <RootNamespace>DevTools.RuntimeDeploy.Cli</RootNamespace>
+    <AssemblyName>RuntimePatcher</AssemblyName>
+    <InvariantGlobalization>true</InvariantGlobalization>
+
+    <!-- Self-contained, trimmed, single-file so the tool can patch the very
+         .NET Desktop runtime it might otherwise depend on. Not Native AOT:
+         this keeps JSON (de)serialization and reflection concerns simple
+         while still requiring no pre-installed .NET runtime on the target
+         machine. v1 ships win-x64 only; other RIDs are a documented future
+         enhancement. -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <PublishTrimmed>true</PublishTrimmed>
+    <TrimMode>partial</TrimMode>
+    <EnableCompressionInSingleFile>true</EnableCompressionInSingleFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DevTools.RuntimeDeploy.Engine\DevTools.RuntimeDeploy.Engine.csproj" />
+  </ItemGroup>
+
+</Project>

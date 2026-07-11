@@ -11,9 +11,13 @@ public partial class CommandBatchForm : Form
     private readonly TaskCompletionSource _shownCompletion =
         new(TaskCreationOptions.RunContinuationsAsynchronously);
 
-    public CommandBatchForm(string? windowTitle, Font? consoleFont = null)
+    private readonly RuntimeDeploySettingsService? _settingsService;
+
+    public CommandBatchForm(string? windowTitle, Font? consoleFont = null, RuntimeDeploySettingsService? settingsService = null)
     {
         InitializeComponent();
+
+        _settingsService = settingsService;
 
         if (consoleFont is not null)
         {
@@ -30,10 +34,22 @@ public partial class CommandBatchForm : Form
         FormClosed += (_, _) => Dispose();
     }
 
+    protected override void OnLoad(EventArgs e)
+    {
+        base.OnLoad(e);
+        RestoreSavedBounds();
+    }
+
     protected override void OnShown(EventArgs e)
     {
         base.OnShown(e);
         _shownCompletion.TrySetResult();
+    }
+
+    protected override void OnFormClosing(FormClosingEventArgs e)
+    {
+        base.OnFormClosing(e);
+        SaveBounds();
     }
 
     protected override void OnFormClosed(FormClosedEventArgs e)
@@ -42,6 +58,41 @@ public partial class CommandBatchForm : Form
         // closed before it was ever shown.
         _shownCompletion.TrySetResult();
         base.OnFormClosed(e);
+    }
+
+    private void RestoreSavedBounds()
+    {
+        if (_settingsService is null || !_settingsService.SaveWindowPositions)
+        {
+            return;
+        }
+
+        if (_settingsService.CommandBatchFormBounds is not Rectangle bounds)
+        {
+            return;
+        }
+
+        if (!Screen.AllScreens.Any(screen => screen.WorkingArea.IntersectsWith(bounds)))
+        {
+            return;
+        }
+
+        StartPosition = FormStartPosition.Manual;
+        Bounds = bounds;
+    }
+
+    private void SaveBounds()
+    {
+        if (_settingsService is null || !_settingsService.SaveWindowPositions)
+        {
+            return;
+        }
+
+        Rectangle bounds = WindowState == FormWindowState.Normal
+            ? Bounds
+            : RestoreBounds;
+
+        _settingsService.CommandBatchFormBounds = bounds;
     }
 
     public async Task WriteAsync(string message)
@@ -89,7 +140,12 @@ public partial class CommandBatchForm : Form
     public async Task EndBatchAsync()
     {
         await _shownCompletion.Task;
-        _okButton.Enabled = true;
+
+        // EndBatchAsync is awaited from a background Task.Run context in
+        // CommandBatch/DeployRuntimeView, so the continuation after awaiting
+        // _shownCompletion.Task has no UI SynchronizationContext. Marshal the
+        // control update back to the UI thread instead of touching it directly.
+        await InvokeAsync(() => _okButton.Enabled = true);
     }
 
     private void OkButton_Click(object sender, EventArgs e)

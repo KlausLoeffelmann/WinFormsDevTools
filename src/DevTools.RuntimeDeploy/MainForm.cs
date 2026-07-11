@@ -1,4 +1,4 @@
-using DevTools.RuntimeDeploy.Domain;
+using DevTools.RuntimeDeploy.Engine.Domain;
 using DevTools.RuntimeDeploy.Infrastructure;
 using DevTools.RuntimeDeploy.Views;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,7 +6,7 @@ using Microsoft.Extensions.Logging;
 using System.ComponentModel;
 using WarpToolkit.ComponentModel;
 using WarpToolkit.Desktop.AppServices;
-using static DevTools.RuntimeDeploy.Domain.BuildArtefactsScanner;
+using static DevTools.RuntimeDeploy.Engine.Domain.BuildArtefactsScanner;
 
 namespace DevTools.RuntimeDeploy;
 
@@ -96,12 +96,6 @@ public partial class MainForm : Form, IServiceProvider
         // must be assigned explicitly.
         _menuStrip.Font = uiFont;
         _statusStrip.Font = uiFont;
-    }
-
-    private async Task UpdateStatusAsync(string statusText)
-    {
-        _statusService?.ReportInfo(statusText);
-        await Task.Delay(1000);
     }
 
     protected override void OnFormClosing(FormClosingEventArgs e)
@@ -205,6 +199,7 @@ public partial class MainForm : Form, IServiceProvider
         }
 
         Rectangle workingArea = Screen.FromControl(this).WorkingArea;
+
         Rectangle defaultBounds = new(
             workingArea.Left + ((workingArea.Width - Width) / 2),
             workingArea.Top + ((workingArea.Height - Height) / 2),
@@ -219,6 +214,7 @@ public partial class MainForm : Form, IServiceProvider
         }
 
         Rectangle bounds = _userSettings.Get(SettingKeys.MainFormBounds, defaultBounds);
+
         if (!Screen.AllScreens.Any(screen => screen.WorkingArea.IntersectsWith(bounds)))
         {
             bounds = defaultBounds;
@@ -256,6 +252,12 @@ public partial class MainForm : Form, IServiceProvider
 
     private void MinimizeToTray()
     {
+        // Persist the current (still-Normal) bounds before hiding: this is the
+        // only reliable point to save them for users who minimize-to-tray
+        // instead of using "Quit" - OnFormClosing's SaveBounds() only runs on
+        // an actual close, which minimize-to-tray intentionally cancels.
+        SaveBounds();
+
         Hide();
         _notifyIcon.Visible = true;
 
@@ -283,6 +285,28 @@ public partial class MainForm : Form, IServiceProvider
 
     private void OptionsMenuItem_Click(object sender, EventArgs e)
         => ShowOptionsDialog();
+
+    private void CreateRuntimePatcherMenuItem_Click(object sender, EventArgs e)
+    {
+        if (_serviceProvider is null)
+        {
+            return;
+        }
+
+        using CreateRuntimePatcherForm form = _serviceProvider.GetRequiredService<CreateRuntimePatcherForm>();
+        form.ShowDialog(this);
+    }
+
+    private void RestoreBackupMenuItem_Click(object sender, EventArgs e)
+    {
+        if (_serviceProvider is null)
+        {
+            return;
+        }
+
+        using RestoreBackupForm form = _serviceProvider.GetRequiredService<RestoreBackupForm>();
+        form.ShowDialog(this);
+    }
 
     private void QuitMenuItem_Click(object sender, EventArgs e)
     {

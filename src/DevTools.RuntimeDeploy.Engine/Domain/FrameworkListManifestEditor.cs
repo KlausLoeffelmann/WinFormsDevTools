@@ -1,6 +1,6 @@
 using System.Xml.Linq;
 
-namespace DevTools.RuntimeDeploy.Domain;
+namespace DevTools.RuntimeDeploy.Engine.Domain;
 
 /// <summary>
 ///  Reads, mutates, and writes a <c>FrameworkList.xml</c> manifest under
@@ -21,7 +21,7 @@ namespace DevTools.RuntimeDeploy.Domain;
 ///   comparator copied from the original <c>UpdateAssemblyInfo</c>.
 ///  </para>
 /// </remarks>
-internal sealed class FrameworkListManifestEditor
+public sealed class FrameworkListManifestEditor
 {
     private const string FileListElementName = "FileList";
     private const string FileElementName = "File";

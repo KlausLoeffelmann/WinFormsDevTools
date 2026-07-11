@@ -15,11 +15,24 @@ internal static class SettingKeys
 
     public const string ExcludedAssemblyNames = "ExcludedAssemblyNames";
 
+    /// <summary>
+    ///  Root folder under which backups (created before overwriting existing
+    ///  runtime assemblies) are stored.
+    /// </summary>
+    public const string BackupRootFolder = "BackupRootFolder";
+
+
     public const string MainFormBounds = "MainForm.Bounds";
 
     /// <summary>
-    ///  Whether the main window position/size is persisted across sessions.
-    ///  When disabled, bounds are neither saved on exit nor restored on launch.
+    ///  Bounds of the command-batch ("console") output window.
+    /// </summary>
+    public const string CommandBatchFormBounds = "CommandBatchForm.Bounds";
+
+    /// <summary>
+    ///  Whether window positions/sizes (main window and command-batch console
+    ///  window) are persisted across sessions. When disabled, bounds are
+    ///  neither saved on exit nor restored on launch for either window.
     /// </summary>
     public const string SaveWindowPositions = "MainForm.SaveWindowPositions";
 

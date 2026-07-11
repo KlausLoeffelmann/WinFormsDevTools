@@ -1,7 +1,7 @@
-using DevTools.RuntimeDeploy.Domain;
+using DevTools.RuntimeDeploy.Engine.Domain;
 using DevTools.RuntimeDeploy.Infrastructure;
 using Microsoft.Extensions.Logging;
-using static DevTools.RuntimeDeploy.Domain.BuildArtefactsScanner;
+using static DevTools.RuntimeDeploy.Engine.Domain.BuildArtefactsScanner;
 
 namespace DevTools.RuntimeDeploy.Views;
 

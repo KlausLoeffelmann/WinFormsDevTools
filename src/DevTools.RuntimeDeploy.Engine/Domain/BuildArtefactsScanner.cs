@@ -1,10 +1,10 @@
-namespace DevTools.RuntimeDeploy.Domain;
+namespace DevTools.RuntimeDeploy.Engine.Domain;
 
 /// <summary>
 ///  Provides functionality to extract the available generated assemblies
 ///  from the Artifacts folder of the WinForms GitHub repository.
 /// </summary>
-internal partial class BuildArtefactsScanner
+public partial class BuildArtefactsScanner
 {
     public const string BinSystemWindowsFormsPath = "\\bin\\System.Windows.Forms";
     public const string BinPath = "\\bin";
@@ -40,17 +40,21 @@ internal partial class BuildArtefactsScanner
                 // Each item carries every TFM path the deploy step should pull files from:
                 // index 0 is the primary (config + main TFM, e.g. "\Debug\net10.0") and is
                 // also used to locate the ref-assembly source directory; subsequent entries
-                // are sibling netstandard fallbacks that exist on disk next to the primary.
+                // are sibling netstandard fallbacks for the same configuration.
                 List<string> tfmPaths = [middlePath];
 
                 if (item.Parent is DirectoryInfo parent)
                 {
+                    string configurationPath = parent.FullName.Replace(
+                        PathToBinSystemWindowsForms,
+                        string.Empty);
+
                     foreach (string fallback in s_additionalTfmPaths)
                     {
                         DirectoryInfo additional = new(parent.FullName + fallback);
                         if (additional.Exists)
                         {
-                            tfmPaths.Add(fallback);
+                            tfmPaths.Add(configurationPath + fallback);
                         }
                     }
                 }
@@ -62,9 +66,15 @@ internal partial class BuildArtefactsScanner
             })];
     }
 
-    public DesktopAssemblyInfo[] GetWinFormsRuntimeAssemblies(TargetFrameworkSourceItem target, bool includeRefAssemblies)
+    public DesktopAssemblyInfo[] GetWinFormsRuntimeAssemblies(
+        TargetFrameworkSourceItem target,
+        bool includeRefAssemblies,
+        bool includeNetStandardAssemblies)
     {
         DirectoryInfo binWinForms = new(PathToGitHubRepo + BinPath);
+        IReadOnlyList<string> includedTfmPaths = includeNetStandardAssemblies
+            ? target.TfmPaths
+            : [target.TfmPaths[0]];
 
         return [.. binWinForms.GetFiles(
                 searchPattern: "*.dll",
@@ -73,7 +83,7 @@ internal partial class BuildArtefactsScanner
             // TfmPaths is the list of TFM directory suffixes to include for this source item
             // (the primary main-TFM path plus any present netstandard fallbacks). A DLL is
             // considered "in scope" if its parent directory's full name ends with any of them.
-            .Where(item => target.TfmPaths.Any(tfmItem => item.Directory!.FullName.EndsWith(tfmItem, StringComparison.OrdinalIgnoreCase)))
+            .Where(item => includedTfmPaths.Any(tfmItem => item.Directory!.FullName.EndsWith(tfmItem, StringComparison.OrdinalIgnoreCase)))
             .GroupBy(
                 keySelector: item => item.Directory!.Parent!.Parent!,
                 elementSelector: elementItem => elementItem,

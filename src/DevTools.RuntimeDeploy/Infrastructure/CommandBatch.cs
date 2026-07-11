@@ -1,24 +1,30 @@
 using System.Text;
+using DevTools.RuntimeDeploy.Engine.Copying;
 
 namespace DevTools.RuntimeDeploy.Infrastructure;
 
-public class CommandBatch
+/// <summary>
+///  WinForms adapter around <see cref="CopyEngine"/>: renders progress into an
+///  optional <see cref="CommandBatchForm"/> console window and accumulates the
+///  full transcript into a protocol string, while delegating the actual file
+///  copy work (and lock-holder diagnostics) to the headless engine.
+/// </summary>
+public class CommandBatch : ICopyProgressSink
 {
-    private bool _showCommandBatchWindow;
-    private bool _dryRun;
     private bool _batchStarted;
 
     private CommandBatchForm? _commandBatchWindow;
     private StringBuilder? _protocolStorage;
     private bool _newline = true;
 
-    private readonly List<CopyFailure> _failures = [];
+    private CopyEngine? _copyEngine;
 
     public Task StartBatchAsync(
         bool showCommandBatchWindow = true,
         bool dryRun = false,
         string? windowTitle = null,
-        Font? outputFont = null)
+        Font? outputFont = null,
+        RuntimeDeploySettingsService? settingsService = null)
     {
         Task batchTask = Task.CompletedTask;
 
@@ -28,13 +34,11 @@ public class CommandBatch
         }
 
         _batchStarted = true;
-        _showCommandBatchWindow = showCommandBatchWindow;
-        _dryRun = dryRun;
-        _failures.Clear();
+        _copyEngine = new CopyEngine(this, dryRun);
 
-        if (_showCommandBatchWindow)
+        if (showCommandBatchWindow)
         {
-            _commandBatchWindow = new CommandBatchForm(windowTitle, outputFont);
+            _commandBatchWindow = new CommandBatchForm(windowTitle, outputFont, settingsService);
             batchTask = _commandBatchWindow.StartBatchAsync();
         }
 
@@ -45,7 +49,7 @@ public class CommandBatch
 
     public async Task<string> EndBatchAsync(string? endOfBatchComment)
     {
-        await WriteFailureSummaryAsync();
+        await (_copyEngine?.WriteFailureSummaryAsync() ?? Task.CompletedTask);
 
         if (!string.IsNullOrEmpty(endOfBatchComment))
         {
@@ -55,34 +59,6 @@ public class CommandBatch
         _batchStarted = false;
         await (_commandBatchWindow?.EndBatchAsync() ?? Task.CompletedTask);
         return _protocolStorage!.ToString();
-    }
-
-    private async Task WriteFailureSummaryAsync()
-    {
-        if (_failures.Count == 0)
-        {
-            return;
-        }
-
-        await WriteLineErrorAsync(string.Empty);
-        await WriteLineErrorAsync($"{_failures.Count} file(s) could NOT be written:");
-
-        foreach (CopyFailure failure in _failures)
-        {
-            await WriteLineErrorAsync($"  - {failure.DestinationFile.FullName}");
-            await WriteLineErrorAsync($"      Reason: {failure.Reason}");
-
-            if (failure.Lockers.Count == 0)
-            {
-                await WriteLineErrorAsync("      Locked by: (no holding process could be identified)");
-                continue;
-            }
-
-            foreach (FileLockProcessInfo locker in failure.Lockers)
-            {
-                await WriteLineErrorAsync($"      Locked by: {locker}");
-            }
-        }
     }
 
     private void CheckBatchStarted()
@@ -99,77 +75,14 @@ public class CommandBatch
         bool overrideIfExist = false,
         string? comment = default)
     {
-        return CopyFileCommandAsync(
-            sourceFile,
-            new FileInfo($"{destinationDirectory.FullName}\\{sourceFile.Name}"),
-            overrideIfExist,
-            comment);
+        CheckBatchStarted();
+        return _copyEngine!.CopyFileAsync(sourceFile, destinationDirectory, overrideIfExist, comment);
     }
 
-    public async Task CopyFileCommandAsync(FileInfo sourceFile, FileInfo destinationFile, bool overrideIfExist, string? comment)
+    public Task CopyFileCommandAsync(FileInfo sourceFile, FileInfo destinationFile, bool overrideIfExist, string? comment)
     {
         CheckBatchStarted();
-
-        // We print the comment first, then we check if the source file exists.
-        await WriteInfoAsync(comment);
-
-        if (!sourceFile.Exists)
-        {
-            await WriteLineWarningAsync($"Source file [{sourceFile.Name}] does NOT exists. --> SKIPPING.");
-            return;
-        }
-
-        if (!destinationFile.Exists)
-        {
-            await WriteInfoAsync($"Copying [{sourceFile.Name}] to [{destinationFile.Name}] ... ");
-            await TryCopyFileAsync(sourceFile, destinationFile);
-            return;
-        }
-
-        await WriteInfoAsync($"Copying [{sourceFile.Name}] - destination file [{destinationFile.Name}] exists! ");
-
-        if (overrideIfExist)
-        {
-            await WriteInfoAsync($"--> Overwriting... ");
-            await TryCopyFileAsync(sourceFile, destinationFile);
-        }
-        else
-        {
-            await WriteLineWarningAsync($"--> SKIPPING.");
-        }
-    }
-
-    // Performs the actual copy and writes the trailing "result" segment of the
-    // current line. On failure the result is written in red, the failure (with any
-    // locking process discovered via the Restart Manager) is recorded, and the
-    // batch keeps going instead of aborting the whole run.
-    private async Task TryCopyFileAsync(FileInfo sourceFile, FileInfo destinationFile)
-    {
-        if (_dryRun)
-        {
-            await WriteLineInfoAsync($"OK.");
-            return;
-        }
-
-        try
-        {
-            File.Copy(sourceFile.FullName, destinationFile.FullName, overwrite: true);
-            await WriteLineInfoAsync($"OK.");
-        }
-        catch (Exception ex)
-        {
-            await WriteLineErrorAsync($"FAILED: {ex.Message}");
-
-            IReadOnlyList<FileLockProcessInfo> lockers =
-                FileLockInspector.GetLockingProcesses(destinationFile.FullName);
-
-            foreach (FileLockProcessInfo locker in lockers)
-            {
-                await WriteLineErrorAsync($"    --> Locked by: {locker}");
-            }
-
-            _failures.Add(new CopyFailure(sourceFile, destinationFile, ex.Message, lockers));
-        }
+        return _copyEngine!.CopyFileAsync(sourceFile, destinationFile, overrideIfExist, comment);
     }
 
     private string MessageHeader(string? message)
@@ -229,10 +142,4 @@ public class CommandBatch
         await (_commandBatchWindow?.WriteLineErrorAsync(message) ?? Task.CompletedTask);
         _newline = true;
     }
-
-    private sealed record CopyFailure(
-        FileInfo SourceFile,
-        FileInfo DestinationFile,
-        string Reason,
-        IReadOnlyList<FileLockProcessInfo> Lockers);
 }

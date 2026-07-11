@@ -1,7 +1,7 @@
-using DevTools.RuntimeDeploy.Domain;
+using DevTools.RuntimeDeploy.Engine.Domain;
 using DevTools.RuntimeDeploy.Infrastructure;
 using Microsoft.Extensions.Logging;
-using static DevTools.RuntimeDeploy.Domain.BuildArtefactsScanner;
+using static DevTools.RuntimeDeploy.Engine.Domain.BuildArtefactsScanner;
 
 namespace DevTools.RuntimeDeploy.Views;
 
@@ -12,8 +12,8 @@ public partial class OptionsForm : Form
     private ILogger<OptionsForm>? _logger;
     private BuildArtefactsScanner? _scanner;
     private bool _assembliesLoaded;
-    private Font _uiFont = RuntimeDeploySettingsService.DefaultUiFont;
-    private Font _outputFont = RuntimeDeploySettingsService.DefaultOutputFont;
+    private Font _uiFont = RuntimeDeploySettingsService.CreateDefaultUiFont();
+    private Font _outputFont = RuntimeDeploySettingsService.CreateDefaultOutputFont();
 
     public OptionsForm()
     {
@@ -45,6 +45,8 @@ public partial class OptionsForm : Form
         {
             LoadTargets();
         }
+
+        _backupFolderTextBox.Text = _settings.BackupRootFolder;
 
         _uiFont = _settings.UiFont;
         _outputFont = _settings.OutputFont;
@@ -118,6 +120,20 @@ public partial class OptionsForm : Form
         _assembliesLoaded = false;
     }
 
+    private void BrowseBackupFolderButton_Click(object sender, EventArgs e)
+    {
+        using FolderBrowserDialog dialog = new()
+        {
+            Description = "Pick the folder where backups of overwritten runtime assemblies are stored:",
+            SelectedPath = Directory.Exists(_backupFolderTextBox.Text) ? _backupFolderTextBox.Text : string.Empty
+        };
+
+        if (dialog.ShowDialog(this) == DialogResult.OK)
+        {
+            _backupFolderTextBox.Text = dialog.SelectedPath;
+        }
+    }
+
     private void LoadAssembliesButton_Click(object sender, EventArgs e)
         => LoadTargets();
 
@@ -164,7 +180,10 @@ public partial class OptionsForm : Form
 
         try
         {
-            DesktopAssemblyInfo[] assemblies = _scanner.GetWinFormsRuntimeAssemblies(target, includeRefAssemblies: true);
+            DesktopAssemblyInfo[] assemblies = _scanner.GetWinFormsRuntimeAssemblies(
+                target,
+                includeRefAssemblies: true,
+                includeNetStandardAssemblies: true);
             HashSet<string> excludedNames = _settings?.GetExcludedAssemblyNames() ?? [];
 
             _assembliesListView.AddItemsWithColumnHeadersFromType(
@@ -200,6 +219,7 @@ public partial class OptionsForm : Form
         }
 
         _settings.SourceArtefactsFolder = _sourceFolderTextBox.Text;
+        _settings.BackupRootFolder = _backupFolderTextBox.Text;
 
         if (_assembliesLoaded)
         {

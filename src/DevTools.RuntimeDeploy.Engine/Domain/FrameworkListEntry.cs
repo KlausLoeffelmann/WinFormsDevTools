@@ -1,4 +1,4 @@
-namespace DevTools.RuntimeDeploy.Domain;
+namespace DevTools.RuntimeDeploy.Engine.Domain;
 
 /// <summary>
 ///  One row in <c>FrameworkList.xml</c>: the per-assembly identity and
@@ -17,7 +17,7 @@ namespace DevTools.RuntimeDeploy.Domain;
 /// <param name="AssemblyVersion">Already rounded to the SDK's <c>major.0.0.0</c> shape.</param>
 /// <param name="FileVersion">Already rounded to the SDK's <c>major.0.0.0</c> shape.</param>
 /// <param name="Profile">Typically <c>"WindowsForms"</c>.</param>
-internal sealed record FrameworkListEntry(
+public sealed record FrameworkListEntry(
     string FileType,
     string RelativePath,
     string AssemblyName,
