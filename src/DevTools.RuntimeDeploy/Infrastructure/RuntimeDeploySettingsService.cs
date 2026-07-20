@@ -126,6 +126,36 @@ public sealed class RuntimeDeploySettingsService(IUserSettingsService userSettin
         }
     }
 
+    public bool CloseMainWindowToTray
+    {
+        get => userSettings.Get(SettingKeys.CloseMainWindowToTray, true);
+        set
+        {
+            userSettings.Set(SettingKeys.CloseMainWindowToTray, value);
+            userSettings.Flush();
+        }
+    }
+
+    public bool RestoreFromTrayOnSingleClick
+    {
+        get => userSettings.Get(SettingKeys.RestoreFromTrayOnSingleClick, true);
+        set
+        {
+            userSettings.Set(SettingKeys.RestoreFromTrayOnSingleClick, value);
+            userSettings.Flush();
+        }
+    }
+
+    public bool StartWithWindows
+    {
+        get => userSettings.Get(SettingKeys.StartWithWindows, true);
+        set
+        {
+            userSettings.Set(SettingKeys.StartWithWindows, value);
+            userSettings.Flush();
+        }
+    }
+
     /// <summary>
     ///  The last saved bounds of the command-batch ("console") output window,
     ///  or <see langword="null"/> if none have been saved yet.

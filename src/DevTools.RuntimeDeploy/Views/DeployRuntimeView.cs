@@ -259,48 +259,49 @@ public partial class DeployRuntimeView : UserControl
                         overrideIfExist: true);
                 }
 
-                if (assemblyInfo.RefAssemblyFiles is null)
+                if (assemblyInfo.RefAssemblyFiles is not null)
                 {
-                    continue;
+                    foreach (FileInfo fileItem in assemblyInfo.RefAssemblyFiles)
+                    {
+                        // Check if the file has already been processed
+                        if (processedFiles.Contains(fileItem))
+                        {
+                            continue;
+                        }
+
+                        // Add the file to the processed files HashSet (mirror the non-ref-assembly
+                        // loop above: mark as processed BEFORE invoking manifest logic so a skip
+                        // from ProcessManifestResult does not cause the same file to be inspected
+                        // again later in the iteration).
+                        processedFiles.Add(fileItem);
+
+                        // Determine the file type for ref assembly
+                        string fileName = Path.GetFileNameWithoutExtension(fileItem.Name);
+                        string currentFileType = AssemblyFileTypeClassifier.Classify(fileName);
+
+                        // Update the AssemblyInfo.xml file with the assembly information.
+                        AssemblyManifestProcessResult result = UpdateAssemblyInfo(
+                            manifestEditor: manifestEditor,
+                            destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetRefAssemblyPath}\\{fileItem.Name}")),
+                            fileType: currentFileType,
+                            targetFrameworkVersion: targetFrameworkTarget.Name,
+                            updatePublicKey: false);
+
+                        if (await ProcessManifestResult(commandBatch, fileItem, result))
+                        {
+                            continue;
+                        }
+
+                        await commandBatch.CopyFileCommandAsync(
+                            fileItem,
+                            targetRefAssemblyPath,
+                            overrideIfExist: true,
+                            comment: "REF: ");
+                    }
                 }
 
-                foreach (FileInfo fileItem in assemblyInfo.RefAssemblyFiles)
-                {
-                    // Check if the file has already been processed
-                    if (processedFiles.Contains(fileItem))
-                    {
-                        continue;
-                    }
-
-                    // Add the file to the processed files HashSet (mirror the non-ref-assembly
-                    // loop above: mark as processed BEFORE invoking manifest logic so a skip
-                    // from ProcessManifestResult does not cause the same file to be inspected
-                    // again later in the iteration).
-                    processedFiles.Add(fileItem);
-
-                    // Determine the file type for ref assembly
-                    string fileName = Path.GetFileNameWithoutExtension(fileItem.Name);
-                    string currentFileType = AssemblyFileTypeClassifier.Classify(fileName);
-
-                    // Update the AssemblyInfo.xml file with the assembly information.
-                    AssemblyManifestProcessResult result = UpdateAssemblyInfo(
-                        manifestEditor: manifestEditor,
-                        destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetRefAssemblyPath}\\{fileItem.Name}")),
-                        fileType: currentFileType,
-                        targetFrameworkVersion: targetFrameworkTarget.Name,
-                        updatePublicKey: false);
-
-                    if (await ProcessManifestResult(commandBatch, fileItem, result))
-                    {
-                        continue;
-                    }
-
-                    await commandBatch.CopyFileCommandAsync(
-                        fileItem,
-                        targetRefAssemblyPath,
-                        overrideIfExist: true,
-                        comment: "REF: ");
-                }
+                await InvokeAsync(
+                    () => _assetSelectionControl.RefreshDeploymentDateComparison(assemblyInfo));
             }
 
             if (checkedAssemblies.Length == 0)

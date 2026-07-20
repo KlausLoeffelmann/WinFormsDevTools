@@ -9,6 +9,7 @@ public partial class OptionsForm : Form
 {
     private RuntimeDeploySettingsService? _settings;
     private RuntimeDeployStatusService? _statusService;
+    private IStartupRegistrationService? _startupRegistrationService;
     private ILogger<OptionsForm>? _logger;
     private BuildArtefactsScanner? _scanner;
     private bool _assembliesLoaded;
@@ -24,10 +25,12 @@ public partial class OptionsForm : Form
     public OptionsForm(
         RuntimeDeploySettingsService settings,
         RuntimeDeployStatusService statusService,
+        IStartupRegistrationService startupRegistrationService,
         ILogger<OptionsForm> logger) : this()
     {
         _settings = settings;
         _statusService = statusService;
+        _startupRegistrationService = startupRegistrationService;
         _logger = logger;
     }
 
@@ -52,6 +55,10 @@ public partial class OptionsForm : Form
         _outputFont = _settings.OutputFont;
         UpdateFontPreview(_uiFontPreviewLabel, _uiFont);
         UpdateFontPreview(_outputFontPreviewLabel, _outputFont);
+
+        _closeBehaviorComboBox.SelectedIndex = _settings.CloseMainWindowToTray ? 1 : 0;
+        _startWithWindowsCheckBox.Checked = _settings.StartWithWindows;
+        _trayRestoreGestureComboBox.SelectedIndex = _settings.RestoreFromTrayOnSingleClick ? 0 : 1;
     }
 
     private static void UpdateFontPreview(Label previewLabel, Font font)
@@ -210,7 +217,7 @@ public partial class OptionsForm : Form
         }
     }
 
-    private void OkButton_Click(object sender, EventArgs e)
+    private async void OkButton_Click(object sender, EventArgs e)
     {
         if (_settings is null)
         {
@@ -218,8 +225,42 @@ public partial class OptionsForm : Form
             return;
         }
 
+        bool startWithWindows = _startWithWindowsCheckBox.Checked;
+        _okButton.Enabled = false;
+        _cancelButton.Enabled = false;
+        ControlBox = false;
+
+        try
+        {
+            if (_startupRegistrationService is not null)
+            {
+                await _startupRegistrationService.SetEnabledAsync(startWithWindows);
+            }
+        }
+        catch (StartupRegistrationException ex)
+        {
+            _logger?.LogError(ex, "Could not update RuntimeDeploy Windows startup.");
+            _statusService?.ReportException(ex);
+            MessageBox.Show(
+                this,
+                ex.Message,
+                "Could not update Windows startup",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Error);
+            return;
+        }
+        finally
+        {
+            _okButton.Enabled = true;
+            _cancelButton.Enabled = true;
+            ControlBox = true;
+        }
+
         _settings.SourceArtefactsFolder = _sourceFolderTextBox.Text;
         _settings.BackupRootFolder = _backupFolderTextBox.Text;
+        _settings.CloseMainWindowToTray = _closeBehaviorComboBox.SelectedIndex == 1;
+        _settings.StartWithWindows = startWithWindows;
+        _settings.RestoreFromTrayOnSingleClick = _trayRestoreGestureComboBox.SelectedIndex == 0;
 
         if (_assembliesLoaded)
         {

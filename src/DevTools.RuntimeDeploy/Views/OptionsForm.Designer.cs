@@ -30,6 +30,12 @@ partial class OptionsForm
         _backupFolderLabel = new Label();
         _backupFolderTextBox = new TextBox();
         _browseBackupFolderButton = new Button();
+        _applicationBehaviorGroupBox = new GroupBox();
+        _closeBehaviorLabel = new Label();
+        _closeBehaviorComboBox = new ComboBox();
+        _startWithWindowsCheckBox = new CheckBox();
+        _trayRestoreGestureLabel = new Label();
+        _trayRestoreGestureComboBox = new ComboBox();
         _fontsGroupBox = new GroupBox();
         _uiFontCaptionLabel = new Label();
         _uiFontPreviewLabel = new Label();
@@ -40,6 +46,7 @@ partial class OptionsForm
         _okButton = new Button();
         _cancelButton = new Button();
         _backupGroupBox.SuspendLayout();
+        _applicationBehaviorGroupBox.SuspendLayout();
         _fontsGroupBox.SuspendLayout();
         SuspendLayout();
         // 
@@ -160,6 +167,71 @@ partial class OptionsForm
         _browseBackupFolderButton.Text = "...";
         _browseBackupFolderButton.UseVisualStyleBackColor = true;
         _browseBackupFolderButton.Click += BrowseBackupFolderButton_Click;
+        //
+        // _applicationBehaviorGroupBox
+        //
+        _applicationBehaviorGroupBox.Anchor = AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
+        _applicationBehaviorGroupBox.Controls.Add(_closeBehaviorLabel);
+        _applicationBehaviorGroupBox.Controls.Add(_closeBehaviorComboBox);
+        _applicationBehaviorGroupBox.Controls.Add(_startWithWindowsCheckBox);
+        _applicationBehaviorGroupBox.Controls.Add(_trayRestoreGestureLabel);
+        _applicationBehaviorGroupBox.Controls.Add(_trayRestoreGestureComboBox);
+        _applicationBehaviorGroupBox.Location = new Point(15, 621);
+        _applicationBehaviorGroupBox.Name = "_applicationBehaviorGroupBox";
+        _applicationBehaviorGroupBox.Size = new Size(1093, 160);
+        _applicationBehaviorGroupBox.TabIndex = 9;
+        _applicationBehaviorGroupBox.TabStop = false;
+        _applicationBehaviorGroupBox.Text = "Application behavior";
+        //
+        // _closeBehaviorLabel
+        //
+        _closeBehaviorLabel.AutoSize = true;
+        _closeBehaviorLabel.Location = new Point(18, 42);
+        _closeBehaviorLabel.Name = "_closeBehaviorLabel";
+        _closeBehaviorLabel.Size = new Size(285, 30);
+        _closeBehaviorLabel.TabIndex = 0;
+        _closeBehaviorLabel.Text = "When closing the main window:";
+        //
+        // _closeBehaviorComboBox
+        //
+        _closeBehaviorComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        _closeBehaviorComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+        _closeBehaviorComboBox.FormattingEnabled = true;
+        _closeBehaviorComboBox.Items.AddRange(new object[] { "Close the app", "Put the app in the system tray and keep it running" });
+        _closeBehaviorComboBox.Location = new Point(360, 39);
+        _closeBehaviorComboBox.Name = "_closeBehaviorComboBox";
+        _closeBehaviorComboBox.Size = new Size(717, 38);
+        _closeBehaviorComboBox.TabIndex = 1;
+        //
+        // _startWithWindowsCheckBox
+        //
+        _startWithWindowsCheckBox.AutoSize = true;
+        _startWithWindowsCheckBox.Location = new Point(18, 119);
+        _startWithWindowsCheckBox.Name = "_startWithWindowsCheckBox";
+        _startWithWindowsCheckBox.Size = new Size(340, 34);
+        _startWithWindowsCheckBox.TabIndex = 4;
+        _startWithWindowsCheckBox.Text = "Start automatically with Windows";
+        _startWithWindowsCheckBox.UseVisualStyleBackColor = true;
+        //
+        // _trayRestoreGestureLabel
+        //
+        _trayRestoreGestureLabel.AutoSize = true;
+        _trayRestoreGestureLabel.Location = new Point(18, 86);
+        _trayRestoreGestureLabel.Name = "_trayRestoreGestureLabel";
+        _trayRestoreGestureLabel.Size = new Size(243, 30);
+        _trayRestoreGestureLabel.TabIndex = 2;
+        _trayRestoreGestureLabel.Text = "Restore from the tray with:";
+        //
+        // _trayRestoreGestureComboBox
+        //
+        _trayRestoreGestureComboBox.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+        _trayRestoreGestureComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+        _trayRestoreGestureComboBox.FormattingEnabled = true;
+        _trayRestoreGestureComboBox.Items.AddRange(new object[] { "Single-click", "Double-click" });
+        _trayRestoreGestureComboBox.Location = new Point(360, 83);
+        _trayRestoreGestureComboBox.Name = "_trayRestoreGestureComboBox";
+        _trayRestoreGestureComboBox.Size = new Size(717, 38);
+        _trayRestoreGestureComboBox.TabIndex = 3;
         // 
         // _fontsGroupBox
         // 
@@ -170,10 +242,10 @@ partial class OptionsForm
         _fontsGroupBox.Controls.Add(_outputFontCaptionLabel);
         _fontsGroupBox.Controls.Add(_outputFontPreviewLabel);
         _fontsGroupBox.Controls.Add(_changeOutputFontButton);
-        _fontsGroupBox.Location = new Point(15, 621);
+        _fontsGroupBox.Location = new Point(15, 791);
         _fontsGroupBox.Name = "_fontsGroupBox";
         _fontsGroupBox.Size = new Size(1093, 130);
-        _fontsGroupBox.TabIndex = 9;
+        _fontsGroupBox.TabIndex = 10;
         _fontsGroupBox.TabStop = false;
         _fontsGroupBox.Text = "Fonts";
         // 
@@ -242,10 +314,10 @@ partial class OptionsForm
         // _okButton
         // 
         _okButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
-        _okButton.Location = new Point(869, 761);
+        _okButton.Location = new Point(869, 931);
         _okButton.Name = "_okButton";
         _okButton.Size = new Size(115, 44);
-        _okButton.TabIndex = 10;
+        _okButton.TabIndex = 11;
         _okButton.Text = "OK";
         _okButton.UseVisualStyleBackColor = true;
         _okButton.Click += OkButton_Click;
@@ -254,10 +326,10 @@ partial class OptionsForm
         // 
         _cancelButton.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
         _cancelButton.DialogResult = DialogResult.Cancel;
-        _cancelButton.Location = new Point(993, 761);
+        _cancelButton.Location = new Point(993, 931);
         _cancelButton.Name = "_cancelButton";
         _cancelButton.Size = new Size(115, 44);
-        _cancelButton.TabIndex = 11;
+        _cancelButton.TabIndex = 12;
         _cancelButton.Text = "Cancel";
         _cancelButton.UseVisualStyleBackColor = true;
         // 
@@ -267,10 +339,11 @@ partial class OptionsForm
         AutoScaleDimensions = new SizeF(12F, 30F);
         AutoScaleMode = AutoScaleMode.Font;
         CancelButton = _cancelButton;
-        ClientSize = new Size(1123, 822);
+        ClientSize = new Size(1123, 992);
         Controls.Add(_cancelButton);
         Controls.Add(_okButton);
         Controls.Add(_fontsGroupBox);
+        Controls.Add(_applicationBehaviorGroupBox);
         Controls.Add(_backupGroupBox);
         Controls.Add(_assembliesListView);
         Controls.Add(_assembliesLabel);
@@ -284,13 +357,15 @@ partial class OptionsForm
         FormBorderStyle = FormBorderStyle.SizableToolWindow;
         Margin = new Padding(3, 4, 3, 4);
         MinimizeBox = false;
-        MinimumSize = new Size(980, 720);
+        MinimumSize = new Size(980, 900);
         Name = "OptionsForm";
         ShowInTaskbar = false;
         StartPosition = FormStartPosition.CenterParent;
         Text = "Runtime Deploy Options";
         _backupGroupBox.ResumeLayout(false);
         _backupGroupBox.PerformLayout();
+        _applicationBehaviorGroupBox.ResumeLayout(false);
+        _applicationBehaviorGroupBox.PerformLayout();
         _fontsGroupBox.ResumeLayout(false);
         _fontsGroupBox.PerformLayout();
         ResumeLayout(false);
@@ -311,6 +386,12 @@ partial class OptionsForm
     private Label _backupFolderLabel;
     private TextBox _backupFolderTextBox;
     private Button _browseBackupFolderButton;
+    private GroupBox _applicationBehaviorGroupBox;
+    private Label _closeBehaviorLabel;
+    private ComboBox _closeBehaviorComboBox;
+    private CheckBox _startWithWindowsCheckBox;
+    private Label _trayRestoreGestureLabel;
+    private ComboBox _trayRestoreGestureComboBox;
     private GroupBox _fontsGroupBox;
     private Label _uiFontCaptionLabel;
     private Label _uiFontPreviewLabel;

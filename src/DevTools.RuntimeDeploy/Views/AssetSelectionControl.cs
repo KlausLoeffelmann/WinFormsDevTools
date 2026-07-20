@@ -193,6 +193,32 @@ public partial class AssetSelectionControl : UserControl
     }
 
     /// <summary>
+    ///  Refreshes the comparison columns and styling for one listed assembly.
+    /// </summary>
+    public void RefreshDeploymentDateComparison(DesktopAssemblyInfo assemblyInfo)
+    {
+        ArgumentNullException.ThrowIfNull(assemblyInfo);
+
+        if (!ShowDeploymentDateComparison)
+        {
+            return;
+        }
+
+        ListViewItem? item = _availableAssembliesListView.Items
+            .Cast<ListViewItem>()
+            .FirstOrDefault(candidate => ReferenceEquals(candidate.Tag, assemblyInfo));
+
+        if (item is null)
+        {
+            return;
+        }
+
+        EnsureDeploymentComparisonBoldFont();
+        ApplyDeploymentComparison(item);
+        ResizeDeploymentComparisonColumns();
+    }
+
+    /// <summary>
     ///  Finds the first listed assembly (checked or not) that has at least
     ///  one runtime assembly file.
     /// </summary>
@@ -311,48 +337,74 @@ public partial class AssetSelectionControl : UserControl
             return;
         }
 
-        Font? previousBoldFont = _deploymentComparisonBoldFont;
-        _deploymentComparisonBoldFont = new Font(_availableAssembliesListView.Font, FontStyle.Bold);
-        previousBoldFont?.Dispose();
+        ReplaceDeploymentComparisonBoldFont();
+
+        foreach (ListViewItem item in _availableAssembliesListView.Items)
+        {
+            ApplyDeploymentComparison(item);
+        }
+
+        ResizeDeploymentComparisonColumns();
+    }
+
+    private void ApplyDeploymentComparison(ListViewItem item)
+    {
+        if (item.Tag is not DesktopAssemblyInfo assemblyInfo)
+        {
+            return;
+        }
+
+        (FileInfo? sourceFile, FileInfo? destinationFile) = _deploymentComparisonResolver is null
+            ? (null, null)
+            : _deploymentComparisonResolver(assemblyInfo);
+
+        sourceFile?.Refresh();
+        destinationFile?.Refresh();
+
+        string sourceText = sourceFile?.Exists == true
+            ? sourceFile.LastWriteTime.ToString("g")
+            : "-";
+
+        string destinationText = destinationFile?.Exists == true
+            ? destinationFile.LastWriteTime.ToString("g")
+            : "(new)";
+
+        bool willBeReplaced = sourceFile?.Exists == true
+            && (destinationFile?.Exists != true || destinationFile.LastWriteTime < sourceFile.LastWriteTime);
+
+        while (item.SubItems.Count < 4)
+        {
+            item.SubItems.Add(string.Empty);
+        }
+
+        item.SubItems[2].Text = sourceText;
+        item.SubItems[3].Text = destinationText;
 
         bool isDarkMode = Application.IsDarkModeEnabled;
         Color replacedColor = isDarkMode ? Color.LightCoral : Color.DarkRed;
         Color upToDateColor = isDarkMode ? Color.LightGreen : Color.DarkGreen;
 
-        foreach (ListViewItem item in _availableAssembliesListView.Items)
+        item.ForeColor = willBeReplaced ? replacedColor : upToDateColor;
+        item.Font = willBeReplaced ? _deploymentComparisonBoldFont : _availableAssembliesListView.Font;
+    }
+
+    private void EnsureDeploymentComparisonBoldFont()
+    {
+        if (_deploymentComparisonBoldFont is null)
         {
-            if (item.Tag is not DesktopAssemblyInfo assemblyInfo)
-            {
-                continue;
-            }
-
-            (FileInfo? sourceFile, FileInfo? destinationFile) = _deploymentComparisonResolver is null
-                ? (null, null)
-                : _deploymentComparisonResolver(assemblyInfo);
-
-            string sourceText = sourceFile?.Exists == true
-                ? sourceFile.LastWriteTime.ToString("g")
-                : "-";
-
-            string destinationText = destinationFile?.Exists == true
-                ? destinationFile.LastWriteTime.ToString("g")
-                : "(new)";
-
-            bool willBeReplaced = sourceFile?.Exists == true
-                && (destinationFile?.Exists != true || destinationFile.LastWriteTime < sourceFile.LastWriteTime);
-
-            while (item.SubItems.Count < 4)
-            {
-                item.SubItems.Add(string.Empty);
-            }
-
-            item.SubItems[2].Text = sourceText;
-            item.SubItems[3].Text = destinationText;
-
-            item.ForeColor = willBeReplaced ? replacedColor : upToDateColor;
-            item.Font = willBeReplaced ? _deploymentComparisonBoldFont : _availableAssembliesListView.Font;
+            ReplaceDeploymentComparisonBoldFont();
         }
+    }
 
+    private void ReplaceDeploymentComparisonBoldFont()
+    {
+        Font? previousBoldFont = _deploymentComparisonBoldFont;
+        _deploymentComparisonBoldFont = new Font(_availableAssembliesListView.Font, FontStyle.Bold);
+        previousBoldFont?.Dispose();
+    }
+
+    private void ResizeDeploymentComparisonColumns()
+    {
         foreach (ColumnHeader columnItem in _availableAssembliesListView.Columns)
         {
             columnItem.Width = -2;

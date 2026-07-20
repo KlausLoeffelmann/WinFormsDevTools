@@ -18,6 +18,8 @@ public partial class MainForm : Form, IServiceProvider
     private readonly IWinFormsAppExceptionService? _exceptionService;
     private readonly RuntimeDeployStatusService? _statusService;
     private readonly RuntimeDeploySettingsService? _settingsService;
+    private readonly IStartupRegistrationService? _startupRegistrationService;
+    private readonly RuntimeDeployLaunchOptions? _launchOptions;
     private readonly DeployRuntimeView? _deployRuntimeView;
     private readonly OverView? _overView;
     private bool _allowClose;
@@ -35,6 +37,8 @@ public partial class MainForm : Form, IServiceProvider
         IWinFormsAppExceptionService exceptionService,
         RuntimeDeployStatusService statusService,
         RuntimeDeploySettingsService settingsService,
+        IStartupRegistrationService startupRegistrationService,
+        RuntimeDeployLaunchOptions launchOptions,
         OverView overView,
         DeployRuntimeView deployRuntimeView) : this()
     {
@@ -46,6 +50,8 @@ public partial class MainForm : Form, IServiceProvider
         _exceptionService = exceptionService;
         _statusService = statusService;
         _settingsService = settingsService;
+        _startupRegistrationService = startupRegistrationService;
+        _launchOptions = launchOptions;
         _overView = overView;
         _deployRuntimeView = deployRuntimeView;
 
@@ -79,6 +85,13 @@ public partial class MainForm : Form, IServiceProvider
         RestoreSavedBounds();
         InitializeSdkTargets();
         InitializeTabs();
+
+        if (_launchOptions?.StartInTray == true)
+        {
+            MinimizeToTray();
+        }
+
+        await EnsureStartupRegistrationAsync();
     }
 
     private void ApplyFontsFromSettings()
@@ -96,13 +109,17 @@ public partial class MainForm : Form, IServiceProvider
         // must be assigned explicitly.
         _menuStrip.Font = uiFont;
         _statusStrip.Font = uiFont;
+        _trayContextMenu.Font = uiFont;
     }
 
     protected override void OnFormClosing(FormClosingEventArgs e)
     {
         base.OnFormClosing(e);
 
-        if (!_allowClose && e.CloseReason == CloseReason.UserClosing)
+        bool closeToTray = _settingsService?.CloseMainWindowToTray ?? true;
+        if (!_allowClose &&
+            closeToTray &&
+            e.CloseReason == CloseReason.UserClosing)
         {
             e.Cancel = true;
  
@@ -315,13 +332,38 @@ public partial class MainForm : Form, IServiceProvider
     }
 
     private void NotifyIcon_DoubleClick(object sender, EventArgs e)
-        => RestoreFromTray();
+    {
+        if (_settingsService?.RestoreFromTrayOnSingleClick != true)
+        {
+            RestoreFromTray();
+        }
+    }
 
     private void NotifyIcon_MouseClick(object sender, MouseEventArgs e)
     {
-        if (e.Button == MouseButtons.Left)
+        if (e.Button == MouseButtons.Left &&
+            (_settingsService?.RestoreFromTrayOnSingleClick ?? true))
         {
-            _trayContextMenu.Show(Cursor.Position);
+            RestoreFromTray();
+        }
+    }
+
+    private async Task EnsureStartupRegistrationAsync()
+    {
+        if (_startupRegistrationService is null ||
+            _settingsService?.StartWithWindows != true)
+        {
+            return;
+        }
+
+        try
+        {
+            await _startupRegistrationService.SetEnabledAsync(true);
+        }
+        catch (StartupRegistrationException ex)
+        {
+            _logger?.LogError(ex, "Could not register RuntimeDeploy for Windows startup.");
+            _statusService?.ReportException(ex);
         }
     }
 

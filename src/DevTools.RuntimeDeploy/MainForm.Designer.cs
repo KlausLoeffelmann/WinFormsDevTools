@@ -162,7 +162,7 @@ partial class MainForm
         // 
         _restoreTrayMenuItem.Name = "_restoreTrayMenuItem";
         _restoreTrayMenuItem.Size = new Size(194, 32);
-        _restoreTrayMenuItem.Text = "Restore App...";
+        _restoreTrayMenuItem.Text = "Restore App";
         _restoreTrayMenuItem.Click += RestoreMenuItem_Click;
         // 
         // _optionsTrayMenuItem

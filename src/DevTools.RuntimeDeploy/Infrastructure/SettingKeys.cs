@@ -45,4 +45,19 @@ internal static class SettingKeys
     ///  The font used for the command-batch output (console) window.
     /// </summary>
     public const string OutputFont = "Fonts.Output";
+
+    /// <summary>
+    ///  Whether a user-initiated close hides the main window in the system tray.
+    /// </summary>
+    public const string CloseMainWindowToTray = "MainForm.CloseToTray";
+
+    /// <summary>
+    ///  Whether one left-click, rather than a double-click, restores the main window.
+    /// </summary>
+    public const string RestoreFromTrayOnSingleClick = "MainForm.RestoreFromTrayOnSingleClick";
+
+    /// <summary>
+    ///  Whether an elevated scheduled task starts the app when the user signs in.
+    /// </summary>
+    public const string StartWithWindows = "Application.StartWithWindows";
 }

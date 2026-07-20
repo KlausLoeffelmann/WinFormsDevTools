@@ -30,6 +30,8 @@ internal static class Program
             .AddWinFormsExceptionService();
 
         builder.Services
+            .AddSingleton(RuntimeDeployLaunchOptions.FromArguments(args))
+            .AddScoped<IStartupRegistrationService, WindowsStartupRegistrationService>()
             .AddScoped<RuntimeDeploySettingsService>()
             .AddScoped<RuntimeDeployStatusService>()
             .AddScoped<OverView>()
