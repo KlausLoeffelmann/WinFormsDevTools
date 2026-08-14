@@ -13,9 +13,10 @@
          .NET Desktop runtime it might otherwise depend on. Not Native AOT:
          this keeps JSON (de)serialization and reflection concerns simple
          while still requiring no pre-installed .NET runtime on the target
-         machine. v1 ships win-x64 only; other RIDs are a documented future
-         enhancement. -->
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+         machine. -->
+    <RuntimeIdentifier Condition="'$(Platform)' == 'ARM64'">win-arm64</RuntimeIdentifier>
+    <RuntimeIdentifier Condition="'$(RuntimeIdentifier)' == ''">win-x64</RuntimeIdentifier>
+    <RuntimeIdentifiers>win-x64;win-arm64</RuntimeIdentifiers>
     <SelfContained>true</SelfContained>
     <PublishSingleFile>true</PublishSingleFile>
     <PublishTrimmed>true</PublishTrimmed>

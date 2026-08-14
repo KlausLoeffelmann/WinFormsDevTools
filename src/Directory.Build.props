@@ -1,0 +1,5 @@
+<Project>
+  <PropertyGroup>
+    <Platforms>AnyCPU;x64;ARM64</Platforms>
+  </PropertyGroup>
+</Project>
