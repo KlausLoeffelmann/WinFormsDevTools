@@ -85,6 +85,47 @@ public sealed class BuildArtefactsScannerTests : IDisposable
             withNetStandard.AssemblyFiles.Select(file => file.Name).Order());
     }
 
+    [Fact]
+    public void GetWinFormsRuntimeAssemblies_FindsAnalyzersInNetStandardFallback()
+    {
+        string runtimeFolder = Path.Combine(
+            _tempFolder,
+            "bin",
+            "System.Windows.Forms",
+            "Release",
+            "net11.0");
+        string analyzerFolder = Path.Combine(
+            _tempFolder,
+            "bin",
+            "System.Windows.Forms.Analyzers",
+            "Release",
+            "netstandard2.0");
+        Directory.CreateDirectory(runtimeFolder);
+        Directory.CreateDirectory(Path.Combine(
+            _tempFolder,
+            "bin",
+            "System.Windows.Forms",
+            "Release",
+            "netstandard2.0"));
+        Directory.CreateDirectory(analyzerFolder);
+        File.WriteAllBytes(Path.Combine(runtimeFolder, "System.Windows.Forms.dll"), [1]);
+        File.WriteAllBytes(Path.Combine(analyzerFolder, "System.Windows.Forms.Analyzers.dll"), [2]);
+
+        BuildArtefactsScanner scanner = new(_tempFolder);
+        TargetFrameworkSourceItem target = Assert.Single(
+            scanner.GetAvailableTargets(),
+            item => item.Name == "Release - net11.0");
+
+        DesktopAssemblyInfo analyzer = Assert.Single(
+            scanner.GetWinFormsRuntimeAssemblies(
+                target,
+                includeRefAssemblies: false,
+                includeNetStandardAssemblies: true),
+            item => item.Name == "System.Windows.Forms.Analyzers");
+
+        Assert.Equal("System.Windows.Forms.Analyzers.dll", Assert.Single(analyzer.AssemblyFiles).Name);
+    }
+
     public void Dispose()
     {
         if (Directory.Exists(_tempFolder))

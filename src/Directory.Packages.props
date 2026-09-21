@@ -1,9 +1,9 @@
-<Project>
+﻿<Project>
   <PropertyGroup>
     <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
 
 	<!-- Define the version as a property -->
-	<WarpToolkitVersion>0.9.324-preview.ge962db2903</WarpToolkitVersion>
+	<WarpToolkitVersion>0.9.501-preview.g446e1176e7</WarpToolkitVersion>
   </PropertyGroup>
   
   <ItemGroup>

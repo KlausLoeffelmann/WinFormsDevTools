@@ -121,7 +121,8 @@ public partial class DeployRuntimeView : UserControl
             return;
         }
 
-        if (_replaceTargetSDKVersionComboBox.SelectedItem is not TargetFrameworkTargetItem targetFrameworkTarget)
+        if (_replaceTargetSDKVersionComboBox.SelectedItem is not TargetFrameworkTargetItem targetFrameworkTarget ||
+            _assetSelectionControl.SelectedSourceTarget is not TargetFrameworkSourceItem sourceTarget)
         {
             return;
         }
@@ -155,8 +156,6 @@ public partial class DeployRuntimeView : UserControl
             DirectoryInfo packageAssembliesManifestPath = new($"{FrameworkInfo.NetDesktopRefsDirectory}\\{targetFrameworkTarget.Name}\\data");
 
             DirectoryInfo analyzersDir = targetPaths.AnalyzersDir;
-            DirectoryInfo cSharpAnalyzersDir = targetPaths.CSharpAnalyzersDir;
-            DirectoryInfo visualBasicAnalyzersDir = targetPaths.VisualBasicAnalyzersDir;
 
             // Load the manifest once for the whole batch and save once at the
             // end (the old code re-loaded and re-saved per assembly).
@@ -188,120 +187,82 @@ public partial class DeployRuntimeView : UserControl
 
             await commandBatch.WriteLineInfoAsync($"");
 
-            DirectoryInfo targetDir;
+            AssemblyDeploymentPlan.CopyItem[] runtimeCopyPlan =
+                AssemblyDeploymentPlan.CreateRuntimeCopyPlan(checkedAssemblies, sourceTarget, targetPaths);
+            AssemblyDeploymentPlan.CopyItem[] referenceCopyPlan =
+                AssemblyDeploymentPlan.CreateReferenceCopyPlan(checkedAssemblies, sourceTarget, targetPaths);
+            int discoveredFileCount = checkedAssemblies.Sum(
+                assembly => assembly.AssemblyFiles.Length + (assembly.RefAssemblyFiles?.Length ?? 0));
+            int duplicateCount = discoveredFileCount - runtimeCopyPlan.Length - referenceCopyPlan.Length;
 
-            // Create a HashSet to store the processed files.
-            HashSet<FileInfo> processedFiles = [];
-
-            foreach (DesktopAssemblyInfo assemblyInfo in checkedAssemblies)
+            if (duplicateCount > 0)
             {
-                bool vbFirst = false, csFirst = false;
+                await commandBatch.WriteLineInfoAsync(
+                    $"Skipped {duplicateCount} duplicate source file(s) that map to an already planned destination.");
+                await commandBatch.WriteLineInfoAsync(string.Empty);
+            }
 
-                foreach (FileInfo fileItem in assemblyInfo.AssemblyFiles)
+            foreach (AssemblyDeploymentPlan.CopyItem copyItem in runtimeCopyPlan)
+            {
+                FileInfo fileItem = copyItem.SourceFile;
+                FileInfo destinationFile = copyItem.DestinationFile;
+                string fileName = Path.GetFileNameWithoutExtension(fileItem.Name);
+                string currentFileType = AssemblyFileTypeClassifier.Classify(fileName);
+
+                if (fileItem.Name.StartsWith("System.Windows.Forms.Analyzers", StringComparison.Ordinal))
                 {
-                    // Check if the file has already been processed
-                    if (processedFiles.Contains(fileItem))
+                    destinationFile.Directory?.Create();
+
+                    AssemblyManifestProcessResult result = UpdateAssemblyInfo(
+                        manifestEditor: manifestEditor,
+                        sourceFile: fileItem,
+                        destinationAssemblyFileInfo: (targetRefAssemblyBasePath, destinationFile),
+                        fileType: currentFileType,
+                        targetFrameworkVersion: targetFrameworkTarget.Name,
+                        updatePublicKey: false);
+
+                    if (await ProcessManifestResult(commandBatch, fileItem, result))
                     {
                         continue;
                     }
-
-                    // Add the file to the processed files HashSet
-                    processedFiles.Add(fileItem);
-
-                    // Determine the file type based on the file name without extension
-                    string fileName = Path.GetFileNameWithoutExtension(fileItem.Name);
-                    string currentFileType = AssemblyFileTypeClassifier.Classify(fileName);
-
-                    // Uses the same resolution logic as the "will be replaced" date
-                    // comparison shown in the asset list, so the two never drift apart.
-                    targetDir = AssemblyDeploymentTargetResolver.GetAssemblyTargetDirectory(fileItem.Name, targetPaths);
-
-                    if (fileItem.Name.StartsWith("System.Windows.Forms.Analyzers"))
-                    {
-                        if (targetDir == visualBasicAnalyzersDir && !vbFirst)
-                        {
-                            vbFirst = true;
-
-                            // Create the vb subfolder in the analyzers directory if it does not exist:
-                            if (!Directory.Exists(visualBasicAnalyzersDir.FullName))
-                            {
-                                Directory.CreateDirectory(visualBasicAnalyzersDir.FullName);
-                            }
-                        }
-                        else if (targetDir == cSharpAnalyzersDir && !csFirst)
-                        {
-                            csFirst = true;
-
-                            // Create the subfolder "cs" in the analyzers directory if it does not exist:
-                            if (!Directory.Exists($"{cSharpAnalyzersDir}"))
-                            {
-                                Directory.CreateDirectory(cSharpAnalyzersDir.FullName);
-                            }
-                        }
-
-                        // Update the AssemblyInfo.xml file with the assembly information.
-                        AssemblyManifestProcessResult result = UpdateAssemblyInfo(
-                            manifestEditor: manifestEditor,
-                            destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetDir}\\{fileItem.Name}")),
-                            fileType: currentFileType,
-                            targetFrameworkVersion: targetFrameworkTarget.Name,
-                            updatePublicKey: false);
-
-                        if (await ProcessManifestResult(commandBatch, fileItem, result))
-                        {
-                            continue;
-                        }
-                    }
-
-                    await commandBatch.CopyFileCommandAsync(
-                        fileItem,
-                        targetDir,
-                        overrideIfExist: true);
                 }
 
-                if (assemblyInfo.RefAssemblyFiles is not null)
+                await commandBatch.CopyFileCommandAsync(
+                    fileItem,
+                    destinationFile,
+                    overrideIfExist: true,
+                    comment: null);
+            }
+
+            foreach (AssemblyDeploymentPlan.CopyItem copyItem in referenceCopyPlan)
+            {
+                FileInfo fileItem = copyItem.SourceFile;
+                string fileName = Path.GetFileNameWithoutExtension(fileItem.Name);
+                string currentFileType = AssemblyFileTypeClassifier.Classify(fileName);
+
+                AssemblyManifestProcessResult result = UpdateAssemblyInfo(
+                    manifestEditor: manifestEditor,
+                    sourceFile: fileItem,
+                    destinationAssemblyFileInfo: (targetRefAssemblyBasePath, copyItem.DestinationFile),
+                    fileType: currentFileType,
+                    targetFrameworkVersion: targetFrameworkTarget.Name,
+                    updatePublicKey: false);
+
+                if (await ProcessManifestResult(commandBatch, fileItem, result))
                 {
-                    foreach (FileInfo fileItem in assemblyInfo.RefAssemblyFiles)
-                    {
-                        // Check if the file has already been processed
-                        if (processedFiles.Contains(fileItem))
-                        {
-                            continue;
-                        }
-
-                        // Add the file to the processed files HashSet (mirror the non-ref-assembly
-                        // loop above: mark as processed BEFORE invoking manifest logic so a skip
-                        // from ProcessManifestResult does not cause the same file to be inspected
-                        // again later in the iteration).
-                        processedFiles.Add(fileItem);
-
-                        // Determine the file type for ref assembly
-                        string fileName = Path.GetFileNameWithoutExtension(fileItem.Name);
-                        string currentFileType = AssemblyFileTypeClassifier.Classify(fileName);
-
-                        // Update the AssemblyInfo.xml file with the assembly information.
-                        AssemblyManifestProcessResult result = UpdateAssemblyInfo(
-                            manifestEditor: manifestEditor,
-                            destinationAssemblyFileInfo: (targetRefAssemblyBasePath, new FileInfo($"{targetRefAssemblyPath}\\{fileItem.Name}")),
-                            fileType: currentFileType,
-                            targetFrameworkVersion: targetFrameworkTarget.Name,
-                            updatePublicKey: false);
-
-                        if (await ProcessManifestResult(commandBatch, fileItem, result))
-                        {
-                            continue;
-                        }
-
-                        await commandBatch.CopyFileCommandAsync(
-                            fileItem,
-                            targetRefAssemblyPath,
-                            overrideIfExist: true,
-                            comment: "REF: ");
-                    }
+                    continue;
                 }
 
-                await InvokeAsync(
-                    () => _assetSelectionControl.RefreshDeploymentDateComparison(assemblyInfo));
+                await commandBatch.CopyFileCommandAsync(
+                    fileItem,
+                    copyItem.DestinationFile,
+                    overrideIfExist: true,
+                    comment: "REF: ");
+            }
+
+            foreach (DesktopAssemblyInfo assemblyInfo in checkedAssemblies)
+            {
+                await InvokeAsync(() => _assetSelectionControl.RefreshDeploymentDateComparison(assemblyInfo));
             }
 
             if (checkedAssemblies.Length == 0)
@@ -364,17 +325,18 @@ public partial class DeployRuntimeView : UserControl
 
     private static AssemblyManifestProcessResult UpdateAssemblyInfo(
         FrameworkListManifestEditor manifestEditor,
+        FileInfo sourceFile,
         (DirectoryInfo targetBasePath, FileInfo targetFile) destinationAssemblyFileInfo,
         string fileType,
         string targetFrameworkVersion,
         bool updatePublicKey)
     {
-        if (!destinationAssemblyFileInfo.targetFile.Exists)
+        if (!sourceFile.Exists)
         {
             return AssemblyManifestProcessResult.MissingAssembly;
         }
 
-        AssemblyProbeResult? probe = AssemblyProbe.TryRead(destinationAssemblyFileInfo.targetFile.FullName);
+        AssemblyProbeResult? probe = AssemblyProbe.TryRead(sourceFile.FullName);
         if (probe is null)
         {
             return AssemblyManifestProcessResult.InvalidAssembly;
