@@ -1,9 +1,27 @@
 ---
 name: warptoolkit-messaging
-description: Guide for WarpToolkit.WinForms FluentMessageBox (a DarkMode- and app-font-aware MessageBox replacement) and the underlying FluentMessageBoxForm. Use this when showing a themed message/confirmation dialog in a WARP WinForms app instead of System.Windows.Forms.MessageBox.
+description: >-
+  Use this skill when UI code should show a DarkMode- and app-font-aware themed
+  message or confirmation with WarpToolkit.WinForms FluentMessageBox or directly
+  customize its FluentMessageBoxForm, instead of using MessageBox. For dialogs
+  originating in a ViewModel, use warp-app-services and IDialogService instead.
 ---
 
 # WarpToolkit.WinForms Messaging
+
+## Package Dependencies
+
+The following NuGet packages are necessary to add to the project.
+* Make sure, that existing packages use at least the NuGet versions stated below. 
+* Check references projects, for contradicting NuGet package definitions or versions, which need to be updated.
+
+```Markdown
+# NuGet Packages info
+
+* minimum Version: 0.9.324-preview.ge962db2903
+* Package(s) required for this skill:
+  - WarpToolkit.WinForms
+```
 
 `FluentMessageBox` is a drop-in replacement for `System.Windows.Forms.MessageBox`
 that respects DarkMode and the application font. Both types live in namespace
@@ -11,12 +29,6 @@ that respects DarkMode and the application font. Both types live in namespace
 
 > **Source of truth:** verified against
 > `src/WarpToolkit.WinForms/FluentMessageBox/`.
-
-## When to Use This Skill
-
-- Showing a **themed** information / confirmation / error dialog in a WARP app.
-- Replacing a `MessageBox.Show(...)` call so it matches Dark/Light mode and the
-  app font.
 
 ## FluentMessageBox (static)
 

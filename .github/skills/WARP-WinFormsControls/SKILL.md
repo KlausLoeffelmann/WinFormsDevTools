@@ -1,6 +1,9 @@
 ---
 name: warp-winforms-controls
+
 description: Use this skill when adding modern WinForms UI with the WARP-Toolkit — fluent controls (FluentTabControl, FluentMessageBox, WizardContainer, FilePathPicker, BindableComboBox), adorned/grid layouts, MVVM-style commands for WinForms, control-tree helpers, dark-mode for DataGridView, persisting form/grid state, async ShowDialog, and developer tools such as ConsoleControl and FilenameDisambiguator. Bundles WarpToolkit.WinForms, WarpToolkit.WinForms.Extensions, and WarpToolkit.WinForms.Specialized because they are designed to be used together.
+
+metadata: Required NuGet packages "WarpToolkit.WinForms"; latest version "0.9.323-preview.gb01532b307"
 ---
 
 # WARP WinForms Controls, Components and Helpers

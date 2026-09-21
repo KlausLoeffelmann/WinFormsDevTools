@@ -1,25 +1,17 @@
 ---
 name: winforms-designer-code
-description: Strict rules for WinForms Designer-generated code and InitializeComponent patterns. Use this when writing or reviewing Designer files (*.Designer.cs), working with InitializeComponent, or ensuring Designer compatibility.
+description: >-
+  Use when generating, modifying, reviewing, debugging, or migrating
+  Designer-compatible WinForms Forms and UserControls, including
+  .Designer.cs/.Designer.vb files, InitializeComponent structure, Designer
+  serialization, .NET Framework-to-.NET migrations, and VB6 modernization.
+  For broad form-design-quality reviews, pair with
+  winforms-high-dpi-fluent-layout to cover layout and DPI quality.
 ---
 
 # WinForms Designer Code Rules
 
 The WinForms Designer generates serialization code, not regular C# code. Understanding and following these rules is CRITICAL for Designer compatibility. **All WinForms Forms and UserControls should be Designer-compatible** — these rules are not optional guidance but mandatory constraints for any code that the Designer must be able to round-trip (read, modify, and re-serialize).
-
-## When to Use This Skill
-
-Use this skill when:
-
-- Generating the code which makes up a Form or a UserControl in WinForms.
-- Writing or modifying `.Designer.cs` or `.Designer.vb` files
-- Creating user controls that need Designer support
-- Reviewing Designer-generated code
-- Debugging Designer-related issues
-- Migrating forms between .NET Framework and .NET
-- Migrating VB6 Code to either Visual Basic (.NET) or C# WinForms Projects.
-
-**IMPORTANT:** Other skills (layout, rendering, data binding, MVVM) describe *what* to build. This skill defines *how* the Designer code-behind file must be structured. When those skills show control configuration, the actual property assignments belong in `InitializeComponent` following the rules below.
 
 ## Critical Hierarchy
 
@@ -30,6 +22,8 @@ Designer Compatibility > Code Quality > DRY > Token Efficiency > Length Concerns
 ```
 
 ## The Two Code Contexts
+
+**IMPORTANT:** Other skills (layout, rendering, data binding, MVVM) describe *what* to build. This skill defines *how* the Designer code-behind file must be structured. When those skills show control configuration, the actual property assignments belong in `InitializeComponent` following the rules below.
 
 | Context | Files/Location | Language Level | Purpose |
 |---------|----------------|----------------|---------|

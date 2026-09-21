@@ -1,25 +1,16 @@
 ---
 name: winforms-databinding
-description: Comprehensive guide for WinForms data binding patterns including BindingSource, INotifyPropertyChanged, validation, and master-detail scenarios. Use this when implementing data binding between UI controls and data sources, working with BindingSource, or setting up two-way data synchronization.
+description: >-
+  Use for WinForms control and collection binding with BindingSource,
+  INotifyPropertyChanged, two-way update modes, BindingList and
+  ObservableCollection adaptation, validation and ErrorProvider, master-detail
+  and DataGridView scenarios, designer .datasource support, and troubleshooting
+  binding updates, performance, nulls, or disposal.
 ---
 
 # WinForms Data Binding Guide
 
 Data binding in WinForms enables automatic synchronization between UI controls and data sources, eliminating manual property updates and keeping view and data in sync.
-
-## When to Use This Skill
-
-Use this skill when:
-
-- Binding Label, TextBox, Button, ComboBox, or other controls to data objects
-- Implementing two-way data binding
-- Working with BindingSource components
-- Creating master-detail data relationships
-- Setting up DataGridView with data sources
-- Implementing data validation with ErrorProvider
-- Converting between WPF/MAUI ObservableCollection and WinForms BindingList
-- Creating .datasource files for Designer support in the PropertyGrid's BindingPicker
-- Troubleshooting binding updates or performance issues
 
 ## Overview
 

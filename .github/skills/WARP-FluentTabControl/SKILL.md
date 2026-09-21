@@ -1,6 +1,10 @@
 ---
 name: warp-fluent-tab-control
+
 description: Use this skill when adding, designing, or sizing tabbed UI built on WARP's FluentTabControl. Covers the mandatory "one UserControl per tab page" pattern, how each UserControl drives the host form's natural size via its Designer-set Size, the size-cap rules the host must respect (≤ 75% of current screen and ≤ 90% of parent), and when a tab UserControl needs to add an internal scrolling layer because its content exceeds the cap.
+
+metadata: Required NuGet packages "WarpToolkit.WinForms.Containers"; latest version "0.9.323-preview.gb01532b307"
+
 ---
 
 # WARP FluentTabControl

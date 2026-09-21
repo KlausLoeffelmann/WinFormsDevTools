@@ -1,9 +1,32 @@
 ---
 name: warp-winforms-ai
-description: Use this skill when adding AI / chat features to a WinForms application with the WARP-Toolkit — drop-in provider components (OpenAI, Azure OpenAI, Anthropic, Google, Ollama, OpenRouter, …) implementing `Microsoft.Extensions.AI.IChatClient`, prompt templates with `[AITemplate]` / `[AITemplateSegment]`, streaming response parsing into paragraphs and code blocks via `ReturnTokenParser`, `AIChatHistory` / `AIChatClient<T>`, and the full `ChatView` / `ChatRendererControl` UI. Covers `WarpToolkit.Desktop.AI`, `WarpToolkit.Microsoft.Extensions.AI`, `WarpToolkit.WinForms.AI`, and `WarpToolkit.WinForms.Chat` together because they form one logical stack.
+description: >-
+  Use this skill when adding WARP/WarpToolkit AI or chat features to WinForms:
+  designer-droppable provider IChatClient components, prompt templates,
+  ReturnTokenParser streaming paragraphs/code blocks, AIChatHistory,
+  AIChatClient<T>, and the ChatView/ChatRendererControl UI across Desktop.AI,
+  Microsoft.Extensions.AI, WinForms.AI, and WinForms.Chat. API-key wiring
+  requires the key-retrieval setup from warp-app-services.
 ---
 
 # WARP WinForms AI
+
+## Package Dependencies
+
+The following NuGet packages are necessary to add to the project.
+* Make sure, that existing packages use at least the NuGet versions stated below. 
+* Check references projects, for contradicting NuGet package definitions or versions, which need to be updated.
+
+```Markdown
+# NuGet Packages info
+
+* minimum Version: 0.9.324-preview.ge962db2903
+* Package(s) required for this skill:
+  - WarpToolkit.Desktop.AI
+  - WarpToolkit.Microsoft.Extensions.AI
+  - WarpToolkit.WinForms.AI
+  - WarpToolkit.WinForms.Chat
+```
 
 This skill covers the four packages that, together, give a WinForms
 application a complete AI / chat surface on top of Microsoft.Extensions.AI:
@@ -15,29 +38,11 @@ application a complete AI / chat surface on top of Microsoft.Extensions.AI:
 | `WarpToolkit.WinForms.AI` | Designer-droppable provider components derived from `AIChatServiceBase` (each implements `IChatClient`). |
 | `WarpToolkit.WinForms.Chat` | Polished chat UI: `ChatView`, `ChatRendererControl`, `ChatProcessor`, `ChatViewVm`. |
 
-Current preview version: `0.9.7-preview.g32895b766b`.
-
 Reference files:
 - `src/docs/reference/WarpToolkit.Desktop.AI.md`
 - `src/docs/reference/WarpToolkit.Microsoft.Extensions.AI.md`
 - `src/docs/reference/WarpToolkit.WinForms.AI.md`
 - `src/docs/reference/WarpToolkit.WinForms.Chat.md`
-
-## When to use this skill
-
-- When the user has explicitly instructed before to use or introduce the WarpToolkit library for a specific project.
-
-- Adding a **chat UI** to a form.
- 
-- Wiring an **AI chat service** (OpenAI / Azure / Anthropic / Ollama / …)
-  as a designer-droppable component.
-
-- Defining **prompt templates** declaratively on request DTOs.
-
-- Consuming a **streaming** chat response and turning it into paragraphs +
-  parsed code blocks in real time.
-
-- Persisting / restoring **chat history**, including metadata and usage.
 
 ## Mental model
 

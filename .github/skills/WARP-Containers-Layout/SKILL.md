@@ -1,9 +1,28 @@
 ---
 name: warptoolkit-containers-layout
-description: Guide for WarpToolkit.WinForms container and layout controls — FluentTabControl, AdornerPanel, AdornerTableLayoutPanel, and TransparentPanel — including adorned grid layouts, per-cell styles, and click-through transparency. Use this when building modern tabbed UI, decorating a TableLayoutPanel with borders/error signalling, or overlaying a transparent/pass-through panel.
+description: >-
+  Use this skill for WarpToolkit.WinForms container and layout controls:
+  FluentTabControl, AdornerPanel, AdornerTableLayoutPanel, and TransparentPanel,
+  including adorned grid layouts, per-cell styles, and click-through overlays.
+  For FluentTabControl's one-UserControl-per-tab sizing and scrolling rules, use
+  warp-fluent-tab-control.
 ---
 
 # WarpToolkit.WinForms Containers & Layout
+
+## Package Dependencies
+
+The following NuGet packages are necessary to add to the project.
+* Make sure, that existing packages use at least the NuGet versions stated below. 
+* Check references projects, for contradicting NuGet package definitions or versions, which need to be updated.
+
+```Markdown
+# NuGet Packages info
+
+* minimum Version: 0.9.324-preview.ge962db2903
+* Package(s) required for this skill:
+  - WarpToolkit.WinForms
+```
 
 Container and layout controls from `WarpToolkit.WinForms`. These are
 **Designer-droppable** controls; everything in `InitializeComponent` must follow
@@ -12,14 +31,6 @@ fields, no helpers/lambdas/object-initializers/control-flow.
 
 > **Source of truth:** signatures below were verified against the WARP repo
 > source in `src/WarpToolkit.WinForms/Containers/`. Document only what exists.
-
-## When to Use This Skill
-
-- Adding a modern, dark-mode-aware **tab control** (`FluentTabControl`).
-- Decorating a panel/grid with consistent **borders, padding and error
-  signalling** (`AdornerPanel`, `AdornerTableLayoutPanel`, `AdornerCellStyle`).
-- Overlaying a **transparent / click-through** region on top of other controls
-  (`TransparentPanel`).
 
 ## FluentTabControl
 

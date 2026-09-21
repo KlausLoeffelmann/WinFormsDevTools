@@ -5,6 +5,20 @@ description: Guide for WarpToolkit.WinForms WizardContainer / WizardPage multi-s
 
 # WarpToolkit.WinForms Wizard
 
+## Package Dependencies
+
+The following NuGet packages are necessary to add to the project.
+* Make sure, that existing packages use at least the NuGet versions stated below. 
+* Check references projects, for contradicting NuGet package definitions or versions, which need to be updated.
+
+```Markdown
+# NuGet Packages info
+
+* minimum Version: 0.9.324-preview.ge962db2903
+* Package(s) required for this skill:
+  - WarpToolkit.WinForms
+```
+
 Multi-step wizard UI from `WarpToolkit.WinForms.Containers.Wizard`. A
 `WizardContainer` coordinates an ordered set of `WizardPage`s, each hosting a
 single content `Control` (typically a `UserControl`).
@@ -12,12 +26,6 @@ single content `Control` (typically a `UserControl`).
 > **Source of truth:** verified against
 > `src/WarpToolkit.WinForms/Containers/Wizard/`. Real usage:
 > `src/Chatty/Views/FirstStartWizard/FirstStartWizardHost.cs`.
-
-## When to Use This Skill
-
-- Building a **multi-step dialog** with Back/Next/Finish navigation.
-- Needing **per-page validation** that can block forward navigation.
-- Showing a wizard **modally and asynchronously** and awaiting its result.
 
 ## WizardContainer
 

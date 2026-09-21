@@ -1,27 +1,16 @@
 ---
 name: winforms-rendering
-description: Comprehensive guide for custom painting and rendering in WinForms using GDI/GDI+. Use this when implementing OnPaint, creating custom controls with owner-draw, working with Graphics objects, measuring/drawing text, or handling resource disposal for pens, brushes, and fonts.
+description: >-
+  Use for WinForms GDI/GDI+ custom or owner-drawn painting: OnPaint and
+  Graphics work, shapes and text measurement/rendering, double buffering and
+  flicker or artifact troubleshooting, performance optimization, DPI-aware and
+  .NET 9+ dark-mode rendering, and correct disposal or caching of graphics,
+  pens, brushes, fonts, images, and related resources.
 ---
 
 # WinForms Custom Rendering Guide
 
 Custom rendering in WinForms enables complete control over how controls paint themselves, from simple borders to complex visualizations using GDI+ (modern, object-oriented) and GDI (legacy, performance-optimized).
-
-## When to Use This Skill
-
-Use this skill when:
-
-- Implementing custom OnPaint methods
-- Creating custom controls that render their content themselves
-- Working with Graphics, Pen, Brush, or Font objects
-- Drawing shapes, lines, or custom graphics in a DC painting context
-- Rendering and measuring text
-- Implementing double buffering to avoid flicker
-- Optimizing rendering performance
-- Supporting high-DPI displays
-- Implementing DarkMode-aware rendering (.NET 9+)
-- Troubleshooting paint artifacts or flicker
-- Managing GDI+ resource disposal
 
 ## Overview
 

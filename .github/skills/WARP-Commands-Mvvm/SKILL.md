@@ -5,6 +5,20 @@ description: Guide for WarpToolkit.WinForms ICommand-style command types — UiC
 
 # WarpToolkit.WinForms Commands (MVVM)
 
+## Package Dependencies
+
+The following NuGet packages are necessary to add to the project.
+* Make sure, that existing packages use at least the NuGet versions stated below. 
+* Check references projects, for contradicting NuGet package definitions or versions, which need to be updated.
+
+```Markdown
+# NuGet Packages info
+
+* minimum Version: 0.9.324-preview.ge962db2903
+* Package(s) required for this skill:
+  - WarpToolkit.WinForms
+```
+
 `ICommand`-style command components for WinForms, from namespace
 `WarpToolkit.WinForms.Experimental.CommandTypes`. They let you bind reusable
 command objects to buttons / tool-strip items and expose them at design time via
@@ -13,13 +27,6 @@ an extender provider.
 > **Source of truth:** verified against
 > `src/WarpToolkit.WinForms/Experimental/CommandTypes/`. These types live under
 > `Experimental` — treat the API as evolving.
-
-## When to Use This Skill
-
-- Wiring an **`ICommand`-style command** to a WinForms `Button`/`ToolStripItem`.
-- Providing a built-in command (open a **form**, show a **message box**) without
-  writing a handler.
-- Exposing commands to the **WinForms Designer** through an extender provider.
 
 ## IUiCommand
 

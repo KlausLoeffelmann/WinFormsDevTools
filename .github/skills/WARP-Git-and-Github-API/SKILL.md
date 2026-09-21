@@ -5,6 +5,20 @@ description: Use this skill when working with WARP's GitHub and local Git APIs, 
 
 # WARP GitHub and Git APIs
 
+## Package Dependencies
+
+The following NuGet packages are necessary to add to the project.
+* Make sure, that existing packages use at least the NuGet versions stated below. 
+* Check references projects, for contradicting NuGet package definitions or versions, which need to be updated.
+
+```Markdown
+# NuGet Packages info
+
+* minimum Version: 0.9.324-preview.ge962db2903
+* Package(s) required for this skill:
+  - WarpToolkit.WinForms.Github
+```
+
 This skill covers `WarpToolkit.WinForms.Github`, which currently contains two
 related areas:
 
@@ -13,31 +27,13 @@ related areas:
 | GitHub API/auth | `IGitHubClientFactoryService`, `AddGitHubGcmClientServiceFactory`, `GitHubLoginManager`, `GitHubDeviceLogin`, `RepoListView` | Authenticated Octokit client creation and GitHub repository UI helpers. |
 | Local Git APIs | `ILocalGitRepositoryService`, `IGitBranchCompositionService`, `AddGitServices` | Inspect local git repos, read branch/commit metadata, and compose target branches from selected source branches. |
 
-## When to use this skill
-
-- The user wants to inspect a local GitHub repository from a WinForms or CLI app.
-- The user wants to list local/remote branches or show latest commit metadata.
-- The user wants to compose a target branch by replaying/cherry-picking commits
-  from one or more source branches.
-- The user needs an authenticated `GitHubClient` through Git Credential Manager
-  or the existing GitHub device-login flow.
-- The user wants to display GitHub repositories in a WinForms `ListView`.
-
 ## Package / project reference
 
 For apps that can use the package:
 
 ```xml
-<PackageReference Include="WarpToolkit.WinForms.Github" Version="0.9.79-preview.g5a320ad311" />
+<PackageReference Include="WarpToolkit.WinForms.Github" Version="0.9.324-preview.ge962db2903" />
 ```
-
-If the API is still being evolved inside the WARP repo, reference the project:
-
-```xml
-<ProjectReference Include="..\..\..\warp\src\WarpToolkit.WinForms.Github\WarpToolkit.WinForms.Github.csproj" />
-```
-
-Adjust the relative path for the consuming project.
 
 ## DI registration
 
@@ -194,4 +190,3 @@ authentication setup, including SSH keys, GCM, or `gh auth setup-git`.
 - Do not assume every local git remote is GitHub.com. `GitRemoteInfo` can parse
   GitHub Enterprise-style hosts; local git workflows should still work without
   Octokit.
-

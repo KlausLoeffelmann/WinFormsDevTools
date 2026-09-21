@@ -5,20 +5,26 @@ description: Guide for WarpToolkit.WinForms.Specialized developer-tool types —
 
 # WarpToolkit.WinForms.Specialized Console & Diagnostics
 
+## Package Dependencies
+
+The following NuGet packages are necessary to add to the project.
+* Make sure, that existing packages use at least the NuGet versions stated below. 
+* Check references projects, for contradicting NuGet package definitions or versions, which need to be updated.
+
+```Markdown
+# NuGet Packages info
+
+* minimum Version: 0.9.324-preview.ge962db2903
+* Package(s) required for this skill:
+  - WarpToolkit.WinForms.Specialized
+```
+
 Developer-tool controls and helpers from `WarpToolkit.WinForms.Specialized`
 (namespace `WarpToolkit.WinForms.Specialized`).
 
 > **Source of truth:** verified against
 > `src/WarpToolkit.WinForms.Specialized/Console/`, `Tools/`, and `IO/`. Real
 > usage: `samples/Self Managed/cs/WarpToolkit.GitScanner/UI/Console/ConsoleTab.cs`.
-
-## When to Use This Skill
-
-- Embedding an **interactive in-process console / terminal pane** that streams
-  colored output and runs commands (`ConsoleControl`).
-- Formatting binary data as a **hex + ASCII dump** (`HexAsciiDumper`).
-- Generating **collision-free filenames** for save/export features
-  (`FilenameDisambiguator`).
 
 ## ConsoleControl
 

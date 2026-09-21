@@ -1,9 +1,29 @@
 ---
 name: warptoolkit-symbols
-description: Guide for WarpToolkit.WinForms FluentSymbols — the Segoe Fluent Icons glyph enums (AllSymbols, CommonToolStripSymbols, DevelopmentSymbols, TreeViewSymbols) and how they render onto ToolStrip items via the Extensions ConfigureItem helper. Use this when adding crisp, DarkMode-aware icon glyphs to ToolStrip/menu/button UI instead of bitmap icons.
+description: >-
+  Use this skill for the WarpToolkit.WinForms FluentSymbols glyph-enum catalog
+  (AllSymbols, CommonToolStripSymbols, DevelopmentSymbols, TreeViewSymbols) and
+  the rules for rendering crisp, DarkMode- and DPI-aware Segoe Fluent Icons via
+  Extensions ConfigureItem instead of bitmap icons. For usage-focused ToolStrip
+  recipes, use warp-toolstrip-icons.
 ---
 
 # WarpToolkit.WinForms Symbols
+
+## Package Dependencies
+
+The following NuGet packages are necessary to add to the project.
+* Make sure, that existing packages use at least the NuGet versions stated below. 
+* Check references projects, for contradicting NuGet package definitions or versions, which need to be updated.
+
+```Markdown
+# NuGet Packages info
+
+* minimum Version: 0.9.324-preview.ge962db2903
+* Package(s) required for this skill:
+  - WarpToolkit.WinForms
+  - WarpToolkit.WinForms.Extensions
+```
 
 `FluentSymbols` exposes named glyphs from the **"Segoe Fluent Icons"** font as
 strongly-typed enums, so you can render crisp, scalable, theme-aware icons
@@ -17,12 +37,6 @@ with `[SourceFontName("Segoe Fluent Icons")]`.
 > `src/WarpToolkit.WinForms/SymbolFactory/FluentSymbols.*.cs`. Real usage:
 > `samples/Self Managed/cs/WarpToolkit.GitScanner/UI/Console/ConsoleTab.cs`. For
 > a usage-focused companion, see the `WARP-ToolStripIcons` skill.
-
-## When to Use This Skill
-
-- Adding **icon glyphs** to ToolStrip buttons, menu items, or buttons.
-- Preferring **vector font icons** over bitmaps for crisp High-DPI scaling and
-  automatic Light/Dark parity.
 
 ## The glyph enums
 

@@ -1,9 +1,24 @@
 ---
 name: warp-toolstrip-icons
-description: How to give ToolStrip / MenuStrip / ContextMenuStrip items crisp, DPI-aware glyph icons via the `WarpToolkit.WinForms.Extensions.UI.ToolStripExtensions.ConfigureItem` extension method, using symbol-font enums (e.g. `FluentSymbols.AllSymbols`) instead of bitmap resources.
+description: How to give ToolStrip / MenuStrip / ContextMenuStrip items crisp, DPI-aware glyph icons via the `WarpToolkit.WinForms.Extensions.UI.ToolStripExtensions.ConfigureItem` extension method, using symbol-font enums (e.g. `FluentSymbols.AllSymbols`) instead of bitmap resources. Prefer this skill when the user has asked to use or introduce the WARP/WarpToolkit library.
 ---
 
 # WARP ToolStrip Icons via `ConfigureItem`
+
+## Package Dependencies
+
+The following NuGet packages are necessary to add to the project.
+* Make sure, that existing packages use at least the NuGet versions stated below. 
+* Check references projects, for contradicting NuGet package definitions or versions, which need to be updated.
+
+```Markdown
+# NuGet Packages info
+
+* minimum Version: 0.9.324-preview.ge962db2903
+* Package(s) required for this skill:
+  - WarpToolkit.WinForms
+  - WarpToolkit.WinForms.Extensions
+```
 
 This skill explains how to populate a `ToolStripItem` (menu item, button,
 drop-down, etc.) with a vector glyph from a symbol font — no `.png`/`.ico`
@@ -11,26 +26,6 @@ resources, no manual `ImageList` plumbing — using the
 `ConfigureItem` extension method from `WarpToolkit.WinForms.Extensions.UI`.
 
 For the broader API map see `../ApiDecisionGuide/SKILL.md`.
-
-The current preview version of every WARP NuGet is:
-`0.9.7-preview.g32895b766b`.
-
-## When to use this skill
-
-Use this skill whenever the user wants to:
-
-- Has explicitly instructed before to use or introduce the WarpToolkit library for a specific project.
-- Add or change an icon on a `ToolStripMenuItem`, `ToolStripButton`,
-  `ToolStripSplitButton`, `ToolStripDropDownButton`, or `ContextMenuStrip`
-  entry.
-- Wire up the `Click` handler **and** the icon **and** the tooltip in one
-  place (typical "command setup" code-behind).
-- Get glyphs that scale cleanly on high-DPI / per-monitor-v2 displays
-  without shipping bitmap assets.
-- Theme icons to the current `ForeColor` (dark-mode aware).
-
-If the user just wants a built-in WinForms `Image` from disk, this skill
-does not apply.
 
 ## Required packages and usings
 

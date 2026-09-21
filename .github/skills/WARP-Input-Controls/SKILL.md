@@ -5,22 +5,26 @@ description: Guide for WarpToolkit.WinForms input controls — FilePathPicker (f
 
 # WarpToolkit.WinForms Input Controls
 
+## Package Dependencies
+
+The following NuGet packages are necessary to add to the project.
+* Make sure, that existing packages use at least the NuGet versions stated below. 
+* Check references projects, for contradicting NuGet package definitions or versions, which need to be updated.
+
+```Markdown
+# NuGet Packages info
+
+* minimum Version: 0.9.324-preview.ge962db2903
+* Package(s) required for this skill:
+  - WarpToolkit.WinForms
+```
+
 Binding-friendly input controls from `WarpToolkit.WinForms`. All are
 Designer-droppable; configure them in `InitializeComponent` per the
 `winforms-designer-code` rules (backing fields, no object initializers/lambdas).
 
 > **Source of truth:** verified against `src/WarpToolkit.WinForms/Controls/` and
 > `Experimental/Binding/`.
-
-## When to Use This Skill
-
-- A **file / folder / save-as picker** field with a browse button
-  (`FilePathPicker`).
-- A `ComboBox` whose selected **value** binds to a view-model property
-  (`BindableComboBox`).
-- A slider/track bar over a **floating-point** range, optionally with an inline
-  edit box (`FloatingPointSlider`, `FloatingPointTrackBar`,
-  `EditFloatingPointSlider`).
 
 ## FilePathPicker
 

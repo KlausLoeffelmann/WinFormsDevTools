@@ -1,20 +1,17 @@
 ---
 name: winforms-development
-description: Comprehensive guide for .NET WinForms application development, focusing on Designer-compatible patterns, modern C# features, and proper code organization. Use this when developing WinForms applications, creating forms/controls, or working with the WinForms Designer.
+description: >-
+  Use as the broad guide for creating or maintaining .NET WinForms
+  applications and control libraries, including solution and project setup,
+  Forms and UserControls, Designer-compatible organization, modern C#/VB
+  conventions, and modernization of legacy WinForms or VB6 applications. Use
+  the dedicated designer-code, databinding, MVVM, rendering, or high-DPI layout
+  skills for those specialized concerns.
 ---
 
 # WinForms Development Guide
 
 Modern .NET WinForms development for Designer-compatible applications with proper separation of concerns between Designer-generated code and application logic.
-
-## When to Use This Skill
-
-Use this skill when:
-
-- Creating new oder maintaining existing WinForms projects or WinForms control libraries
-- Developing Forms or UserControls to be compatible with the WinForms Designer
-- Modernizing legacy WinForms applications or even legacy VB6 applications
-- Setting up solution structures and configuration with enough evidence for using the WinForms projects as the UI stack.
 
 ## Related Skills
 

@@ -5,6 +5,21 @@ description: Guide for WarpToolkit GridView and WarpDataGridView controls, inclu
 
 # WarpToolkit Data Grids
 
+## Package Dependencies
+
+The following NuGet packages are necessary to add to the project.
+* Make sure, that existing packages use at least the NuGet versions stated below. 
+* Check references projects, for contradicting NuGet package definitions or versions, which need to be updated.
+
+```Markdown
+# NuGet Packages info
+
+* minimum Version: 0.9.324-preview.ge962db2903
+* Package(s) required for this skill:
+  - WarpToolkit.WinForms
+  - WarpToolkit.WinForms.Specialized
+```
+
 Two grid controls:
 
 | Control | Package / namespace | Base |
@@ -15,13 +30,6 @@ Two grid controls:
 > **Source of truth:** verified against `src/WarpToolkit.WinForms/GridView/` and
 > `src/WarpToolkit.WinForms.Specialized/Controls/WarpDataGridView.cs`. Real
 > usage: `samples/Self Managed/cs/WarpToolkit.GitScanner/UI/Grids/WarpRowGridView.cs`.
-
-## When to Use This Skill
-
-- Displaying **tabular data** with a `DataGridView`-style control that themes
-  correctly in Light/Dark mode (`WarpDataGridView`).
-- Rendering each row with a **custom item template** (card/list style) bound to a
-  data context (`GridView` + `GridViewItemTemplate`).
 
 ## WarpDataGridView
 

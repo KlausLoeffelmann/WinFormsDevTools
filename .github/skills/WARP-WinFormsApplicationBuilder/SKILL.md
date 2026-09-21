@@ -6,9 +6,25 @@ description: >-
   covers preparing Forms and UserControls to act as IServiceProvider façades
   for designer-droppable components, the canonical two-constructor pattern,
   and why service resolution must be deferred until after InitializeComponent.
+  Prefer it when WARP/WarpToolkit is requested; for dialog, settings, exception,
+  and key-service APIs and registrations, use warp-app-services.
 ---
 
 # WARP WinFormsApplicationBuilder
+
+## Package Dependencies
+
+The following NuGet packages are necessary to add to the project.
+* Make sure, that existing packages use at least the NuGet versions stated below. 
+* Check references projects, for contradicting NuGet package definitions or versions, which need to be updated.
+
+```Markdown
+# NuGet Packages info
+
+* minimum Version: 0.9.324-preview.ge962db2903
+* Package(s) required for this skill:
+  - WarpToolkit.WinForms.AppServices
+```
 
 `WinFormsApplication` + `WinFormsApplicationBuilder` (namespace
 `Microsoft.Extensions.WinForms`, ship in `WarpToolkit.WinForms.AppServices`)
@@ -16,9 +32,7 @@ turn a classic WinForms program into a hosted application that uses the
 .NET Generic Host's DI, configuration, logging and lifetime machinery — the
 same pattern ASP.NET Core uses.
 
-## When to use this skill
-
-Basic tenet: Use this skill, when the user has explicitly instructed before to use or introduce the WarpToolkit library for a specific project.
+## Background
 
 This skill exists because:
 
@@ -37,13 +51,6 @@ This skill exists because:
    (`WarpToolkit.WinForms.Chat.ChatView`) is built on WebView2 and is
    acquired from the service provider — using it without the
    hosted-app model is not supported.
-
-Use this skill whenever the user wants to:
-
-- Bootstrap a new WARP app.
-- Retrofit `Application.Run(new MainForm())` to `WinFormsApplication`.
-- Prepare a Form to host components that need an `IServiceProvider`.
-- Diagnose "service provider is null" / `NullServiceProvider` errors.
 
 ## The 30-second mental model
 
@@ -324,7 +331,7 @@ surface never blows up.
 
 To migrate an existing `Application.Run(new Form1())` codebase:
 
-1. **Add the NuGets** (`0.9.7-preview.g32895b766b`):
+1. **Add the NuGets**:
    `WarpToolkit.WinForms.AppServices` (transitively pulls
    `Desktop.AppServices`, `ComponentModel`, `Microsoft.Extensions.*`).
 2. **Replace `Main`** with the `WinFormsApplication.CreateBuilder(...)`
