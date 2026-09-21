@@ -15,7 +15,8 @@ public partial class BuildArtefactsScanner
     ///  is also used to locate the ref-assembly source directory under
     ///  <c>obj\System.Windows.Forms\{primary}\ref</c>. Subsequent entries
     ///  are same-configuration netstandard fallbacks (e.g.
-    ///  <c>"\Debug\netstandard2.0"</c>) that physically exist on disk.
+    ///  <c>"\Debug\netstandard2.0"</c>) that physically exist under any
+    ///  project in the artifacts tree.
     /// </param>
     /// <param name="directory">The main TFM build output directory.</param>
     public class TargetFrameworkSourceItem(string name, IReadOnlyList<string> tfmPaths, DirectoryInfo directory)

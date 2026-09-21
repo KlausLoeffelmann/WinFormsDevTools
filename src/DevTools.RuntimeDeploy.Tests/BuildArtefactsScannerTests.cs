@@ -101,12 +101,6 @@ public sealed class BuildArtefactsScannerTests : IDisposable
             "Release",
             "netstandard2.0");
         Directory.CreateDirectory(runtimeFolder);
-        Directory.CreateDirectory(Path.Combine(
-            _tempFolder,
-            "bin",
-            "System.Windows.Forms",
-            "Release",
-            "netstandard2.0"));
         Directory.CreateDirectory(analyzerFolder);
         File.WriteAllBytes(Path.Combine(runtimeFolder, "System.Windows.Forms.dll"), [1]);
         File.WriteAllBytes(Path.Combine(analyzerFolder, "System.Windows.Forms.Analyzers.dll"), [2]);

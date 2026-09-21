@@ -25,6 +25,13 @@ public partial class BuildArtefactsScanner
     public TargetFrameworkSourceItem[] GetAvailableTargets()
     {
         DirectoryInfo binWinForms = new(PathToGitHubRepo + BinSystemWindowsFormsPath);
+        DirectoryInfo binRoot = new(PathToGitHubRepo + BinPath);
+        DirectoryInfo[] availableTfmDirectories = binRoot.GetDirectories(
+            searchPattern: "netstandard*",
+            enumerationOptions: new EnumerationOptions
+            {
+                RecurseSubdirectories = true,
+            });
 
         return [..
             binWinForms.GetDirectories(
@@ -51,10 +58,13 @@ public partial class BuildArtefactsScanner
 
                     foreach (string fallback in s_additionalTfmPaths)
                     {
-                        DirectoryInfo additional = new(parent.FullName + fallback);
-                        if (additional.Exists)
+                        string configurationTfmPath = configurationPath + fallback;
+                        if (availableTfmDirectories.Any(
+                            directory => directory.FullName.EndsWith(
+                                configurationTfmPath,
+                                StringComparison.OrdinalIgnoreCase)))
                         {
-                            tfmPaths.Add(configurationPath + fallback);
+                            tfmPaths.Add(configurationTfmPath);
                         }
                     }
                 }
